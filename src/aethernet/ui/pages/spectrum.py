@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
+import time
 from typing import Any
 
 from nicegui import ui
 
 from ...core.spectrum import heatmap as build_heatmap
-from ...core.spectrum import occupancy, polar_points, recommend_channel
+from ...core.spectrum import occupancy, polar_points, recommend_channel, recommend_from_stats
 from ...models import Band
+from ...utils import humanize_age
 from .. import charts
 from ..components import empty_state, kv_row, label_caps, panel_header, status_dot
 from ..shell import shell
@@ -97,6 +99,10 @@ def spectrum_page() -> None:
                             reverse=True,
                         )[:6]
                         panel_header("cell_tower", "CO-INTERFERENCIA", f"{len(interfering)} DETECTADAS EN CH {target_channel}", COLORS["amber"])
+                        ui.label(
+                            "Redes vecinas: aparecer aquí es informativo (malla, multi-banda o "
+                            "repetidores del entorno), no una amenaza. Solo importan si imitan TU SSID."
+                        ).classes("text-[11px] text-[#86B89B] italic")
                         if not interfering:
                             empty_state("Canal limpio.", "check_circle")
                         for ap in interfering:
@@ -124,3 +130,105 @@ def spectrum_page() -> None:
 
         band_toggle.on_value_change(on_band)
         body()
+
+        # -- Asesor de canal 2.4 GHz en vivo (histórico, estable) ----------#
+        advisor = {"hours": 6}
+
+        @ui.refreshable
+        def render_advisor() -> None:
+            stats = context.repo.channel_stats(advisor["hours"])
+            scan_now = context.last_scan()
+            if stats:
+                rec = recommend_from_stats(stats, Band.GHZ_24)
+            elif scan_now is not None:
+                instant = recommend_channel(scan_now, Band.GHZ_24)
+                rec = {
+                    "channel": instant["channel"],
+                    "availability": instant["free_pct"],
+                    "ranking": [instant["channel"]],
+                    "scores": {},
+                    "reason": instant["reason"],
+                }
+            else:
+                with ui.element("div").classes("ae-panel w-full"):
+                    empty_state("Sin datos de espectro todavía.", "insights")
+                return
+
+            key = "channel_advisor_24"
+            previous = context.repo.kv_get(key, {}) or {}
+            now = time.time()
+            if previous.get("channel") != rec["channel"]:
+                previous = {"channel": rec["channel"], "since": now}
+                context.repo.kv_set(key, previous)
+            since = float(previous.get("since", now))
+
+            with ui.element("div").classes("ae-panel flex flex-col gap-4 w-full"):
+                with ui.row().classes("items-center justify-between w-full flex-wrap gap-3"):
+                    panel_header(
+                        "insights",
+                        "ASESOR DE CANAL 2.4 GHz (EN VIVO)",
+                        "HISTÓRICO ESTABLE · AETHERNET NO TOCA TU ROUTER",
+                        COLORS["mint"],
+                    )
+                    with ui.row().classes("items-center gap-2"):
+                        label_caps("VENTANA:")
+                        for hours, text in ((1, "1 H"), (6, "6 H"), (24, "24 H")):
+                            active = advisor["hours"] == hours
+                            chip = ui.html(text).classes(
+                                "ae-chip" + (" active" if active else "")
+                            ).style("cursor:pointer")
+                            chip.on("click", lambda _=None, h=hours: _set_window(h))
+
+                with ui.row().classes("items-center gap-4 flex-wrap"):
+                    with ui.column().classes("gap-0"):
+                        label_caps("CANAL RECOMENDADO AHORA")
+                        ui.label(f"CANAL {rec['channel']}").classes("ae-metric text-3xl").style(
+                            f"color:{COLORS['mint']}"
+                        )
+                    with ui.column().classes("gap-0"):
+                        label_caps("DISPONIBILIDAD")
+                        ui.label(f"{rec['availability']}%").classes("ae-metric text-2xl").style(
+                            f"color:{COLORS['amber'] if rec['availability'] < 60 else COLORS['cyan']}"
+                        )
+                    with ui.column().classes("gap-0"):
+                        label_caps("ESTABILIDAD")
+                        ui.label(f"estable desde {humanize_age(now - since)}").classes(
+                            "ae-mono text-[12px] text-[#86B89B]"
+                        )
+                    ui.element("div").classes("flex-1")
+                    copy_btn = ui.button("COPIAR CANAL", icon="content_copy").props(
+                        "unelevated no-caps"
+                    ).style(f"background:{COLORS['mint']};color:#030603")
+
+                # ranking visual de los tres canales no solapados
+                ranking = rec.get("ranking") or [rec["channel"]]
+                scores: dict[str, Any] = rec.get("scores") or {}
+                if scores:
+                    for channel in ranking:
+                        score = float(scores.get(str(channel), 0.0))
+                        availability = 100 if score <= 0 else max(0, min(100, round(100 - score * 25)))
+                        with ui.row().classes("items-center gap-3 w-full"):
+                            ui.label(f"CH {channel:02d}").classes("ae-mono text-[12px] w-14").style(
+                                f"color:{COLORS['mint'] if channel == rec['channel'] else COLORS['text-dim']}"
+                            )
+                            bar = ui.linear_progress(value=availability / 100, show_value=False).classes("flex-1")
+                            bar.props("rounded")
+                            ui.label(f"{availability}%").classes("ae-mono text-[11px] w-12 text-right")
+
+                ui.label(
+                    "Recomendación calculada sobre tus observaciones reales (no un escaneo suelto) para "
+                    "evitar cambios de canal que desestabilicen tu red. Aplícalo tú en el panel del router."
+                ).classes("text-[11px] text-[#86B89B] italic")
+
+                def _copy() -> None:
+                    ui.clipboard.write(str(rec["channel"]))
+                    ui.notify(f"Canal {rec['channel']} copiado", position="top", timeout=2500)
+
+                copy_btn.on("click", _copy)
+
+        def _set_window(hours: int) -> None:
+            advisor["hours"] = hours
+            render_advisor.refresh()
+
+        render_advisor()
+        ui.timer(15.0, render_advisor.refresh)

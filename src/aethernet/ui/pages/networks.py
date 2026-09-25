@@ -76,10 +76,26 @@ def networks_page() -> None:
                 kv_row("WPS", "ACTIVO" if ap.wps else "no detectado", COLORS["amber"] if ap.wps else None)
                 kv_row("PRIMERA VEZ", fmt_age(ap.first_seen))
                 kv_row("ÚLTIMA VEZ", fmt_age(ap.last_seen))
-                if ap.tags:
-                    with ui.row().classes("items-center gap-2 flex-wrap"):
-                        for tag in ap.tags:
-                            ui.html(f'<span class="ae-chip active">{tag}</span>')
+                with ui.row().classes("items-center gap-2 flex-wrap"):
+                    for tag in ap.tags:
+                        ui.html(f'<span class="ae-chip active">{tag}</span>')
+                    if ap.is_locally_administered:
+                        ui.html('<span class="ae-chip">MAC VIRTUAL / MALLA</span>')
+
+                scan_now = context.last_scan()
+                peers = (
+                    [a for a in scan_now.aps if a.ssid and a.ssid == ap.ssid]
+                    if scan_now is not None and ap.ssid
+                    else []
+                )
+                if len(peers) > 1:
+                    ui.element("div").classes("ae-divider")
+                    label_caps("GRUPO SSID")
+                    ui.label(
+                        f"'{ap.ssid}' aparece en {len(peers)} BSSID. Suele ser multi-banda o malla del "
+                        "mismo equipo (o de un vecino); no es prueba de suplantación. Solo sería "
+                        "sospechoso si imitara TU red con otro BSSID."
+                    ).classes("text-[11px] text-[#86B89B] italic")
 
         with ui.element("div").classes("grid grid-cols-1 xl:grid-cols-12 gap-5 w-full"):
             with ui.element("div").classes("xl:col-span-8"):

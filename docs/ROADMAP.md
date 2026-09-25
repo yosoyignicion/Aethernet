@@ -85,8 +85,21 @@ sudo -E aethernet monitor start
 - [ ] **Accesibilidad AA**: auditoría de contraste y navegación por teclado.
 - [x] **`mypy --strict`** en todo `src/aethernet` (0 errores).
 
+## Asesor de canal 2.4 GHz (en vivo)
+
+En `/espectro`: recomienda el mejor canal (1/6/11) a partir de **histórico
+agregado** (`channel_stats`) y no de un escaneo suelto, para no inducir cambios
+que desestabilicen la red. Muestra disponibilidad por canal, "estable desde …" y
+botón para copiar el canal. **Aethernet no cambia tu router**; tú lo aplicas.
+
+Interpretación en UI: redes vecinas con SSID repetido o MAC virtual se etiquetan
+como *malla/multi-banda (informativo)*, no como amenaza; solo sería sospechoso
+imitar tu propio SSID con otro BSSID.
+
 ## Changelog
 
+- **2026-09-26** — Asesor de canal 2.4 GHz en vivo (histórico, estable) e
+  interpretación de SSID compartido / MAC virtual en la UI.
 - **2026-09-25** — Rename total a Aethernet + migración de datos.
 - **2026-09-25** — Monitor mode pasivo no disruptivo (core + DB v2 + CLI/API/UI).
 - **2026-09-25** — Endurecimiento: mypy strict núcleo, vulture, evidencia persistida.

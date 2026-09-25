@@ -209,6 +209,14 @@ class AccessPoint:
     def display_ssid(self) -> str:
         return self.ssid or "<oculta>"
 
+    @property
+    def is_locally_administered(self) -> bool:
+        """Bit *locally administered* del primer octeto: BSSID virtual/malla."""
+        try:
+            return bool(int(self.bssid.split(":")[0], 16) & 0b10)
+        except (ValueError, IndexError):
+            return False
+
     def to_dict(self) -> dict[str, Any]:
         data = _as_dict(self)
         data["band"] = self.band.value

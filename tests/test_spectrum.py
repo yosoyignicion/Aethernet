@@ -55,3 +55,25 @@ def test_heatmap_matrix():
 def test_spectrum_snapshot_shape():
     payload = spectrum_snapshot(scan(ap("A", "AA:BB:CC:00:00:01")), Band.GHZ_24)
     assert {"band", "occupancy", "overlap", "recommendation", "polar"} <= set(payload)
+
+
+def test_recommend_from_stats_prefers_free_channel():
+    from aethernet.core.spectrum import recommend_from_stats
+
+    observations = [
+        {"channel": 6, "aps": 8, "avg_signal": -45},
+        {"channel": 1, "aps": 1, "avg_signal": -80},
+        {"channel": 11, "aps": 0, "avg_signal": None},
+    ]
+    rec = recommend_from_stats(observations, Band.GHZ_24)
+    assert rec["channel"] == 11
+    assert rec["availability"] == 100
+    assert rec["ranking"][0] == 11
+
+
+def test_recommend_from_stats_avoids_busy_but_is_defined_when_empty():
+    from aethernet.core.spectrum import recommend_from_stats
+
+    assert recommend_from_stats([], Band.GHZ_24)["channel"] in (1, 6, 11)
+    busy = [{"channel": 1, "aps": 6, "avg_signal": -40}]
+    assert recommend_from_stats(busy, Band.GHZ_24)["channel"] != 1

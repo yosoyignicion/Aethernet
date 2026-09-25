@@ -104,6 +104,60 @@ def recommend_channel(scan: WifiScan, band: Band | str = Band.GHZ_24) -> dict[st
     }
 
 
+def interference_for(
+    target: int, observations: list[dict[str, Any]], band: Band | str = Band.GHZ_24
+) -> float:
+    """Interferencia estimada sobre ``target`` desde observaciones agregadas.
+
+    Cada observación: ``{channel, aps|networks, avg_signal}``.
+    """
+    total = 0.0
+    for row in observations:
+        channel = row.get("channel")
+        if not channel:
+            continue
+        weight_raw = row.get("aps")
+        if weight_raw is None:
+            weight_raw = row.get("networks")
+        if weight_raw is None:
+            weight_raw = 1
+        weight = float(weight_raw)
+        signal = row.get("avg_signal")
+        signal_value = float(signal) if signal is not None else -80.0
+        kernel = _kernel(abs(int(channel) - target), band)
+        if kernel <= 0:
+            continue
+        strength = max(0.0, min(1.0, (signal_value + 90) / 60.0))
+        total += kernel * strength * weight
+    return total
+
+
+def recommend_from_stats(
+    observations: list[dict[str, Any]], band: Band | str = Band.GHZ_24
+) -> dict[str, Any]:
+    """Recomendación **estable** a partir de histórico agregado.
+
+    Usa varias muestras (no un único escaneo) para evitar que el canal
+    recomendado oscile, que es lo que volvería inestable tu red.
+    """
+    value = band.value if isinstance(band, Band) else band
+    candidates = list(CHANNELS_24_NON_OVERLAP) if "2.4" in value else list(band_channels(band))
+    scores = {c: interference_for(c, observations, band) for c in candidates}
+    best = min(candidates, key=lambda c: scores[c])
+    best_interference = scores[best]
+    availability = 100 if best_interference <= 0 else max(0, min(100, round(100 - best_interference * 25)))
+    ranking = sorted(candidates, key=lambda c: scores[c])
+    return {
+        "channel": best,
+        "availability": availability,
+        "interference": round(best_interference, 3),
+        "ranking": ranking,
+        "scores": {str(c): round(scores[c], 3) for c in candidates},
+        "band": value,
+        "reason": f"Canal {best}: disponibilidad {availability}% en la ventana observada.",
+    }
+
+
 def heatmap(rows: list[dict[str, Any]]) -> dict[str, Any]:
     """Matriz hora-del-día × canal a partir de filas agregadas del repositorio."""
     hours = list(range(24))
