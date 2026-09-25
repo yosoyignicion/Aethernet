@@ -20,7 +20,7 @@ def dashboard() -> None:
             with ui.row().classes("items-center gap-3"):
                 ui.html(icon("radar", size=22, color=COLORS["cyan"]))
                 with ui.column().classes("gap-0"):
-                    ui.label("CENTRO DE DIAGNÓSTICO RF").classes("ae-headline text-base text-[#dfe2eb]")
+                    ui.label("CENTRO DE DIAGNÓSTICO RF").classes("ae-headline text-base text-[#D8F5E3]")
                     label_caps("MATRIZ OPERATIVA // RED LOCAL")
             with ui.row().classes("items-center gap-2"):
                 scan_btn = ui.button("FORZAR ESCANEO", icon="sync").props("unelevated no-caps").style(
@@ -42,14 +42,14 @@ def dashboard() -> None:
                 with gauge_container:
                     gauge_chart = ui.echart(charts.gauge(0, "sin datos")).classes("w-full h-full")
                     with ui.column().classes("absolute inset-0 items-center justify-center gap-0 pointer-events-none"):
-                        score_label = ui.label("—").classes("ae-metric text-4xl text-[#dfe2eb]")
+                        score_label = ui.label("—").classes("ae-metric text-4xl text-[#D8F5E3]")
                         grade_label = ui.label("SIN DATOS").classes("ae-label").style(f"color:{COLORS['amber']}")
                         label_caps("SALUD DE RED")
                 with ui.row().classes("items-center justify-between ae-sub px-3 py-2 w-full"):
                     with ui.column().classes("gap-0"):
                         label_caps("ESTADO DEL ADAPTADOR")
                         adapter_label = ui.label("—").classes("ae-mono text-[12px]")
-                    headline_label = ui.label("Sin escaneos todavía.").classes("text-[11px] text-[#94A3B8] max-w-[60%] text-right")
+                    headline_label = ui.label("Sin escaneos todavía.").classes("text-[11px] text-[#86B89B] max-w-[60%] text-right")
 
             with ui.element("div").classes("lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4"):
                 cards = ui.element("div").classes("contents")
@@ -73,7 +73,7 @@ def dashboard() -> None:
                                 value_label = ui.label("0").classes("ae-metric text-4xl").style(f"color:{accent}")
                                 label_caps(unit)
                             with ui.row().classes("items-center justify-between w-full ae-sub px-2 py-1"):
-                                ui.label(hint).classes("text-[11px] text-[#94A3B8] truncate")
+                                ui.label(hint).classes("text-[11px] text-[#86B89B] truncate")
                                 label_caps(badge, accent)
                             metric_refs[key] = value_label
 

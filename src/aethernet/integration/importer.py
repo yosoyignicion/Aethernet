@@ -111,7 +111,7 @@ def import_wifi_analyzer(path: Path | str, timestamp: float | None = None) -> Wi
     return WifiScan(timestamp=ts, interface="imported", aps=tuple(aps), adapter=None, source="import")
 
 
-def import_and_save(repo, path: Path | str, my_bssids: set[str] | None = None) -> int:
+def import_and_save(repo: Any, path: Path | str, my_bssids: set[str] | None = None) -> int:
     scan = import_wifi_analyzer(path)
     repo.save_wifi_scan(scan, my_bssids=my_bssids or set())
     log.info("importadas %d redes desde %s", scan.count, path)

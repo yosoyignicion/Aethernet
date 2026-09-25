@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import socket
 import time
+from typing import Any
 
 from nicegui import ui
 
@@ -28,13 +29,16 @@ _FORMATS = (
 def reports_page() -> None:
     context = get_context()
     with shell("/informes", "Informes"):
-        state = {"preset": "07D", "modules": {"congestion", "inventory", "incidents", "untrusted"}}
+        state: dict[str, Any] = {
+            "preset": "07D",
+            "modules": {"congestion", "inventory", "incidents", "untrusted"},
+        }
 
         with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3"):
             with ui.row().classes("items-center gap-3"):
                 ui.html(icon("description", size=22, color=COLORS["cyan"]))
                 with ui.column().classes("gap-0"):
-                    ui.label("Informes y Auditoría RF").classes("ae-headline text-lg text-[#dfe2eb]")
+                    ui.label("Informes y Auditoría RF").classes("ae-headline text-lg text-[#D8F5E3]")
                     label_caps("SYS.AUDIT // COMPLIANCE & EXPORT")
             with ui.row().classes("items-center gap-2"):
                 label_caps(f"NODO LOCAL: {socket.gethostname().upper()}")
@@ -79,7 +83,7 @@ def reports_page() -> None:
                     )
                 preview = ui.element("div").classes("w-full overflow-auto ae-sub p-4").style("max-height:620px")
                 with preview:
-                    markdown_box = ui.markdown("").classes("text-[#dfe2eb] max-w-none")
+                    markdown_box = ui.markdown("").classes("text-[#D8F5E3] max-w-none")
 
             summary_row = ui.row().classes("xl:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-4 w-full")
             with summary_row:
@@ -139,12 +143,12 @@ def reports_page() -> None:
             incidents.clear()
             with incidents:
                 if not data.events:
-                    ui.label("Sin incidentes registrados.").classes("text-[11px] text-[#94A3B8]")
+                    ui.label("Sin incidentes registrados.").classes("text-[11px] text-[#86B89B]")
                 for event in data.events[:8]:
                     color = SEVERITY_COLORS[event.severity]
                     with ui.row().classes("items-center justify-between w-full ae-sub px-3 py-2"):
                         with ui.column().classes("gap-0 min-w-0"):
-                            ui.label(event.title).classes("text-[12px] text-[#dfe2eb] truncate max-w-[240px]")
+                            ui.label(event.title).classes("text-[12px] text-[#D8F5E3] truncate max-w-[240px]")
                             label_caps(time.strftime("%m-%d %H:%M", time.localtime(event.created_at)))
                         ui.html(f'<span class="ae-chip" style="color:{color};border-color:{color}">{severity_label(event.severity)}</span>')
 
@@ -156,4 +160,4 @@ def _summary_card(label: str, value: str, hint: str, color: str) -> None:
     with ui.element("div").classes("ae-card flex flex-col gap-2"):
         label_caps(label)
         ui.label(value).classes("ae-metric text-2xl").style(f"color:{color}")
-        ui.label(hint).classes("text-[11px] text-[#94A3B8]")
+        ui.label(hint).classes("text-[11px] text-[#86B89B]")

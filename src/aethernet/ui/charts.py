@@ -11,11 +11,11 @@ from typing import Any
 from .theme import COLORS, GRADE_COLORS
 
 _MONO = "JetBrains Mono"
-_GRID = "#1c2026"
-_AXIS = "#475569"
+_GRID = "#0E1E15"
+_AXIS = "#3F6B52"
 
 
-def update(chart, options: dict[str, Any]) -> None:
+def update(chart: Any, options: dict[str, Any]) -> None:
     """Actualiza un ``ui.echart`` en el sitio (la propiedad ``options`` no tiene setter)."""
     chart.options.clear()
     chart.options.update(options)
@@ -197,7 +197,7 @@ def heatmap(grid: dict[str, Any]) -> dict[str, Any]:
             "bottom": 0,
             "itemHeight": 90,
             "textStyle": {"color": _AXIS, "fontSize": 9, "fontFamily": _MONO},
-            "inRange": {"color": [COLORS["void"], "#0b3a2e", COLORS["mint"], COLORS["amber"], COLORS["coral"]]},
+            "inRange": {"color": [COLORS["void"], "#062b1f", COLORS["mint"], COLORS["amber"], COLORS["coral"]]},
         },
         "series": [
             {

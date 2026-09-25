@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+from typing import Any
+
 from nicegui import ui
 
 from ...models import LanDevice
@@ -41,17 +44,17 @@ def _device_type(device: LanDevice) -> tuple[str, str]:
 def devices_page() -> None:
     context = get_context()
     with shell("/dispositivos", "Dispositivos"):
-        state = {"query": ""}
+        state: dict[str, Any] = {"query": ""}
 
         lan = context.repo.latest_lan_scan()
         subnet = lan.subnet if lan else "—"
         with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3"):
             with ui.column().classes("gap-0"):
-                header_label = ui.label("0 Dispositivos en LAN local").classes("ae-headline text-lg text-[#dfe2eb]")
+                header_label = ui.label("0 Dispositivos en LAN local").classes("ae-headline text-lg text-[#D8F5E3]")
                 with ui.row().classes("items-center gap-2"):
                     label_caps("MATRIZ // SUBNET_SCANNER")
                     ui.html(f'<span class="ae-chip active">CIDR {subnet}</span>')
-                    summary_label = ui.label("").classes("text-[11px] text-[#94A3B8]")
+                    summary_label = ui.label("").classes("text-[11px] text-[#86B89B]")
             with ui.row().classes("items-center gap-2"):
                 search = ui.input(placeholder="Filtrar IP, MAC o Vendor...").props(
                     'type=search clearable dense outlined'
@@ -65,10 +68,10 @@ def devices_page() -> None:
         with ui.element("div").classes("ae-panel flex flex-col gap-3"):
             with ui.row().classes("items-center gap-2"):
                 ui.html(icon("add_link", size=18, color=COLORS["mint"]))
-                ui.label("Añadir Regla MAC Estática").classes("ae-headline text-sm text-[#dfe2eb]")
+                ui.label("Añadir Regla MAC Estática").classes("ae-headline text-sm text-[#D8F5E3]")
             ui.label(
                 "Asigna una regla permanente ARP/DHCP: la MAC quedará como confiable con su alias."
-            ).classes("text-[11px] text-[#94A3B8]")
+            ).classes("text-[11px] text-[#86B89B]")
             with ui.row().classes("items-end gap-3 flex-wrap"):
                 mac_input = ui.input("MAC", placeholder="AA:BB:CC:DD:EE:FF").props("dense outlined").classes("w-[220px]")
                 alias_input = ui.input("ALIAS", placeholder="Etiqueta...").props("dense outlined").classes("w-[200px]")
@@ -100,7 +103,7 @@ def devices_page() -> None:
                 for device in devices:
                     _device_card(context, device, render_grid.refresh)
 
-        def on_search(event) -> None:
+        def on_search(event: Any) -> None:
             state["query"] = event.value or ""
             render_grid.refresh()
 
@@ -126,7 +129,7 @@ def devices_page() -> None:
         ui.timer(5.0, render_grid.refresh)
 
 
-def _device_card(context, device: LanDevice, refresh) -> None:
+def _device_card(context: Any, device: LanDevice, refresh: Callable[[], None]) -> None:
     type_label, type_icon = _device_type(device)
     trusted = device.trusted or device.is_gateway
     accent = COLORS["mint"] if trusted else COLORS["amber"]
@@ -140,7 +143,7 @@ def _device_card(context, device: LanDevice, refresh) -> None:
                 f'{"SEGURO // VERIFICADO" if trusted else "NO CONFIABLE"}</span>'
             )
         with ui.row().classes("items-center justify-between w-full"):
-            ui.label(device.display_name).classes("ae-headline text-base text-[#dfe2eb] truncate")
+            ui.label(device.display_name).classes("ae-headline text-base text-[#D8F5E3] truncate")
             ui.html(icon("edit", size=16, color=COLORS["text-muted"]))
         with ui.column().classes("gap-1 w-full"):
             _line("DIRECCIÓN IP", device.ip)
@@ -157,7 +160,7 @@ def _device_card(context, device: LanDevice, refresh) -> None:
             )
             isolate.tooltip("Aislar requiere integración con el router/firewall (pendiente)")
 
-            def toggle_trust(_=None, mac=device.mac, current=trusted) -> None:
+            def toggle_trust(_: Any = None, mac: str = device.mac, current: bool = trusted) -> None:
                 context.repo.set_device_trusted(mac, not current)
                 toast(f"{'Revocado' if current else 'Confiable'}: {mac}", icon_name="verified_user")
                 refresh()
@@ -168,4 +171,4 @@ def _device_card(context, device: LanDevice, refresh) -> None:
 def _line(key: str, value: str) -> None:
     with ui.row().classes("items-center justify-between w-full"):
         label_caps(key)
-        ui.label(value).classes("ae-mono text-[11px] text-[#dfe2eb] truncate max-w-[60%]")
+        ui.label(value).classes("ae-mono text-[11px] text-[#D8F5E3] truncate max-w-[60%]")

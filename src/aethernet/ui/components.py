@@ -54,7 +54,7 @@ def panel_header(icon_name: str, title: str, subtitle: str | None = None, accent
     with ui.row().classes("items-center gap-3 w-full"):
         ui.html(icon(icon_name, size=20, color=accent or COLORS["cyan"]))
         with ui.column().classes("gap-0"):
-            ui.label(title).classes("ae-headline text-base text-[#dfe2eb] leading-tight")
+            ui.label(title).classes("ae-headline text-base text-[#D8F5E3] leading-tight")
             if subtitle:
                 label_caps(subtitle)
 
@@ -79,7 +79,7 @@ def metric_card(
             ui.label(value).classes("ae-metric text-4xl").style(f"color:{accent}")
             label_caps(unit)
         with ui.row().classes("items-center justify-between w-full ae-sub px-2 py-1"):
-            ui.label(hint or "—").classes("text-[11px] text-[#94A3B8] truncate")
+            ui.label(hint or "—").classes("text-[11px] text-[#86B89B] truncate")
             if badge:
                 label_caps(badge, accent)
 
@@ -87,7 +87,7 @@ def metric_card(
 def kv_row(key: str, value: str, value_color: str | None = None) -> None:
     with ui.row().classes("items-center justify-between w-full py-1"):
         label_caps(key)
-        ui.label(value).classes("ae-mono text-[12px] text-[#dfe2eb]").style(
+        ui.label(value).classes("ae-mono text-[12px] text-[#D8F5E3]").style(
             f"color:{value_color}" if value_color else ""
         )
 
@@ -95,7 +95,7 @@ def kv_row(key: str, value: str, value_color: str | None = None) -> None:
 def empty_state(message: str, icon_name: str = "search_off") -> None:
     with ui.column().classes("items-center justify-center gap-2 w-full py-10 opacity-70"):
         ui.html(icon(icon_name, size=32, color=COLORS["text-muted"]))
-        ui.label(message).classes("text-[#94A3B8] text-sm")
+        ui.label(message).classes("text-[#86B89B] text-sm")
 
 
 def toast(message: str, *, icon_name: str = "check_circle", color: str | None = None) -> None:

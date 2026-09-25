@@ -6,7 +6,7 @@ FastAPI/uvicorn son opcionales; si faltan, se avisa con claridad.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from ..capabilities import detect
 from ..config import Settings
@@ -23,7 +23,7 @@ class APIDependencyError(RuntimeError):
     pass
 
 
-def create_app(repo, settings: Settings, service: MonitorService | None = None):
+def create_app(repo: Any, settings: Settings, service: MonitorService | None = None) -> Any:
     """Fábrica de la app FastAPI. Se importa FastAPI aquí para no exigirlo siempre."""
     try:
         from fastapi import FastAPI, HTTPException, Query
@@ -66,7 +66,7 @@ def create_app(repo, settings: Settings, service: MonitorService | None = None):
         scan = repo.latest_wifi_scan()
         if scan is None:
             raise HTTPException(status_code=404, detail="sin escaneos")
-        return scan.to_dict()
+        return cast("dict[str, Any]", scan.to_dict())
 
     @app.get("/wifi/scans")
     def wifi_scans(limit: int = Query(20, ge=1, le=200)) -> dict[str, Any]:
@@ -93,7 +93,7 @@ def create_app(repo, settings: Settings, service: MonitorService | None = None):
         scan = repo.latest_lan_scan()
         if scan is None:
             raise HTTPException(status_code=404, detail="sin escaneos LAN")
-        return scan.to_dict()
+        return cast("dict[str, Any]", scan.to_dict())
 
     @app.get("/lan/devices")
     def lan_devices(online_only: bool = False) -> dict[str, Any]:
@@ -161,7 +161,7 @@ def create_app(repo, settings: Settings, service: MonitorService | None = None):
     return app
 
 
-def serve(repo, settings: Settings, host: str | None = None, port: int | None = None) -> None:
+def serve(repo: Any, settings: Settings, host: str | None = None, port: int | None = None) -> None:
     """Arranca uvicorn en primer plano."""
     try:
         import uvicorn

@@ -155,6 +155,13 @@ body { font-family: 'Inter', system-ui, sans-serif; overscroll-behavior: none; }
   .ae-fade-up, .ae-glitch, .ae-sweep, .ae-glow, .ae-scanline, .ae-pulse, .ae-ping { animation: none !important; }
 }
 
+/* modo compacto (toggle de la cabecera) */
+.ae-compact .q-table tbody td { padding: 2px 8px !important; font-size: 11px !important; }
+.ae-compact .ae-panel { padding: .85rem; }
+.ae-compact .ae-card { padding: .85rem; min-height: 104px !important; }
+.ae-compact .ae-metric { font-size: 1.6rem; }
+.ae-compact .ae-label { font-size: 9px; }
+
 .q-table__container, .q-table { background: transparent !important; color: var(--ae-text) !important; }
 .q-table thead tr { background: var(--ae-surface) !important; }
 .q-table thead th { color: var(--ae-text-dim) !important; font-family: 'JetBrains Mono', monospace !important;

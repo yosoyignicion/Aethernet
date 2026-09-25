@@ -27,7 +27,7 @@ from .data.repository import Repository
 from .integration.importer import import_and_save
 from .integration.speedtest import correlate_with_congestion, run_speedtest
 from .logging_setup import get_logger, setup_logging
-from .models import Severity
+from .models import Finding, Severity
 from .report import build_report_data, export, output_path
 from .service.control import ControlChannel
 from .service.daemon import MonitorService, daemon_is_running, run_daemon
@@ -458,8 +458,8 @@ def cmd_config(ctx: Context) -> int:
         if args.json:
             _emit_json(ctx.settings.to_dict())
             return 0
-        for key, value in ctx.settings.to_dict().items():
-            print(f"{key} = {value}")
+        for key, setting_value in ctx.settings.to_dict().items():
+            print(f"{key} = {setting_value}")
         return 0
     if args.action == "set":
         if not args.key or args.value is None:
@@ -569,7 +569,7 @@ def cmd_version(ctx: Context) -> int:
 # --------------------------------------------------------------------------- #
 # Presentación
 # --------------------------------------------------------------------------- #
-def _print_findings(findings) -> None:
+def _print_findings(findings: list[Finding]) -> None:
     if not findings:
         print("  Sin hallazgos: no detecto amenazas conocidas con el hardware actual.")
         return

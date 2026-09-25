@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from nicegui import ui
 
 from ...core.oui import vendor_for
@@ -31,14 +33,14 @@ def _signal_text(dbm: int) -> str:
 def networks_page() -> None:
     context = get_context()
     with shell("/redes", "Redes"):
-        state = {"chips": set(), "density": "standard"}
+        state: dict[str, Any] = {"chips": set(), "density": "standard"}
 
         with ui.element("div").classes("ae-panel flex flex-col gap-4"):
             with ui.row().classes("items-center justify-between w-full flex-wrap gap-3"):
-                with ui.row().classes("items-center gap-2 ae-mono text-[11px] text-[#94A3B8]"):
+                with ui.row().classes("items-center gap-2 ae-mono text-[11px] text-[#86B89B]"):
                     ui.html(icon("wifi", size=18, color=COLORS["cyan"]))
                     ui.label("// RF TABLE DISCOVERY").classes("ae-mono text-[11px]")
-                    ui.label("| PROMISCUOUS MODE [ETH_P_ALL]").classes("ae-mono text-[11px] text-[#475569]")
+                    ui.label("| PROMISCUOUS MODE [ETH_P_ALL]").classes("ae-mono text-[11px] text-[#3F6B52]")
                 search = ui.input(placeholder="Buscar SSID, BSSID o fabricante...").props(
                     'type=search clearable dense outlined'
                 ).classes("min-w-[280px]")
@@ -56,14 +58,14 @@ def networks_page() -> None:
                     return
                 panel_header("troubleshoot", "// INSPECTOR DE RED ACTIVA", None, COLORS["cyan"])
                 with ui.row().classes("items-center justify-between w-full"):
-                    ui.label(ap.display_ssid).classes("ae-headline text-lg text-[#dfe2eb] truncate")
+                    ui.label(ap.display_ssid).classes("ae-headline text-lg text-[#D8F5E3] truncate")
                     ui.html(f'<span class="ae-chip active">{_signal_text(ap.signal_dbm)}</span>')
                 series = context.repo.signal_series(ap.bssid, hours=24)
                 label_caps("HISTÓRICO RSSI (24 H)")
                 if series:
                     ui.echart(charts.sparkline(series)).classes("w-full").style("height:80px")
                 else:
-                    ui.label("Sin histórico todavía.").classes("text-[11px] text-[#475569]")
+                    ui.label("Sin histórico todavía.").classes("text-[11px] text-[#3F6B52]")
                 ui.element("div").classes("ae-divider")
                 label_caps("PARÁMETROS DE CAPA 1 Y 2")
                 kv_row("FABRICANTE (OUI)", ap.vendor or vendor_for(ap.bssid) or "Desconocido", COLORS["cyan"])
@@ -153,7 +155,7 @@ def networks_page() -> None:
             build_chips()
             apply_filters()
 
-        def on_select(event) -> None:
+        def on_select(event: Any) -> None:
             selection = event.args or []
             if not selection:
                 render_inspector.refresh(None)

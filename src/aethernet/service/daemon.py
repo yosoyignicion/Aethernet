@@ -13,6 +13,7 @@ import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 from ..alerts.queue import AlertQueue, AlertResult
 from ..config import Paths, Settings, default_paths
@@ -43,7 +44,7 @@ class ScanResult:
     alerts: AlertResult | None = None
     error: str | None = None
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "timestamp": self.timestamp,
             "networks": self.scan.count if self.scan else 0,
@@ -60,7 +61,7 @@ class MonitorService:
 
     def __init__(
         self,
-        repo,
+        repo: Any,
         settings: Settings,
         paths: Paths | None = None,
         *,
@@ -237,15 +238,15 @@ class MonitorService:
             )
         return self._capture
 
-    def start_monitor(self) -> dict:
+    def start_monitor(self) -> dict[str, Any]:
         return self.monitor().start().to_dict()
 
-    def stop_monitor(self) -> dict:
+    def stop_monitor(self) -> dict[str, Any]:
         if self._capture is None:
             return {}
         return self._capture.stop().to_dict()
 
-    def monitor_status(self) -> dict:
+    def monitor_status(self) -> dict[str, Any]:
         if self._capture is None:
             return self.monitor().status().to_dict()
         return self._capture.status().to_dict()
@@ -301,7 +302,7 @@ class MonitorService:
     # ------------------------------------------------------------------ #
     # Estado persistido (lo que la GUI lee sin tocar el daemon)
     # ------------------------------------------------------------------ #
-    def status(self) -> dict:
+    def status(self) -> dict[str, Any]:
         return {
             "running": self.running,
             "paused": self._paused,
@@ -324,7 +325,7 @@ class MonitorService:
 # --------------------------------------------------------------------------- #
 # Proceso daemon
 # --------------------------------------------------------------------------- #
-def run_daemon(repo, settings: Settings, paths: Paths | None = None) -> int:
+def run_daemon(repo: Any, settings: Settings, paths: Paths | None = None) -> int:
     """Bloquea ejecutando el servicio como proceso independiente."""
     paths = paths or default_paths()
     service = MonitorService(repo, settings, paths)
@@ -341,14 +342,14 @@ def run_daemon(repo, settings: Settings, paths: Paths | None = None) -> int:
 
 
 def _install_signal_handlers(service: MonitorService) -> None:
-    def handle_stop(_signum, _frame) -> None:
+    def handle_stop(_signum: int, _frame: Any) -> None:
         service._stop_event.set()
         service._wake_event.set()
 
-    def handle_scan(_signum, _frame) -> None:
+    def handle_scan(_signum: int, _frame: Any) -> None:
         service.request_scan()
 
-    def handle_toggle(_signum, _frame) -> None:
+    def handle_toggle(_signum: int, _frame: Any) -> None:
         service.toggle_pause()
 
     try:

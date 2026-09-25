@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from nicegui import ui
 
 from ...core.spectrum import heatmap as build_heatmap
@@ -23,14 +25,14 @@ def spectrum_page() -> None:
         with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3"):
             with ui.row().classes("items-center gap-3"):
                 label_caps("MÓDULO:")
-                ui.label("RF_SPECTRUM_ANALYZER").classes("ae-mono text-sm text-[#dfe2eb]")
+                ui.label("RF_SPECTRUM_ANALYZER").classes("ae-mono text-sm text-[#D8F5E3]")
                 band_toggle = ui.toggle(
                     {Band.GHZ_24: "2.4 GHz [CH 1-13]", Band.GHZ_5: "5 GHz [U-NII]"},
                     value=Band.GHZ_24,
                 ).props("no-caps dense")
-            with ui.row().classes("items-center gap-4 ae-mono text-[11px] text-[#94A3B8]"):
-                ui.html('SWEEP: <span style="color:#94A3B8">n/d</span>')
-                ui.html('RBW: <span style="color:#94A3B8">n/d</span> · requiere monitor mode')
+            with ui.row().classes("items-center gap-4 ae-mono text-[11px] text-[#86B89B]"):
+                ui.html('SWEEP: <span style="color:#86B89B">n/d</span>')
+                ui.html('RBW: <span style="color:#86B89B">n/d</span> · requiere monitor mode')
 
         @ui.refreshable
         def body() -> None:
@@ -76,7 +78,7 @@ def spectrum_page() -> None:
                             ui.label(f"{recommendation['free_pct']}% LIBRE").classes("ae-mono text-sm").style(
                                 f"color:{COLORS['amber']}"
                             )
-                        ui.label(recommendation["reason"]).classes("text-[12px] text-[#94A3B8]")
+                        ui.label(recommendation["reason"]).classes("text-[12px] text-[#86B89B]")
                         ui.element("div").classes("ae-divider")
                         kv_row("RELACIÓN S/R (SNR)", "n/d", COLORS["text-muted"])
                         kv_row("RUIDO DE FONDO", "n/d", COLORS["text-muted"])
@@ -85,7 +87,7 @@ def spectrum_page() -> None:
                         ui.label(
                             "SNR y ruido de fondo requieren monitor mode; con el hardware actual solo "
                             "medimos ocupación por canal."
-                        ).classes("text-[11px] text-[#475569] italic")
+                        ).classes("text-[11px] text-[#3F6B52] italic")
 
                     with ui.element("div").classes("ae-panel flex flex-col gap-2"):
                         target_channel = recommendation["channel"]
@@ -98,9 +100,9 @@ def spectrum_page() -> None:
                         if not interfering:
                             empty_state("Canal limpio.", "check_circle")
                         for ap in interfering:
-                            with ui.row().classes("items-center justify-between w-full py-1 border-b border-[#232A36]"):
+                            with ui.row().classes("items-center justify-between w-full py-1 border-b border-[#1B3324]"):
                                 with ui.column().classes("gap-0 min-w-0"):
-                                    ui.label(ap.display_ssid).classes("ae-mono text-[12px] text-[#dfe2eb] truncate max-w-[150px]")
+                                    ui.label(ap.display_ssid).classes("ae-mono text-[12px] text-[#D8F5E3] truncate max-w-[150px]")
                                     label_caps(ap.bssid)
                                 ui.label(fmt_dbm(ap.signal_dbm)).classes("ae-mono text-[12px]").style(
                                     f"color:{COLORS['amber'] if ap.signal_dbm > -70 else COLORS['text-dim']}"
@@ -116,7 +118,7 @@ def spectrum_page() -> None:
                         else:
                             empty_state("Sin redes para el radar.", "radar")
 
-        def on_band(event) -> None:
+        def on_band(event: Any) -> None:
             selected["band"] = event.value
             body.refresh()
 

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aethernet"
-version = "0.1.0"
+version = "1.0.0"
 description = "Instrumento de escritorio para auditar tu WiFi doméstico: pasivo por defecto, activo cuando lo pides, honesto sobre el hardware."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -62,6 +62,12 @@ check_untyped_defs = true
 
 [[tool.mypy.overrides]]
 module = "aethernet.ui.*"
+disallow_untyped_decorators = false
+disallow_untyped_defs = false
+
+# FastAPI/NiceGUI decoradores de terceros no tipados: exentos por módulo.
+[[tool.mypy.overrides]]
+module = "aethernet.api.*"
 disallow_untyped_decorators = false
 disallow_untyped_defs = false
 

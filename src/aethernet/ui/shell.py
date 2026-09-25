@@ -10,8 +10,9 @@ from contextlib import contextmanager
 
 from nicegui import ui
 
+from ..config import save_settings
 from . import theme
-from .components import label_caps, status_dot
+from .components import label_caps, status_dot, toast
 from .state import fmt_age, get_context
 from .theme import COLORS, NAV_ITEMS, icon
 
@@ -31,9 +32,9 @@ def _nav(active: str) -> None:
         is_active = path == active
         classes = "w-full items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors"
         if is_active:
-            classes += " bg-[#262a31]"
+            classes += " bg-[#152C1D]"
         else:
-            classes += " hover:bg-[#1c2026]"
+            classes += " hover:bg-[#0E1E15]"
         row = ui.row().classes(classes)
         with row:
             index_label = f"{index:02d}" if icon_name != "warning" else ""
@@ -41,7 +42,7 @@ def _nav(active: str) -> None:
             if label == "Alertas":
                 unread = get_context().repo.unread_count()
                 ui.label(label).classes(
-                    "text-sm flex-1 " + ("text-[#6effc0]" if is_active else "text-[#dfe2eb]")
+                    "text-sm flex-1 " + ("text-[#7CFFB2]" if is_active else "text-[#D8F5E3]")
                 )
                 if unread:
                     ui.html(
@@ -50,9 +51,9 @@ def _nav(active: str) -> None:
                     )
             else:
                 ui.label(label).classes(
-                    "text-sm flex-1 " + ("text-[#6effc0]" if is_active else "text-[#dfe2eb]")
+                    "text-sm flex-1 " + ("text-[#7CFFB2]" if is_active else "text-[#D8F5E3]")
                 )
-                ui.label(index_label).classes("ae-mono text-[10px] text-[#475569]")
+                ui.label(index_label).classes("ae-mono text-[10px] text-[#3F6B52]")
         row.style("border-left:2px solid " + (COLORS["mint"] if is_active else "transparent"))
         row.on("click", lambda _=None, p=path: ui.navigate.to(p))
     ui.element("div").classes("ae-divider my-2")
@@ -62,7 +63,7 @@ def _sidebar_footer() -> None:
     context = get_context()
     with ui.column().classes("gap-2 w-full px-3 pb-3"):
         label_caps("RX POWER")
-        value = ui.label("—").classes("ae-mono text-lg text-[#dfe2eb]")
+        value = ui.label("—").classes("ae-mono text-lg text-[#D8F5E3]")
         bar = ui.linear_progress(value=0, show_value=False).classes("w-full").props("rounded")
 
         def update() -> None:
@@ -94,7 +95,7 @@ def _header() -> None:
         with ui.row().classes("items-center gap-3"):
             ui.html(_LOGO)
             with ui.column().classes("gap-0"):
-                ui.label("AETHERNET").classes("ae-headline text-base font-semibold tracking-wide text-[#dfe2eb]")
+                ui.label("AETHERNET").classes("ae-headline text-base font-semibold tracking-wide text-[#D8F5E3]")
                 label_caps("MONITOR RF // LOCAL")
         with ui.row().classes("items-center gap-3"):
             with ui.row().classes("ae-sub items-center gap-2 px-3 py-1"):
@@ -123,7 +124,22 @@ def _header() -> None:
                 "click", lambda: ui.navigate.to("/redes")
             )
             search.tooltip("Buscar redes y BSSID (Ctrl+K)")
-            ui.button(icon="density_medium").props("flat dense round").tooltip("Modo compacto")
+
+            def toggle_compact(_: object = None) -> None:
+                context.settings.compact = not context.settings.compact
+                save_settings(context.settings, context.paths)
+                compact = str(context.settings.compact).lower()
+                ui.run_javascript(
+                    f"document.documentElement.classList.toggle('ae-compact', {compact})"
+                )
+                toast(
+                    "Modo compacto " + ("activado" if context.settings.compact else "desactivado"),
+                    icon_name="density_medium",
+                )
+
+            ui.button(icon="density_medium").props("flat dense round").on("click", toggle_compact).tooltip(
+                "Modo compacto"
+            )
             ui.button(icon="help").props("flat dense round").on(
                 "click", lambda: ui.navigate.to("/ajustes")
             ).tooltip("Atajos de teclado")
@@ -139,21 +155,21 @@ def _footer() -> None:
     with ui.row().classes("w-full items-center justify-between px-4 h-full"):
         with ui.row().classes("items-center gap-3"):
             adapter_label = ui.html("")
-            ui.label("·").classes("text-[#475569]")
+            ui.label("·").classes("text-[#3F6B52]")
             db_label = ui.html("")
-            ui.label("·").classes("text-[#475569]")
-            age_label = ui.label("—").classes("ae-mono text-[11px] text-[#94A3B8]")
-            ui.label("·").classes("text-[#475569]")
+            ui.label("·").classes("text-[#3F6B52]")
+            age_label = ui.label("—").classes("ae-mono text-[11px] text-[#86B89B]")
+            ui.label("·").classes("text-[#3F6B52]")
             mon_label = ui.label("MON: —").classes("ae-mono text-[11px]")
 
         def update() -> None:
             adapter = context.adapter
             adapter_label.set_content(
-                f'<span class="ae-mono text-[11px] text-[#94A3B8]">ADAPTADOR: '
+                f'<span class="ae-mono text-[11px] text-[#86B89B]">ADAPTADOR: '
                 f'<span style="color:{COLORS["text"]}">{adapter.interface or "—"}</span></span>'
             )
             db_label.set_content(
-                f'<span class="ae-mono text-[11px] text-[#94A3B8]">LATENCIA DB: '
+                f'<span class="ae-mono text-[11px] text-[#86B89B]">LATENCIA DB: '
                 f'<span style="color:{COLORS["mint"]}">local</span></span>'
             )
             scan = context.last_scan()
@@ -168,7 +184,7 @@ def _footer() -> None:
         update()
         with ui.row().classes("items-center gap-2"):
             status_dot(COLORS["cyan"], pulse=context.scanning)
-            state_label = ui.label("").classes("ae-mono text-[11px] text-[#84cfff]")
+            state_label = ui.label("").classes("ae-mono text-[11px] text-[#39D0FF]")
 
         def update_state() -> None:
             state_label.set_text("[ESTADO: ESCANEANDO...]" if context.scanning else "[ESTADO: EN ESPERA]")
@@ -183,9 +199,11 @@ def shell(active: str, title: str) -> Iterator[ui.column]:
     """Monta el shell y devuelve el contenedor de contenido."""
     theme.install()
     ui.page_title(f"{title} · AETHERNET")
+    if get_context().settings.compact:
+        ui.run_javascript("document.documentElement.classList.add('ae-compact')")
 
     with ui.header(elevated=False).classes(
-        "ae-surface h-16 px-0 border-b border-[#232A36]"
+        "ae-surface h-16 px-0 border-b border-[#1B3324]"
     ).style(f"background:{COLORS['surface-1']}"):
         _header()
 
@@ -200,7 +218,7 @@ def shell(active: str, title: str) -> Iterator[ui.column]:
             _nav(active)
         _sidebar_footer()
 
-    with ui.footer(elevated=False).classes("h-10 px-0 border-t border-[#232A36]").style(
+    with ui.footer(elevated=False).classes("h-10 px-0 border-t border-[#1B3324]").style(
         f"background:{COLORS['surface-1']}"
     ):
         _footer()

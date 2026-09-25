@@ -86,7 +86,7 @@ def _device_dict(device: LanDevice, redact: bool) -> dict[str, Any]:
 
 
 def build_report_data(
-    repo,
+    repo: Any,
     settings: Settings,
     *,
     title: str | None = None,

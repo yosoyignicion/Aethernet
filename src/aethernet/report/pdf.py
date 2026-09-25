@@ -9,6 +9,7 @@ from __future__ import annotations
 import tempfile
 import time
 from pathlib import Path
+from typing import Any
 
 from .base import ReportData, ReportDependencyError
 
@@ -36,7 +37,7 @@ def export_pdf(data: ReportData, destination: Path) -> Path:
         title=data.title,
         author="Aethernet",
     )
-    story: list = []
+    story: list[Any] = []
     story.append(Paragraph(data.title, styles["Title"]))
     story.append(
         Paragraph(
@@ -100,7 +101,7 @@ def export_pdf(data: ReportData, destination: Path) -> Path:
     return destination
 
 
-def _import_reportlab():
+def _import_reportlab() -> Any:
     try:
         import reportlab  # noqa: F401
     except ImportError as exc:  # pragma: no cover - depends on environment
@@ -110,7 +111,7 @@ def _import_reportlab():
     return reportlab
 
 
-def _table(rows, Table, TableStyle, colors):
+def _table(rows: list[list[str]], Table: Any, TableStyle: Any, colors: Any) -> list[Any]:
     table = Table(rows, repeatRows=1, hAlign="LEFT")
     table.setStyle(
         TableStyle(
@@ -127,7 +128,7 @@ def _table(rows, Table, TableStyle, colors):
     return [table]
 
 
-def _channel_chart(data: ReportData):
+def _channel_chart(data: ReportData) -> Path | None:
     """Genera un PNG temporal con la ocupación por canal; ``None`` si no hay matplotlib."""
     if not data.spectrum:
         return None

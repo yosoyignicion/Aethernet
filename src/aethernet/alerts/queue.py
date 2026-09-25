@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
+from typing import Any, cast
 
 from ..config import Settings
 from ..logging_setup import get_logger
@@ -42,7 +43,7 @@ class AlertResult:
 class AlertQueue:
     """Punto único de entrada de eventos hacia la DB y el escritorio."""
 
-    def __init__(self, repo, settings: Settings, notifier: Notifier | None = None) -> None:
+    def __init__(self, repo: Any, settings: Settings, notifier: Notifier | None = None) -> None:
         self.repo = repo
         self.settings = settings
         self.filter = AlertFilter(settings)
@@ -100,23 +101,23 @@ class AlertQueue:
             fingerprint=fingerprint,
             created_at=time.time(),
         )
-        event_id, _ = self.repo.add_event(event)
+        event_id, _created = self.repo.add_event(event)
         if notify and self.settings.notifications and not self.filter.quiet_now():
             try:
                 self.notifier.notify(title, body, severity)
             except Exception as exc:
                 log.warning("fallo al notificar evento: %s", exc)
-        return event_id
+        return cast("int", event_id)
 
     # Delegaciones de bandeja ------------------------------------------- #
-    def list(self, **kwargs):
-        return self.repo.list_events(**kwargs)
+    def list(self, **kwargs: Any) -> list[Event]:
+        return cast("list[Event]", self.repo.list_events(**kwargs))
 
     def unread_count(self) -> int:
-        return self.repo.unread_count()
+        return cast("int", self.repo.unread_count())
 
     def mark_read(self, event_id: int | None = None, *, all_events: bool = False) -> int:
-        return self.repo.mark_event_read(event_id, all_events=all_events)
+        return cast("int", self.repo.mark_event_read(event_id, all_events=all_events))
 
     def mute(self, fingerprint: str, muted: bool = True) -> int:
-        return self.repo.mute_fingerprint(fingerprint, muted)
+        return int(self.repo.mute_fingerprint(fingerprint, muted))

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import tarfile
 import time
+from typing import Any
 
 from nicegui import ui
 
@@ -16,7 +17,7 @@ from ..state import get_context
 from ..theme import COLORS
 
 _PALETTES = {
-    "dark": {"--ae-void": "#0A0E14", "--ae-surface-1": "#181c22", "--ae-mint": "#00E5A0", "--ae-primary": "#6effc0"},
+    "dark": {"--ae-void": "#0A0E14", "--ae-surface-1": "#0A1510", "--ae-mint": "#00E5A0", "--ae-primary": "#7CFFB2"},
     "terminal": {"--ae-void": "#001A0E", "--ae-surface-1": "#032314", "--ae-mint": "#00FF9C", "--ae-primary": "#47ffb8"},
     "amber": {"--ae-void": "#160D04", "--ae-surface-1": "#22140A", "--ae-mint": "#FFBE36", "--ae-primary": "#ffe1b1"},
 }
@@ -36,7 +37,7 @@ def settings_page() -> None:
     with shell("/ajustes", "Ajustes"):
         with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3"):
             with ui.column().classes("gap-0"):
-                ui.label("CONFIGURACIÓN Y CALIBRACIÓN DE FIRMWARE").classes("ae-headline text-lg text-[#dfe2eb]")
+                ui.label("CONFIGURACIÓN Y CALIBRACIÓN DE FIRMWARE").classes("ae-headline text-lg text-[#D8F5E3]")
                 label_caps("SISTEMA // PANEL 07")
             with ui.row().classes("items-center gap-2"):
                 selftest_badge = ui.html('<span class="ae-chip">SELF-TEST PENDIENTE</span>')
@@ -54,7 +55,7 @@ def settings_page() -> None:
                         ui.html(f'<span class="ae-chip active">PHY: {adapter.mode.upper()}</span>')
                     with ui.element("div").classes("ae-sub p-3 flex flex-col gap-2"):
                         ui.label(f"{adapter.driver or 'Adaptador'} · {adapter.interface or '—'}").classes(
-                            "ae-headline text-sm text-[#dfe2eb]"
+                            "ae-headline text-sm text-[#D8F5E3]"
                         )
                         kv_row("CHIPSET", adapter.chipset or "n/d")
                         kv_row("BANDAS", ", ".join(b.value for b in adapter.bands) or "desconocidas")
@@ -74,7 +75,7 @@ def settings_page() -> None:
                         ui.label(
                             "Crea una interfaz virtual de monitor. Nunca cambia el tipo de tu interfaz "
                             "gestionada, así que no corta tu WiFi. Solo escucha."
-                        ).classes("text-[11px] text-[#94A3B8]")
+                        ).classes("text-[11px] text-[#86B89B]")
                         if not status["capable"]:
                             ui.label(f"Motivo: {status['reason']}").classes("text-[11px]").style(
                                 f"color:{COLORS['amber']}"
@@ -87,7 +88,7 @@ def settings_page() -> None:
                             "Activar captura pasiva (deauth / probes / beacons / EAPOL)",
                             value=context.settings.monitor_enabled and context.monitor_running(),
                         ).props("dense" + ("" if status["capable"] else " disable"))
-                        mon_info = ui.label("").classes("ae-mono text-[11px] text-[#94A3B8]")
+                        mon_info = ui.label("").classes("ae-mono text-[11px] text-[#86B89B]")
 
                         def refresh_mon() -> None:
                             if context.monitor_running():
@@ -99,7 +100,7 @@ def settings_page() -> None:
                             else:
                                 mon_info.set_text("detenido")
 
-                        def on_monitor(event) -> None:
+                        def on_monitor(event: Any) -> None:
                             if event.value and not consent.value:
                                 toast("Marca el consentimiento antes de activar", icon_name="gpp_maybe", color=COLORS["amber"])
                                 monitor_switch.set_value(False)
@@ -107,7 +108,7 @@ def settings_page() -> None:
                             context.set_monitor_enabled(bool(event.value), on_done=lambda r: ui.timer(0.1, refresh_mon, once=True))
                             toast("Monitor activado" if event.value else "Monitor detenido", icon_name="sensors")
 
-                        def on_consent(event) -> None:
+                        def on_consent(event: Any) -> None:
                             context.settings.consent_monitor = bool(event.value)
                             persist("Consentimiento guardado")
 
@@ -118,9 +119,9 @@ def settings_page() -> None:
 
                     ui.switch("Inyección de frames (no implementado)", value=False).props("dense disable")
                     for limit in honest_limits(adapter):
-                        ui.label("· " + limit).classes("text-[11px] text-[#94A3B8]")
+                        ui.label("· " + limit).classes("text-[11px] text-[#86B89B]")
                     for suggestion in hardware_suggestions(adapter):
-                        ui.label("→ " + suggestion).classes("text-[11px] text-[#475569] italic")
+                        ui.label("→ " + suggestion).classes("text-[11px] text-[#3F6B52] italic")
 
                 # -- muestreo ----------------------------------------#
                 with ui.element("div").classes("ae-panel flex flex-col gap-3"):
@@ -188,11 +189,11 @@ def settings_page() -> None:
                     panel_header("keyboard", "MÓDULO 06 // ATAJOS", "ANSI MAPPING", COLORS["cyan"])
                     for text, keys in _SHORTCUTS:
                         with ui.row().classes("items-center justify-between w-full"):
-                            ui.label(text).classes("text-[12px] text-[#94A3B8]")
+                            ui.label(text).classes("text-[12px] text-[#86B89B]")
                             ui.html(f'<span class="ae-chip">{keys}</span>')
                     with ui.expansion("Glosario didáctico", icon="help").classes("w-full"):
                         for topic in all_topics():
-                            ui.label(f"{topic.title}: {topic.summary}").classes("text-[11px] text-[#94A3B8]")
+                            ui.label(f"{topic.title}: {topic.summary}").classes("text-[11px] text-[#86B89B]")
 
         # -- persistencia de ajustes ---------------------------------#
         def persist(message: str = "Ajustes guardados") -> None:
@@ -212,7 +213,7 @@ def settings_page() -> None:
             context.settings.ui_scale = scale
             persist(f"Escala {scale}% (se aplica al recargar)")
 
-        def on_setting(field: str, value) -> None:
+        def on_setting(field: str, value: Any) -> None:
             setattr(context.settings, field, value)
             persist()
 

@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
+from typing import Any
 
 from nicegui import ui
 
@@ -17,11 +19,11 @@ from ..theme import COLORS, SEVERITY_COLORS
 def alerts_page() -> None:
     context = get_context()
     with shell("/alertas", "Alertas"):
-        state: dict = {"severity": None, "selected": None}
+        state: dict[str, Any] = {"severity": None, "selected": None}
 
         with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3"):
             with ui.column().classes("gap-0"):
-                ui.label("Centro de Alertas de Espectro").classes("ae-headline text-lg text-[#dfe2eb]")
+                ui.label("Centro de Alertas de Espectro").classes("ae-headline text-lg text-[#D8F5E3]")
                 with ui.row().classes("items-center gap-2"):
                     label_caps("MATRIZ DE INCIDENCIAS RF")
                     status_dot(COLORS["coral"], pulse=True)
@@ -51,7 +53,7 @@ def alerts_page() -> None:
                     chip = ui.html(text).classes("ae-chip" + (" active" if active else "")).style("cursor:pointer")
                     chip.on("click", lambda _=None, v=value: pick_severity(v))
 
-        def pick_severity(value) -> None:
+        def pick_severity(value: Any) -> None:
             state["severity"] = value
             build_filters()
             render_timeline.refresh()
@@ -108,12 +110,12 @@ def alerts_page() -> None:
                     label_caps("ÚLTIMOS EVENTOS DE MONITOR")
                     rows = context.repo.list_monitor_events(limit=8)
                     if not rows:
-                        ui.label("Sin eventos de monitor registrados.").classes("text-[11px] text-[#475569]")
+                        ui.label("Sin eventos de monitor registrados.").classes("text-[11px] text-[#3F6B52]")
                     for row in rows:
                         with ui.row().classes("items-center justify-between w-full"):
                             ui.label(
                                 f"[{row['kind']}] {row['ssid'] or row['bssid'] or row['source_mac']}"
-                            ).classes("ae-mono text-[11px] text-[#dfe2eb] truncate max-w-[65%]")
+                            ).classes("ae-mono text-[11px] text-[#D8F5E3] truncate max-w-[65%]")
                             label_caps(f"×{row['count']} · {fmt_age(row['ts'])}")
                     return
                 panel_header("pageview", "INSPECTOR DE EVIDENCIA", f"ACTIVO: 0x{event.fingerprint[:4].upper() or '----'}", COLORS["cyan"])
@@ -129,13 +131,13 @@ def alerts_page() -> None:
                 ui.element("div").classes("ae-divider")
                 label_caps("DESCRIPCIÓN")
                 ui.label(event.body or "Sin detalle adicional.").classes(
-                    "ae-mono text-[11px] text-[#94A3B8] whitespace-pre-wrap"
+                    "ae-mono text-[11px] text-[#86B89B] whitespace-pre-wrap"
                 )
                 if event.evidence:
                     ui.element("div").classes("ae-divider")
                     label_caps("EVIDENCIA (RAW)")
                     ui.label(json.dumps(event.evidence, ensure_ascii=False, indent=2)).classes(
-                        "ae-mono text-[10px] text-[#94A3B8] whitespace-pre-wrap max-h-40 overflow-auto"
+                        "ae-mono text-[10px] text-[#86B89B] whitespace-pre-wrap max-h-40 overflow-auto"
                     )
                 with ui.row().classes("items-center gap-2 w-full"):
                     read_btn = ui.button("Marcar leído", icon="done_all").props("unelevated no-caps dense").style(
@@ -145,7 +147,7 @@ def alerts_page() -> None:
                         f"background:{COLORS['surface-2']};color:{COLORS['amber']};flex:1"
                     )
 
-                    def mark_read(_=None) -> None:
+                    def mark_read(_: Any = None) -> None:
                         if event.event_id is not None:
                             context.repo.mark_event_read(event.event_id)
                         toast("Evento marcado como leído", icon_name="done_all")
@@ -153,7 +155,7 @@ def alerts_page() -> None:
                         render_counters.refresh()
                         render_inspector.refresh(None)
 
-                    def mute(_=None) -> None:
+                    def mute(_: Any = None) -> None:
                         context.repo.mute_fingerprint(event.fingerprint, True)
                         toast("Tipo de evento silenciado", icon_name="volume_off")
                         render_timeline.refresh()
@@ -187,7 +189,9 @@ def alerts_page() -> None:
         ui.timer(6.0, render_timeline.refresh)
 
 
-def _event_card(context, event: Event, state: dict, refresh_inspector) -> None:
+def _event_card(
+    context: Any, event: Event, state: dict[str, Any], refresh_inspector: Callable[[Event], None]
+) -> None:
     color = SEVERITY_COLORS[event.severity]
     with ui.element("div").classes("ae-sub p-3 flex flex-col gap-2 cursor-pointer").style(
         f"border-left:2px solid {color}"
@@ -199,14 +203,14 @@ def _event_card(context, event: Event, state: dict, refresh_inspector) -> None:
                 if event.dedup_count > 1:
                     ui.html(f'<span class="ae-chip">×{event.dedup_count}</span>')
             label_caps(fmt_age(event.created_at))
-        ui.label(event.title).classes("text-[13px] text-[#dfe2eb]")
+        ui.label(event.title).classes("text-[13px] text-[#D8F5E3]")
         if event.body:
-            ui.label(event.body.splitlines()[0]).classes("text-[11px] text-[#94A3B8] truncate")
+            ui.label(event.body.splitlines()[0]).classes("text-[11px] text-[#86B89B] truncate")
         with ui.row().classes("items-center gap-2"):
             if not event.read:
                 ui.html(f'<span class="ae-icon" style="font-size:14px;color:{COLORS["amber"]}">fiber_manual_record</span>')
 
-        def select(_=None) -> None:
+        def select(_: Any = None) -> None:
             state["selected"] = event
             refresh_inspector(event)
 

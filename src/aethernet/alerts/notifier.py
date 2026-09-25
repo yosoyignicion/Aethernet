@@ -45,9 +45,10 @@ class Notifier:
 
     def notify(self, title: str, body: str, severity: Severity = Severity.INFO) -> bool:
         sent = False
-        if self.available:
+        notify_send = self._notify_send
+        if notify_send:
             argv = [
-                self._notify_send,
+                notify_send,
                 "--app-name=Aethernet",
                 f"--urgency={_URGENCY.get(severity, 'normal')}",
                 f"--icon={_ICONS.get(severity, 'dialog-information')}",

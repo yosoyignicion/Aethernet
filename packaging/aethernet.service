@@ -1,15 +1,24 @@
 [Unit]
-Description=Aethernet RF monitor (daemon pasivo)
-After=network.target NetworkManager.service
+Description=Aethernet RF monitor (daemon de vigilancia pasiva)
+Documentation=file:%h/.local/share/aethernet/README.md
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/aethernet daemon run
+# Unidad de USUARIO: se instala en ~/.config/systemd/user/ y usa binarios del usuario.
+ExecStart=%h/.local/bin/aethernet daemon run
+Environment=PYTHONUNBUFFERED=1
 Restart=on-failure
 RestartSec=10
-# El monitor pasivo requiere privilegios; ejecútalo como usuario con capacidad
-# CAP_NET_ADMIN/CAP_NET_RAW o habilita monitor desde la UI con consentimiento.
+# El daemon no necesita privilegios para escaneos gestionados.
+# El MONITOR PASIVO sí requiere CAP_NET_ADMIN/CAP_NET_RAW:
+#   - opción simple:   sudo -E aethernet monitor start
+#   - o un servicio de sistema con AmbientCapabilities (ver docs/ROADMAP.md).
 NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
 
 [Install]
 WantedBy=default.target

@@ -9,16 +9,18 @@ import threading
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
 
 from ..alerts.queue import AlertQueue
 from ..capabilities import CapabilityReport, detect
 from ..config import Paths, Settings, bootstrap_paths, load_settings
-from ..core.adapter import AdapterInfo, probe_adapter
+from ..core.adapter import probe_adapter
 from ..core.health import score_health
 from ..data.db import Database
 from ..data.repository import Repository
 from ..logging_setup import get_logger, setup_logging
-from ..models import HealthScore, Severity, WifiScan
+from ..models import AdapterInfo, HealthScore, Severity, WifiScan
 from ..report import build_report_data, export
 from ..service.daemon import MonitorService, ScanResult
 from ..utils import humanize_age
@@ -93,13 +95,15 @@ class UIContext:
         self.adapter = probe_adapter(self.settings.interface or "")
 
     # -- monitor pasivo ------------------------------------------------- #
-    def monitor_status(self) -> dict:
+    def monitor_status(self) -> dict[str, Any]:
         return self.service.monitor_status()
 
     def monitor_running(self) -> bool:
         return self.service.monitor_running()
 
-    def set_monitor_enabled(self, enabled: bool, *, on_done: Callable[[dict], None] | None = None) -> None:
+    def set_monitor_enabled(
+        self, enabled: bool, *, on_done: Callable[[dict[str, Any]], None] | None = None
+    ) -> None:
         """Activa/desactiva la captura pasiva en segundo plano."""
         self.settings.monitor_enabled = enabled
 
@@ -139,7 +143,7 @@ class UIContext:
         threading.Thread(target=worker, name="ae-scan", daemon=True).start()
         return True
 
-    def export_report(self, fmt: str, destination=None) -> list:
+    def export_report(self, fmt: str, destination: Path | None = None) -> list[Path]:
         data = build_report_data(self.repo, self.settings)
         if destination is None:
             ext = {"markdown": "md", "md": "md", "json": "json", "csv": "csv", "pdf": "pdf"}[fmt]

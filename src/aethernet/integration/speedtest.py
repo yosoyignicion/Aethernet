@@ -35,7 +35,7 @@ class SpeedTestResult:
 def run_speedtest(timeout: float = 60.0) -> SpeedTestResult:
     """Ejecuta speedtest-cli si está instalado; devuelve error legible si no."""
     try:
-        import speedtest  # type: ignore
+        import speedtest
     except ImportError:
         return SpeedTestResult(error="speedtest-cli no está instalado (pip install 'aethernet[speedtest]')")
 

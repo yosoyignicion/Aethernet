@@ -38,25 +38,52 @@
 ## Verificación
 
 ```bash
-pytest -q                 # ver salida real en CI/local
-ruff check src tests      # limpio
-mypy --strict src/aethernet/core src/aethernet/data   # 0 errores
-vulture src/aethernet/core src/aethernet/data          # 0
+./scripts/ci.sh           # ruff + mypy --strict + vulture + pytest
+./scripts/smoke.sh        # UI headless: 7 rutas + monitor status
 aethernet monitor status  # honesto si falta scapy/iw/root
+```
+
+Estado de gates (v1.0.0): `ruff` limpio · `mypy --strict src/aethernet` = 0 ·
+`vulture` core/data = 0 · `pytest` 117 passed · UI 7/7 rutas HTTP 200.
+
+## Validación de monitor en hardware (pendiente, bloqueante externo)
+
+En este equipo no se pudo verificar (falta `iw`, `scapy` y root). Checklist para
+cerrarlo en un equipo con adaptador monitor-capable:
+
+- [ ] `iw dev` lista la interfaz; `aethernet doctor` muestra "Monitor pasivo: disponible".
+- [ ] `aethernet monitor start` crea `aemon0` y **no corta** la conexión WiFi gestionada.
+- [ ] `aethernet monitor status` muestra `running=true` y canal actual cambiando.
+- [ ] Generar tráfico (otro dispositivo) y ver eventos: `aethernet monitor events`.
+- [ ] `aethernet monitor stop` elimina `aemon0` y restaura el estado.
+- [ ] Sin `iw`/`scapy`/root: `monitor status` reporta motivo claro y no falla.
+
+Capabilities para el monitor pasivo (no necesario para el resto):
+
+```bash
+# opción A: ejecutar bajo demanda
+sudo -E aethernet monitor start
+
+# opción B: unidad de SISTEMA con capabilities (no de usuario)
+# [Service]
+# AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
+# CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
 ```
 
 ## Pendiente (backlog)
 
-- [ ] **Captura verificada en hardware real** con adaptador monitor-capable + `iw` +
-      root (en este equipo falta `iw`/`scapy`/root; los decoders se testean con
-      tramas sintéticas).
+- [ ] **Captura verificada en hardware real** (ver checklist arriba).
 - [ ] **UI del comparador de escaneos** (`diff_scans` ya está en core).
 - [ ] **Histórico de monitor en UI**: gráfica temporal de deauth/probes.
 - [ ] **Aislar dispositivo**: requiere integración router/firewall.
 - [ ] **PDF**: validar con `reportlab`+`matplotlib` instalados.
-- [ ] **Empaquetado**: instalar `debhelper dh-python` y publicar `.deb` + `.desktop`.
+- [ ] **Empaquetado `.deb`**: instalar `debhelper dh-python pybuild-plugin-pyproject`
+      y ejecutar `scripts/build_deb.sh` (decisión: aparcado).
+- [ ] **systemd user**: instalar `packaging/aethernet.service` en
+      `~/.config/systemd/user/` y `systemctl --user enable --now aethernet`.
+- [ ] **CI en GitHub Actions** (tras feedback humano).
 - [ ] **Accesibilidad AA**: auditoría de contraste y navegación por teclado.
-- [ ] **`mypy --strict` en `ui/`** (hoy con overrides por decoradores NiceGUI).
+- [x] **`mypy --strict`** en todo `src/aethernet` (0 errores).
 
 ## Changelog
 
