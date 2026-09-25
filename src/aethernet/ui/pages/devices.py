@@ -107,8 +107,11 @@ def devices_page() -> None:
             state["query"] = event.value or ""
             render_grid.refresh()
 
+        def _after_arp(_result: object) -> None:
+            ui.timer(0.1, render_grid.refresh, once=True)
+
         def do_arp() -> None:
-            started = context.scan_async(include_lan=True, on_done=lambda _: ui.timer(0.1, render_grid.refresh, once=True))
+            started = context.scan_async(include_lan=True, on_done=_after_arp)
             toast("Escaneo ARP en curso" if started else "Escaneo ya en curso", icon_name="search")
 
         def assign() -> None:
@@ -129,7 +132,7 @@ def devices_page() -> None:
         ui.timer(5.0, render_grid.refresh)
 
 
-def _device_card(context: Any, device: LanDevice, refresh: Callable[[], None]) -> None:
+def _device_card(context: Any, device: LanDevice, refresh: Callable[..., Any]) -> None:
     type_label, type_icon = _device_type(device)
     trusted = device.trusted or device.is_gateway
     accent = COLORS["mint"] if trusted else COLORS["amber"]

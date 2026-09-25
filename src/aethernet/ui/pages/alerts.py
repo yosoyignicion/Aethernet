@@ -190,7 +190,7 @@ def alerts_page() -> None:
 
 
 def _event_card(
-    context: Any, event: Event, state: dict[str, Any], refresh_inspector: Callable[[Event], None]
+    context: Any, event: Event, state: dict[str, Any], refresh_inspector: Callable[..., Any]
 ) -> None:
     color = SEVERITY_COLORS[event.severity]
     with ui.element("div").classes("ae-sub p-3 flex flex-col gap-2 cursor-pointer").style(

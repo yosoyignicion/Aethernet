@@ -14,7 +14,7 @@ from ..shell import shell
 from ..state import fmt_age, get_context, security_label
 from ..theme import COLORS, icon
 
-_COLUMNS = [
+_COLUMNS: list[dict[str, Any]] = [
     {"name": "signal", "label": "SEÑAL", "field": "signal", "sortable": True, "align": "left"},
     {"name": "ssid", "label": "SSID", "field": "ssid", "sortable": True, "align": "left"},
     {"name": "bssid", "label": "BSSID (MAC)", "field": "bssid", "align": "left"},

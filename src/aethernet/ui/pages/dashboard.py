@@ -107,8 +107,11 @@ def dashboard() -> None:
             unread_label.classes(remove="ae-glitch")
         charts.update(congestion_chart, charts.congestion_area(context.repo.hourly_congestion(24)))
 
+    def _after_scan(_result: object) -> None:
+        ui.timer(0.1, refresh, once=True)
+
     def do_scan() -> None:
-        started = context.scan_async(on_done=lambda result: ui.timer(0.1, refresh, once=True))
+        started = context.scan_async(on_done=_after_scan)
         toast("Escaneo RF iniciado" if started else "Ya hay un escaneo en curso", icon_name="sync")
 
     async def do_export() -> None:

@@ -55,7 +55,9 @@ select = ["E", "F", "I", "UP", "B", "SIM", "W"]
 ignore = ["E501"]
 
 [tool.mypy]
-python_version = "3.11"
+# El proyecto soporta >=3.11; fijamos el target de mypy a 3.12 para poder leer
+# stubs de terceros que usan sintaxis PEP 695 (numpy >= 2). Ruff vigila py311.
+python_version = "3.12"
 warn_unused_ignores = true
 ignore_missing_imports = true
 check_untyped_defs = true
@@ -74,6 +76,11 @@ disallow_untyped_defs = false
 [[tool.mypy.overrides]]
 module = "scapy.*"
 ignore_missing_imports = true
+
+# Stubs de terceros con sintaxis PEP 695 (no analizables bajo target 3.11).
+[[tool.mypy.overrides]]
+module = ["numpy.*", "matplotlib.*", "scipy.*", "PIL.*", "reportlab.*"]
+follow_imports = "skip"
 
 [tool.vulture]
 min_confidence = 80

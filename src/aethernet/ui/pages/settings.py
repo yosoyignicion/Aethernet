@@ -105,7 +105,10 @@ def settings_page() -> None:
                                 toast("Marca el consentimiento antes de activar", icon_name="gpp_maybe", color=COLORS["amber"])
                                 monitor_switch.set_value(False)
                                 return
-                            context.set_monitor_enabled(bool(event.value), on_done=lambda r: ui.timer(0.1, refresh_mon, once=True))
+                            def _after_toggle(_result: object) -> None:
+                                ui.timer(0.1, refresh_mon, once=True)
+
+                            context.set_monitor_enabled(bool(event.value), on_done=_after_toggle)
                             toast("Monitor activado" if event.value else "Monitor detenido", icon_name="sensors")
 
                         def on_consent(event: Any) -> None:
