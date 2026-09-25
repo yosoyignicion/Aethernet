@@ -178,6 +178,8 @@ class Settings:
     # Previsión de canal: guarda el mejor canal por hora/día para anticipar saturación
     forecast_enabled: bool = True
     forecast_window_hours: int = 6
+    # Canal en el que está tu router (para comparar y ver cuánto mejorarías)
+    my_channel: int = 0
 
     def merged_with(self, data: dict[str, Any]) -> Settings:
         known = {f.name for f in fields(self)}

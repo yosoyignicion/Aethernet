@@ -112,6 +112,9 @@ La recogida es automática en `MonitorService.scan_once` (también vía daemon).
 
 ## Changelog
 
+- **2026-09-26** — Gestor de canal: selección manual del canal propio, tabla
+  comparativa por canal (interferencia/disponibilidad/ranking), veredicto de
+  mejora y copia de instrucciones para el router.
 - **2026-09-26** — Previsión de canal por hora/día: histórico SQLite, recogida
   automática, CLI `forecast` y panel de UI con gráfico semanal.
 - **2026-09-26** — Asesor de canal 2.4 GHz en vivo (histórico, estable) e

@@ -7,9 +7,17 @@ from typing import Any
 
 from nicegui import ui
 
+from ...config import save_settings
 from ...core.forecast import WEEKDAYS, coverage, predict_channel, weekly_grid
+from ...core.spectrum import (
+    channel_table,
+    evaluate_channel,
+    occupancy,
+    polar_points,
+    recommend_channel,
+    recommend_from_stats,
+)
 from ...core.spectrum import heatmap as build_heatmap
-from ...core.spectrum import occupancy, polar_points, recommend_channel, recommend_from_stats
 from ...models import Band
 from ...utils import humanize_age
 from .. import charts
@@ -300,3 +308,114 @@ def spectrum_page() -> None:
 
         render_forecast()
         ui.timer(60.0, render_forecast.refresh)
+
+        # -- Gestor de canal: selección manual con veredicto de mejora -----#
+        @ui.refreshable
+        def render_manager() -> None:
+            stats = context.repo.channel_stats(hours=context.settings.forecast_window_hours)
+            table = channel_table(stats, Band.GHZ_24)
+            best = min(table, key=lambda r: r["rank"])
+            current = int(context.settings.my_channel or 0)
+
+            if 1 <= current <= 13:
+                evaluation = evaluate_channel(best["channel"], stats, Band.GHZ_24, current=current)
+                vs = evaluation.get("vs_current", {})
+                if current == best["channel"]:
+                    verdict = f"Tu canal CH{current:02d} ya es el mejor observado."
+                    verdict_color = COLORS["mint"]
+                elif vs.get("better"):
+                    current_interference = next(
+                        (r["interference"] for r in table if r["channel"] == current), 0.0
+                    )
+                    pct = int(round(vs["interference_delta"] / current_interference * 100)) if current_interference > 0 else 0
+                    verdict = (
+                        f"CH{current:02d} → CH{best['channel']:02d}: menos interferencia (~{pct}%) "
+                        f"y +{vs['availability_delta']}% disponibilidad."
+                    )
+                    verdict_color = COLORS["amber"]
+                else:
+                    verdict = "Ahora mismo no hay mejora clara; mantén tu canal y revisa más tarde."
+                    verdict_color = COLORS["text-dim"]
+            else:
+                verdict = "Define tu canal actual para ver cuánto mejorarías."
+                verdict_color = COLORS["text-dim"]
+
+            with ui.element("div").classes("ae-panel flex flex-col gap-4 w-full"):
+                with ui.row().classes("items-center justify-between w-full flex-wrap gap-3"):
+                    panel_header(
+                        "tune",
+                        "GESTOR DE CANAL 2.4 GHz",
+                        "SELECCIÓN MANUAL EN VIVO · AETHERNET NO TOCA TU ROUTER",
+                        COLORS["amber"],
+                    )
+                    copy_btn = ui.button("COPIAR INSTRUCCIONES", icon="content_copy").props(
+                        "unelevated no-caps"
+                    ).style(f"background:{COLORS['amber']};color:#030603")
+
+                with ui.row().classes("items-end gap-6 flex-wrap"):
+                    with ui.column().classes("gap-1"):
+                        label_caps("TU CANAL ACTUAL")
+                        select = ui.select(
+                            {0: "— sin definir —", **{c: f"CH {c:02d}" for c in range(1, 14)}},
+                            value=current,
+                        ).props("dense outlined").classes("w-40")
+                        select.on_value_change(_set_channel)
+                    with ui.column().classes("gap-1"):
+                        label_caps("RECOMENDADO AHORA")
+                        ui.label(f"CH {best['channel']:02d}").classes("ae-metric text-2xl").style(
+                            f"color:{COLORS['mint']}"
+                        )
+                    with ui.column().classes("gap-1"):
+                        label_caps("VEREDICTO")
+                        ui.label(verdict).classes("ae-mono text-[12px] max-w-[520px]").style(
+                            f"color:{verdict_color}"
+                        )
+
+                with ui.row().classes("items-center gap-3 w-full"):
+                    ui.label("CH").classes("ae-mono text-[10px] w-14 text-[#3F6B52]")
+                    ui.label("#").classes("ae-mono text-[10px] w-8 text-[#3F6B52]")
+                    ui.label("REDES").classes("ae-mono text-[10px] w-16 text-[#3F6B52]")
+                    ui.label("DISPONIBILIDAD").classes("ae-mono text-[10px] flex-1 text-[#3F6B52]")
+                for row in sorted(table, key=lambda r: r["rank"]):
+                    is_best = row["channel"] == best["channel"]
+                    is_mine = row["channel"] == current
+                    color = COLORS["mint"] if is_best else (COLORS["amber"] if is_mine else COLORS["text-dim"])
+                    with ui.row().classes("items-center gap-3 w-full py-1 border-b border-[#1B3324]"):
+                        ui.label(f"CH {row['channel']:02d}").classes("ae-mono text-[12px] w-14").style(
+                            f"color:{color}"
+                        )
+                        ui.label(f"#{row['rank']}").classes("ae-mono text-[11px] w-8 text-[#3F6B52]")
+                        ui.label(f"{row['networks']}").classes("ae-mono text-[11px] w-16 text-[#86B89B]")
+                        bar = ui.linear_progress(value=row["availability"] / 100, show_value=False).classes(
+                            "flex-1"
+                        )
+                        bar.props("rounded")
+                        ui.label(f"{row['availability']}%").classes("ae-mono text-[11px] w-12 text-right")
+                        if is_best:
+                            ui.html('<span class="ae-chip active">RECOMENDADO</span>')
+                        if is_mine:
+                            ui.html('<span class="ae-chip">TU CANAL</span>')
+
+                ui.label(
+                    "Elige el canal tú mismo en el panel del router; Aethernet mide y te dice qué ganarías. "
+                    "La tabla se calcula sobre tus observaciones reales."
+                ).classes("text-[11px] text-[#86B89B] italic")
+
+                def _copy() -> None:
+                    current_label = f"CH{current:02d}" if current else "sin definir"
+                    text = (
+                        f"Aethernet · Canal recomendado 2.4 GHz: CH{best['channel']:02d}. "
+                        f"Actual: {current_label}. {verdict}"
+                    )
+                    ui.clipboard.write(text)
+                    ui.notify("Instrucciones copiadas", position="top", timeout=2500)
+
+                copy_btn.on("click", _copy)
+
+        def _set_channel(event: Any) -> None:
+            context.settings.my_channel = int(event.value or 0)
+            save_settings(context.settings, context.paths)
+            render_manager.refresh()
+
+        render_manager()
+        ui.timer(20.0, render_manager.refresh)

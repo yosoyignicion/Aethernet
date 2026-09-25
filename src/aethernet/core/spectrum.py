@@ -158,6 +158,69 @@ def recommend_from_stats(
     }
 
 
+def channel_table(
+    observations: list[dict[str, Any]], band: Band | str = Band.GHZ_24
+) -> list[dict[str, Any]]:
+    """Tabla comparativa por canal: interferencia, disponibilidad y ranking.
+
+    Útil para elegir canal manualmente: ordena implícitamente por interferencia
+    (``rank`` 1 = mejor) y expone el número de redes exactas de cada canal.
+    """
+    value = band.value if isinstance(band, Band) else band
+    channels = band_channels(band)
+    by_channel: dict[int, dict[str, Any]] = {}
+    for row in observations:
+        channel = row.get("channel")
+        if channel:
+            by_channel[int(channel)] = row
+    interferences = {c: interference_for(c, observations, band) for c in channels}
+    ordered = sorted(channels, key=lambda c: interferences[c])
+    ranks = {c: index + 1 for index, c in enumerate(ordered)}
+    table: list[dict[str, Any]] = []
+    for channel in channels:
+        row = by_channel.get(channel, {})
+        networks_raw = row.get("aps")
+        if networks_raw is None:
+            networks_raw = row.get("networks")
+        interference = interferences[channel]
+        availability = 100 if interference <= 0 else max(0, min(100, round(100 - interference * 25)))
+        table.append(
+            {
+                "channel": channel,
+                "networks": int(networks_raw or 0),
+                "interference": round(interference, 3),
+                "availability": availability,
+                "rank": ranks[channel],
+                "band": value,
+            }
+        )
+    return table
+
+
+def evaluate_channel(
+    target: int,
+    observations: list[dict[str, Any]],
+    band: Band | str = Band.GHZ_24,
+    current: int | None = None,
+) -> dict[str, Any]:
+    """Evalúa un canal concreto y, si se indica ``current``, la mejora frente a él."""
+    table = channel_table(observations, band)
+    row = next((r for r in table if r["channel"] == target), None)
+    result: dict[str, Any] = dict(row) if row else {"channel": target, "band": band}
+    if row is not None and current:
+        current_row = next((r for r in table if r["channel"] == current), None)
+        if current_row is not None:
+            delta_interference = current_row["interference"] - row["interference"]
+            result["vs_current"] = {
+                "current": current,
+                "interference_delta": round(delta_interference, 3),
+                "availability_delta": row["availability"] - current_row["availability"],
+                "better": delta_interference > 0,
+                "equal": abs(delta_interference) < 0.01,
+            }
+    return result
+
+
 def heatmap(rows: list[dict[str, Any]]) -> dict[str, Any]:
     """Matriz hora-del-día × canal a partir de filas agregadas del repositorio."""
     hours = list(range(24))

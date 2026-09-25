@@ -77,3 +77,25 @@ def test_recommend_from_stats_avoids_busy_but_is_defined_when_empty():
     assert recommend_from_stats([], Band.GHZ_24)["channel"] in (1, 6, 11)
     busy = [{"channel": 1, "aps": 6, "avg_signal": -40}]
     assert recommend_from_stats(busy, Band.GHZ_24)["channel"] != 1
+
+
+def test_channel_table_ranks_busy_channel_last():
+    from aethernet.core.spectrum import channel_table
+
+    stats = [{"channel": 6, "aps": 8, "avg_signal": -45}, {"channel": 11, "aps": 0, "avg_signal": None}]
+    table = {r["channel"]: r for r in channel_table(stats, Band.GHZ_24)}
+    assert table[11]["rank"] < table[6]["rank"]
+    assert table[11]["availability"] == 100
+    assert table[6]["availability"] < 100
+    assert table[6]["networks"] == 8
+
+
+def test_evaluate_channel_improvement_vs_current():
+    from aethernet.core.spectrum import evaluate_channel
+
+    stats = [{"channel": 6, "aps": 8, "avg_signal": -45}]
+    result = evaluate_channel(11, stats, Band.GHZ_24, current=6)
+    assert result["channel"] == 11
+    assert result["vs_current"]["better"] is True
+    assert result["vs_current"]["interference_delta"] > 0
+    assert result["vs_current"]["availability_delta"] > 0
