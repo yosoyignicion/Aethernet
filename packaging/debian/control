@@ -1,0 +1,21 @@
+Source: aethernet
+Section: net
+Priority: optional
+Maintainer: Aethernet <aethernet@localhost>
+Build-Depends: debhelper-compat (= 13), dh-python, python3-all, python3-setuptools,
+ python3-pip, pybuild-plugin-pyproject
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+Homepage: https://example.invalid/aethernet
+
+Package: aethernet
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}, python3-venv
+Recommends: python3-pip, iw, tcpdump
+Suggests: scapy
+Description: RF monitor pasivo y auditoría WiFi doméstica
+ Aethernet es un instrumento local y sin telemetría para auditar tu red WiFi:
+ salud, congestión, inventario BSSID y LAN, alertas y monitor pasivo.
+ .
+ Las dependencias opcionales de la interfaz (NiceGUI) y del monitor (scapy) se
+ instalan vía pip: pip install 'aethernet[ui,monitor]'.

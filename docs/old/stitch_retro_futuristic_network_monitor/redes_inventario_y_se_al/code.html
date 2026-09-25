@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container":"#1c2026","secondary":"#84cfff","on-primary-fixed-variant":"#005236","inverse-primary":"#006c49","on-primary-fixed":"#002114","outline":"#84958a","surface-container-lowest":"#0a0e14","inverse-on-surface":"#2d3137","secondary-container":"#00b6fd","primary-fixed":"#47ffb8","surface-tint":"#00e29e","on-surface-variant":"#bacbbf","surface-container-low":"#181c22","outline-variant":"#3b4a41","on-error":"#690005","on-primary-container":"#006141","surface":"#10141a","on-secondary-fixed":"#001e2e","inverse-surface":"#dfe2eb","primary-container":"#00e5a0","on-secondary-container":"#004461","on-secondary-fixed-variant":"#004c6c","on-error-container":"#ffdad6","secondary-fixed-dim":"#84cfff","background":"#10141a","on-secondary":"#00344c","on-tertiary-container":"#6f4e00","tertiary-fixed":"#ffdea8","primary-fixed-dim":"#00e29e","on-primary":"#003824","surface-dim":"#10141a","tertiary-fixed-dim":"#ffba20","on-background":"#dfe2eb","surface-container-highest":"#31353c","secondary-fixed":"#c7e7ff","on-tertiary":"#412d00","error-container":"#93000a","surface-variant":"#31353c","primary":"#6effc0","surface-container-high":"#262a31","tertiary":"#ffe1b1","on-tertiary-fixed-variant":"#5e4200","on-tertiary-fixed":"#271900","tertiary-container":"#ffbe36","on-surface":"#dfe2eb","surface-bright":"#353940","error":"#ffb4ab"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-xs":"0.25rem","space-md":"1rem","margin-desktop":"2rem","space-xl":"2rem","margin":"1rem","space-sm":"0.5rem","gutter":"1rem","gutter-desktop":"1.5rem","space-lg":"1.5rem"},"fontFamily":{"headline-xl-mobile":["Space Grotesk"],"headline-lg-mobile":["Space Grotesk"],"telemetry-sm":["JetBrains Mono"],"body-sm":["Inter"],"body-lg":["Inter"],"headline-md":["Space Grotesk"],"body-md":["Inter"],"telemetry-lg":["JetBrains Mono"],"telemetry-xl":["JetBrains Mono"],"headline-lg":["Space Grotesk"],"label-caps":["JetBrains Mono"],"telemetry-md":["JetBrains Mono"],"headline-xl":["Space Grotesk"]},"fontSize":{"headline-xl-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-lg-mobile":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"500"}],"telemetry-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.02em","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0.01em","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"headline-md":["18px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"500"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"telemetry-lg":["16px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"500"}],"telemetry-xl":["24px",{"lineHeight":"28px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"500"}],"label-caps":["10px",{"lineHeight":"12px","letterSpacing":"0.08em","fontWeight":"600"}],"telemetry-md":["13px",{"lineHeight":"18px","letterSpacing":"0em","fontWeight":"400"}],"headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface-container-lowest font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 h-16 bg-surface-container-low/95 backdrop-blur-md z-40 border-b border-outline-variant/30 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md"><img alt="Aethernet Telemetry Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VABDlIpgJ4tan4eYYdnBI4W3TC3BJRh-TPk-xRyGSOlWQ3DlP5YE7DuRZKBeLUd5yoA1ooIKbtp1Ay4O5SzlDjzp7vB0B9HUkQkT5InEhAqWjzA1n6vdi8OyCRnNuj0UXYREnD-kWB0Udsa3oLIKhJ3EptEWMAum4U6h-RBp8bAILreF3URNtzuLtL8mdMRLxVGcgpfMqNr5Vgau0AsU2TerJtjEdVjgfxoOAL2WkBMWPWPdZyt7oDL4gH"/><div class="flex flex-col"><span class="font-headline-md text-headline-md tracking-tight text-on-surface">AETHERNET</span><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">RF-MONITOR // 2080</span></div><div class="hidden md:flex items-center gap-space-xs px-space-sm py-1 bg-surface-container rounded-xl border border-outline-variant/40"><span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span><span class="font-telemetry-sm text-telemetry-sm text-primary">SYS: NOMINAL // 2.4 GHz</span></div></div><div class="flex items-center gap-space-md"><button class="flex items-center gap-space-sm px-space-md py-1.5 bg-surface-container rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-outline-variant/30" type="button"><span class="material-symbols-outlined text-[18px]">search</span><span class="font-telemetry-sm text-telemetry-sm hidden sm:inline">BUSCAR</span><kbd class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container-highest font-telemetry-sm text-telemetry-sm text-on-surface">Ctrl+K</kbd></button><div class="flex items-center gap-space-xs bg-surface-container p-1 rounded-xl border border-outline-variant/30"><button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Modo Compacto" type="button"><span class="material-symbols-outlined text-[18px]">density_medium</span></button><button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Atajos de teclado" type="button"><span class="material-symbols-outlined text-[18px]">help</span></button></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><aside class="fixed left-0 top-16 bottom-10 w-64 bg-surface-container-low border-r border-outline-variant/30 z-30 flex flex-col justify-between p-space-md overflow-y-auto"><div class="flex flex-col gap-space-md"><div class="px-space-sm py-1"><span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">Módulos de Rastreo</span></div><nav class="flex flex-col gap-1" data-active-classes="bg-surface-container-high text-primary border-l-2 border-primary"><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="dashboard" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">speed</span><span class="font-telemetry-md text-telemetry-md">Dashboard</span></div><span class="font-label-caps text-label-caps text-outline">01</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="espectro" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">signal_cellular_alt</span><span class="font-telemetry-md text-telemetry-md">Espectro</span></div><span class="font-label-caps text-label-caps text-outline">02</span></a><a aria-current="page" class="flex items-center justify-between px-space-md py-2.5 rounded-xl transition-all bg-surface-container-high text-primary border-l-2 border-primary" data-path="redes" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">wifi</span><span class="font-telemetry-md text-telemetry-md">Redes</span></div><span class="font-label-caps text-label-caps text-outline">03</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="dispositivos" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">memory</span><span class="font-telemetry-md text-telemetry-md">Dispositivos</span></div><span class="font-label-caps text-label-caps text-outline">04</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="alertas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">warning</span><span class="font-telemetry-md text-telemetry-md">Alertas</span></div><span class="px-1.5 py-0.5 rounded-full bg-error-container text-error font-telemetry-sm text-telemetry-sm">1</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="informes" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">description</span><span class="font-telemetry-md text-telemetry-md">Informes</span></div><span class="font-label-caps text-label-caps text-outline">06</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="ajustes" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-telemetry-md text-telemetry-md">Ajustes</span></div><span class="font-label-caps text-label-caps text-outline">07</span></a></nav></div><div class="p-space-sm bg-surface-container rounded-xl border border-outline-variant/30 flex flex-col gap-1"><div class="flex items-center justify-between"><span class="font-label-caps text-label-caps text-outline">RX POWER</span><span class="font-telemetry-sm text-telemetry-sm text-primary">-42 dBm</span></div><div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden"><div class="bg-primary h-full w-[78%]"></div></div></div></aside><div class="pl-64"><main class="relative pt-16 pb-10 min-h-screen w-full bg-surface-container-lowest px-space-lg"><div class="flex flex-col w-full">
+<div class="flex flex-col gap-space-md w-full max-w-[1720px] mx-auto pb-space-lg">
+<!-- Top Telemetry & Control Deck -->
+<section class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-md shadow-sm">
+<div class="flex flex-wrap items-center justify-between gap-space-md">
+<!-- Search Field with Protocol Tag -->
+<div class="relative flex-1 min-w-[280px] max-w-xl">
+<div class="flex items-center bg-surface-container rounded-lg px-space-md py-2 gap-space-sm text-on-surface">
+<span class="font-telemetry-sm text-telemetry-sm text-outline select-none">probe://</span>
+<input class="w-full bg-transparent border-0 outline-none text-on-surface font-telemetry-md text-telemetry-md placeholder:text-outline" id="ssidSearchInput" placeholder="Buscar SSID, BSSID o fabricante..." type="text"/>
+<kbd class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container-highest font-telemetry-sm text-telemetry-sm text-on-surface-variant font-semibold select-none">[/]</kbd>
+</div>
+</div>
+<!-- Filter Chips Matrix -->
+<div class="flex flex-wrap items-center gap-space-xs" id="filterMatrix">
+<button class="filter-btn active-filter flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-container-high text-primary font-label-caps text-label-caps tracking-wider transition-colors" data-filter="all">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            TODAS (34)
+          </button>
+<button class="filter-btn flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-caps text-label-caps tracking-wider transition-colors" data-filter="5g">
+            5 GHZ (12)
+          </button>
+<button class="filter-btn flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-caps text-label-caps tracking-wider transition-colors" data-filter="24g">
+            2.4 GHZ (22)
+          </button>
+<button class="filter-btn flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-caps text-label-caps tracking-wider transition-colors" data-filter="enc">
+            CIFRADAS WPA3/2 (31)
+          </button>
+<button class="filter-btn flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-container text-tertiary-container hover:text-tertiary font-label-caps text-label-caps tracking-wider transition-colors" data-filter="open">
+            ABIERTAS (3)
+          </button>
+<button class="filter-btn flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-container text-error hover:text-error-container font-label-caps text-label-caps tracking-wider transition-colors" data-filter="hidden">
+            OCULTAS (1)
+          </button>
+</div>
+<!-- Density Segmented Switch -->
+<div class="flex items-center bg-surface-container p-1 rounded-lg gap-1 shrink-0">
+<button class="px-2.5 py-1 rounded bg-surface-container-high font-label-caps text-label-caps text-primary uppercase transition-all" id="densityCompact">Compacto</button>
+<button class="px-2.5 py-1 rounded font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface uppercase transition-all" id="densityStandard">Estándar</button>
+</div>
+</div>
+<!-- Quick Metrics Strip -->
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-space-sm pt-2">
+<div class="bg-surface-container p-space-sm rounded-lg flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-outline">BSSIDS ACTIVOS</span>
+<span class="font-telemetry-lg text-telemetry-lg text-on-surface font-semibold">34 <span class="text-primary text-telemetry-sm font-normal">▲ 2</span></span>
+</div>
+<div class="bg-surface-container p-space-sm rounded-lg flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-outline">CH CONGESTIÓN MAX</span>
+<span class="font-telemetry-lg text-telemetry-lg text-tertiary font-semibold">CH 06 <span class="font-telemetry-sm text-outline">(64%)</span></span>
+</div>
+<div class="bg-surface-container p-space-sm rounded-lg flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-outline">RELACIÓN S/R PROMEDIO</span>
+<span class="font-telemetry-lg text-telemetry-lg text-secondary font-semibold">31.4 <span class="font-telemetry-sm text-outline">dB</span></span>
+</div>
+<div class="bg-surface-container p-space-sm rounded-lg flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-outline">ESTACIONES ASOCIADAS</span>
+<span class="font-telemetry-lg text-telemetry-lg text-on-surface font-semibold">189 <span class="font-telemetry-sm text-outline">CLTS</span></span>
+</div>
+<div class="bg-surface-container p-space-sm rounded-lg flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-outline">FRAME BEACON RATE</span>
+<span class="font-telemetry-lg text-telemetry-lg text-primary font-semibold">102.4 <span class="font-telemetry-sm text-outline">ms</span></span>
+</div>
+<div class="bg-surface-container p-space-sm rounded-lg flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-outline">VULNERABILIDADES</span>
+<span class="font-telemetry-lg text-telemetry-lg text-error font-semibold">03 <span class="font-telemetry-sm text-error">ALERTA</span></span>
+</div>
+</div>
+</section>
+<!-- Main Workspace (Table + Inspector Rail) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-md items-start">
+<!-- Central Data Grid Deck (8 Cols) -->
+<section class="xl:col-span-8 bg-surface-container-low rounded-xl overflow-hidden shadow-sm flex flex-col">
+<!-- Table Header Toolbar -->
+<div class="px-space-md py-2.5 bg-surface-container flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">// RF TABLE DISCOVERY</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">| PROMISCUOUS MODE [ETH_P_ALL]</span>
+</div>
+<div class="flex items-center gap-space-md font-telemetry-sm text-telemetry-sm text-outline">
+<span>PAQUETES/S: <span class="text-on-surface font-semibold">1,420</span></span>
+<span>ORDEN: <span class="text-secondary font-semibold">RSSI ↓</span></span>
+</div>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left select-none" id="networkTelemetryTable">
+<thead class="bg-surface-container-high/80 text-outline font-label-caps text-label-caps tracking-wider uppercase">
+<tr>
+<th class="py-2.5 px-space-md whitespace-nowrap">SEÑAL</th>
+<th class="py-2.5 px-space-md whitespace-nowrap">SSID</th>
+<th class="py-2.5 px-space-md whitespace-nowrap">BSSID (MAC)</th>
+<th class="py-2.5 px-space-md whitespace-nowrap">CANAL / FREQ</th>
+<th class="py-2.5 px-space-md whitespace-nowrap">SEGURIDAD</th>
+<th class="py-2.5 px-space-md whitespace-nowrap text-right">CLIENTES</th>
+<th class="py-2.5 px-space-md whitespace-nowrap text-right">ÚLTIMA ACT</th>
+</tr>
+</thead>
+<tbody class="font-telemetry-md text-telemetry-md text-on-surface" id="networkTableBody">
+<!-- Row 1 (Selected Row: ORBITAL-CORP-SEC) -->
+<tr class="table-row-item cursor-pointer transition-colors bg-surface-container-high shadow-[inset_3px_0_0_0_#00b6fd]" data-bssid="74:83:C2:11:9B:40" data-channel="36" data-clients="42" data-freq="5180 MHz" data-maxrate="1201 Mbps" data-rssi="-54" data-sec="WPA3-SAE" data-ssid="ORBITAL-CORP-SEC" data-standard="802.11ax (Wi-Fi 6)" data-vendor="Ubiquiti Networks">
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="flex items-end gap-0.5 h-3.5 w-4">
+<span class="w-1 h-1.5 bg-primary rounded-xs"></span>
+<span class="w-1 h-2.5 bg-primary rounded-xs"></span>
+<span class="w-1 h-3.5 bg-primary rounded-xs"></span>
+<span class="w-1 h-3.5 bg-primary/30 rounded-xs"></span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm font-semibold text-primary">-54 <span class="text-outline font-normal">dBm</span></span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[16px]">wifi</span>
+<span class="font-medium text-secondary">ORBITAL-CORP-SEC</span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap font-telemetry-sm text-telemetry-sm text-on-surface-variant">74:83:C2:11:9B:40</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container font-telemetry-sm text-telemetry-sm text-on-surface">CH 36</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline ml-1">5180 MHz</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container text-primary font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[12px]">lock</span>
+                    WPA3-SAE
+                  </div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm">
+<span class="text-on-surface font-semibold">042</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm text-primary">
+                  120ms
+                </td>
+</tr>
+<!-- Row 2 -->
+<tr class="table-row-item cursor-pointer transition-colors bg-surface-container-low hover:bg-surface-container" data-bssid="9C:35:EB:42:01:DF" data-channel="06" data-clients="29" data-freq="2437 MHz" data-maxrate="867 Mbps" data-rssi="-61" data-sec="WPA2-PSK" data-ssid="SKYNET_GUEST_ISOLATED" data-standard="802.11ac" data-vendor="Cisco Systems">
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="flex items-end gap-0.5 h-3.5 w-4">
+<span class="w-1 h-1.5 bg-primary rounded-xs"></span>
+<span class="w-1 h-2.5 bg-primary rounded-xs"></span>
+<span class="w-1 h-2 bg-primary/30 rounded-xs"></span>
+<span class="w-1 h-3.5 bg-primary/20 rounded-xs"></span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm font-semibold text-primary">-61 <span class="text-outline font-normal">dBm</span></span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-outline text-[16px]">wifi</span>
+<span class="text-on-surface">SKYNET_GUEST_ISOLATED</span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap font-telemetry-sm text-telemetry-sm text-on-surface-variant">9C:35:EB:42:01:DF</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container font-telemetry-sm text-telemetry-sm text-on-surface">CH 06</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline ml-1">2437 MHz</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[12px]">lock</span>
+                    WPA2-PSK
+                  </div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm">
+<span class="text-on-surface font-semibold">029</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm text-outline">
+                  840ms
+                </td>
+</tr>
+<!-- Row 3 (Open Network) -->
+<tr class="table-row-item cursor-pointer transition-colors bg-surface-container hover:bg-surface-container-high" data-bssid="E0:63:DA:AA:88:12" data-channel="01" data-clients="83" data-freq="2412 MHz" data-maxrate="300 Mbps" data-rssi="-68" data-sec="OPEN" data-ssid="METRO_PUBLIC_CIVIC_FREE" data-standard="802.11n" data-vendor="MikroTik">
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="flex items-end gap-0.5 h-3.5 w-4">
+<span class="w-1 h-1.5 bg-tertiary-container rounded-xs"></span>
+<span class="w-1 h-2 bg-tertiary-container rounded-xs"></span>
+<span class="w-1 h-2 bg-outline-variant rounded-xs"></span>
+<span class="w-1 h-3.5 bg-outline-variant rounded-xs"></span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm font-semibold text-tertiary">-68 <span class="text-outline font-normal">dBm</span></span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-tertiary text-[16px]">wifi</span>
+<span class="text-tertiary">METRO_PUBLIC_CIVIC_FREE</span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap font-telemetry-sm text-telemetry-sm text-on-surface-variant">E0:63:DA:AA:88:12</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-telemetry-sm text-telemetry-sm text-on-surface">CH 01</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline ml-1">2412 MHz</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-error-container/20 text-error font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[12px]">lock_open</span>
+                    OPEN
+                  </div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm">
+<span class="text-tertiary font-semibold">083</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm text-outline">
+                  1.2s
+                </td>
+</tr>
+<!-- Row 4 -->
+<tr class="table-row-item cursor-pointer transition-colors bg-surface-container-low hover:bg-surface-container" data-bssid="B4:FB:E4:55:1A:08" data-channel="48" data-clients="11" data-freq="5240 MHz" data-maxrate="2402 Mbps" data-rssi="-72" data-sec="WPA3-SAE" data-ssid="LABS_QUANTUM_CORE" data-standard="802.11ax" data-vendor="Aruba Networks">
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="flex items-end gap-0.5 h-3.5 w-4">
+<span class="w-1 h-1.5 bg-primary rounded-xs"></span>
+<span class="w-1 h-1.5 bg-primary/40 rounded-xs"></span>
+<span class="w-1 h-2 bg-outline-variant rounded-xs"></span>
+<span class="w-1 h-3.5 bg-outline-variant rounded-xs"></span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm font-semibold text-primary">-72 <span class="text-outline font-normal">dBm</span></span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-outline text-[16px]">wifi</span>
+<span class="text-on-surface">LABS_QUANTUM_CORE</span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap font-telemetry-sm text-telemetry-sm text-on-surface-variant">B4:FB:E4:55:1A:08</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container font-telemetry-sm text-telemetry-sm text-on-surface">CH 48</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline ml-1">5240 MHz</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container text-primary font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[12px]">lock</span>
+                    WPA3-SAE
+                  </div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm">
+<span class="text-on-surface font-semibold">011</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm text-outline">
+                  3.4s
+                </td>
+</tr>
+<!-- Row 5 (Hidden Network) -->
+<tr class="table-row-item cursor-pointer transition-colors bg-surface-container hover:bg-surface-container-high" data-bssid="00:1E:42:8A:77:E9" data-channel="11" data-clients="3" data-freq="2462 MHz" data-maxrate="433 Mbps" data-rssi="-79" data-sec="WPA2-PSK" data-ssid="&lt;BROADCAST_DISABLED&gt;" data-standard="802.11ac" data-vendor="Huawei Technologies">
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="flex items-end gap-0.5 h-3.5 w-4">
+<span class="w-1 h-1 bg-tertiary rounded-xs"></span>
+<span class="w-1 h-1.5 bg-outline-variant rounded-xs"></span>
+<span class="w-1 h-2 bg-outline-variant rounded-xs"></span>
+<span class="w-1 h-3.5 bg-outline-variant rounded-xs"></span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm font-semibold text-tertiary">-79 <span class="text-outline font-normal">dBm</span></span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-error text-[16px]">visibility_off</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline italic">&lt;BROADCAST_DISABLED&gt;</span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap font-telemetry-sm text-telemetry-sm text-on-surface-variant">00:1E:42:8A:77:E9</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-telemetry-sm text-telemetry-sm text-on-surface">CH 11</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline ml-1">2462 MHz</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[12px]">lock</span>
+                    WPA2-PSK
+                  </div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm">
+<span class="text-on-surface font-semibold">003</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm text-outline">
+                  9.1s
+                </td>
+</tr>
+<!-- Row 6 -->
+<tr class="table-row-item cursor-pointer transition-colors bg-surface-container-low hover:bg-surface-container" data-bssid="3C:52:82:70:E1:10" data-channel="149" data-clients="18" data-freq="5745 MHz" data-maxrate="1201 Mbps" data-rssi="-82" data-sec="WPA3-SAE" data-ssid="NEXUS-LOGISTICS-5G" data-standard="802.11ax" data-vendor="Ubiquiti Networks">
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="flex items-end gap-0.5 h-3.5 w-4">
+<span class="w-1 h-1 bg-tertiary rounded-xs"></span>
+<span class="w-1 h-1 bg-outline-variant rounded-xs"></span>
+<span class="w-1 h-2 bg-outline-variant rounded-xs"></span>
+<span class="w-1 h-3.5 bg-outline-variant rounded-xs"></span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm font-semibold text-tertiary">-82 <span class="text-outline font-normal">dBm</span></span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-outline text-[16px]">wifi</span>
+<span class="text-on-surface">NEXUS-LOGISTICS-5G</span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap font-telemetry-sm text-telemetry-sm text-on-surface-variant">3C:52:82:70:E1:10</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container font-telemetry-sm text-telemetry-sm text-on-surface">CH 149</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline ml-1">5745 MHz</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container text-primary font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[12px]">lock</span>
+                    WPA3-SAE
+                  </div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm">
+<span class="text-on-surface font-semibold">018</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm text-outline">
+                  12.4s
+                </td>
+</tr>
+<!-- Row 7 -->
+<tr class="table-row-item cursor-pointer transition-colors bg-surface-container hover:bg-surface-container-high" data-bssid="04:D5:90:3A:FF:21" data-channel="100" data-clients="3" data-freq="5500 MHz" data-maxrate="867 Mbps" data-rssi="-86" data-sec="WPA2-PSK" data-ssid="VALT_VAULT_BACKHAUL" data-standard="802.11ac" data-vendor="TP-Link Enterprise">
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="flex items-end gap-0.5 h-3.5 w-4">
+<span class="w-1 h-0.5 bg-error rounded-xs"></span>
+<span class="w-1 h-1 bg-outline-variant rounded-xs"></span>
+<span class="w-1 h-2 bg-outline-variant rounded-xs"></span>
+<span class="w-1 h-3.5 bg-outline-variant rounded-xs"></span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm font-semibold text-error">-86 <span class="text-outline font-normal">dBm</span></span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-outline text-[16px]">wifi</span>
+<span class="text-on-surface">VALT_VAULT_BACKHAUL</span>
+</div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap font-telemetry-sm text-telemetry-sm text-on-surface-variant">04:D5:90:3A:FF:21</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-telemetry-sm text-telemetry-sm text-on-surface">CH 100</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline ml-1">5500 MHz (DFS)</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[12px]">lock</span>
+                    WPA2-PSK
+                  </div>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm">
+<span class="text-on-surface font-semibold">003</span>
+</td>
+<td class="py-2 px-space-md whitespace-nowrap text-right font-telemetry-sm text-telemetry-sm text-outline">
+                  18.2s
+                </td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Telemetry Bar -->
+<div class="p-space-sm bg-surface-container-high/60 flex flex-wrap items-center justify-between text-outline font-label-caps text-label-caps">
+<div class="flex items-center gap-space-md">
+<span>MOSTRANDO 7 DE 34 REDES IDENTIFICADAS</span>
+<span>POLARIZACIÓN: VERTICAL 2X2 MIMO</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="text-primary font-semibold">MODO CAPTURA: ACTIVO</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+</div>
+</div>
+</section>
+<!-- Collapsible Right Inspector Deck (4 Cols) -->
+<aside class="xl:col-span-4 bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-md shadow-sm" id="networkInspectorRail">
+<!-- Inspector Title Header -->
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">// INSPECTOR DE RED ACTIVA</span>
+<h2 class="font-headline-md text-headline-md text-secondary font-semibold" id="inspectorSsidTitle">ORBITAL-CORP-SEC</h2>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-label-caps text-label-caps font-semibold" id="inspectorStatusBadge">
+            ESTABLE -54 DBM
+          </span>
+</div>
+<!-- Real-Time RSSI Fluctuator (SVG Sparkline 15-min) -->
+<div class="bg-surface-container rounded-lg p-space-sm flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-outline">HISTÓRICO RSSI (15 MIN)</span>
+<span class="font-telemetry-sm text-telemetry-sm text-secondary">VAR: ±1.8 dBm</span>
+</div>
+<div class="w-full h-24 relative flex items-center justify-center">
+<!-- Inline Precision Graph -->
+<svg class="w-full h-full text-secondary" fill="none" preserveaspectratio="none" viewbox="0 0 320 90">
+<!-- Grid lines -->
+<line stroke="currentColor" stroke-dasharray="2 2" stroke-opacity="0.1" x1="0" x2="320" y1="20" y2="20"></line>
+<line stroke="currentColor" stroke-dasharray="2 2" stroke-opacity="0.1" x1="0" x2="320" y1="50" y2="50"></line>
+<line stroke="currentColor" stroke-dasharray="2 2" stroke-opacity="0.1" x1="0" x2="320" y1="80" y2="80"></line>
+<!-- Area Glow -->
+<polygon fill="currentColor" fill-opacity="0.08" points="0,90 0,42 20,44 40,40 60,43 80,48 100,45 120,41 140,39 160,42 180,50 200,43 220,38 240,40 260,36 280,39 300,38 320,35 320,90"></polygon>
+<!-- Realtime Path -->
+<polyline points="0,42 20,44 40,40 60,43 80,48 100,45 120,41 140,39 160,42 180,50 200,43 220,38 240,40 260,36 280,39 300,38 320,35" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></polyline>
+<!-- Current Node Ping -->
+<circle class="fill-primary" cx="320" cy="35" r="3.5"></circle>
+</svg>
+<!-- Overlay Axis Labels -->
+<div class="absolute left-1 top-1 font-telemetry-sm text-telemetry-sm text-outline text-[9px]">-40 dBm</div>
+<div class="absolute left-1 bottom-1 font-telemetry-sm text-telemetry-sm text-outline text-[9px]">-90 dBm</div>
+<div class="absolute right-1 bottom-1 font-telemetry-sm text-telemetry-sm text-outline text-[9px]">T-0s</div>
+</div>
+</div>
+<!-- Technical Attributes Field Matrix -->
+<div class="bg-surface-container rounded-lg p-space-sm flex flex-col gap-2">
+<span class="font-label-caps text-label-caps text-outline tracking-wider">// PARÁMETROS DE CAPA 1 Y 2</span>
+<div class="grid grid-cols-2 gap-space-sm font-telemetry-sm text-telemetry-sm">
+<div class="flex flex-col">
+<span class="text-outline">FABRICANTE (OUI)</span>
+<span class="text-on-surface font-semibold truncate" id="fieldVendor">Ubiquiti Networks</span>
+</div>
+<div class="flex flex-col">
+<span class="text-outline">ESTÁNDAR RF</span>
+<span class="text-on-surface font-semibold" id="fieldStandard">802.11ax (Wi-Fi 6)</span>
+</div>
+<div class="flex flex-col">
+<span class="text-outline">VELOCIDAD MÁXIMA</span>
+<span class="text-secondary font-semibold" id="fieldMaxRate">1201 Mbps</span>
+</div>
+<div class="flex flex-col">
+<span class="text-outline">CANAL ANCHO</span>
+<span class="text-on-surface font-semibold">80 MHz (HE80)</span>
+</div>
+<div class="flex flex-col">
+<span class="text-outline">BSSID HARDWARE</span>
+<span class="text-on-surface font-semibold" id="fieldBssid">74:83:C2:11:9B:40</span>
+</div>
+<div class="flex flex-col">
+<span class="text-outline">SECURITY SUITE</span>
+<span class="text-primary font-semibold" id="fieldSecurity">WPA3-Personal SAE</span>
+</div>
+</div>
+<!-- Capability Flags Chips -->
+<div class="pt-2">
+<span class="font-label-caps text-label-caps text-outline block mb-1.5">FLAGS DE CAPACIDADES RADIADAS</span>
+<div class="flex flex-wrap gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-telemetry-sm text-telemetry-sm">MU-MIMO</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-telemetry-sm text-telemetry-sm">OFDMA</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-telemetry-sm text-telemetry-sm">BEAMFORMING</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-telemetry-sm text-telemetry-sm">PMF_REQUIRED</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-telemetry-sm text-telemetry-sm">SHORT_GI</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-telemetry-sm text-telemetry-sm">DFS_ENABLED</span>
+</div>
+</div>
+</div>
+<!-- Event Journal Log (Cambios Detectados) -->
+<div class="bg-surface-container rounded-lg p-space-sm flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-outline tracking-wider">// CAMBIOS DETECTADOS</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">DIAG-EVT</span>
+</div>
+<div class="flex flex-col gap-2 max-h-44 overflow-y-auto pr-1">
+<div class="p-2 rounded bg-surface-container-high flex flex-col gap-0.5">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-tertiary">FREQ MIGRATION</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">hace 4h 12m</span>
+</div>
+<p class="font-telemetry-sm text-telemetry-sm text-on-surface">Canal cambió automáticamente de 06 a 01 para reducir interferencia adyacente.</p>
+</div>
+<div class="p-2 rounded bg-surface-container-high flex flex-col gap-0.5">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-secondary">BEACON INTERVAL</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">hace 6h 45m</span>
+</div>
+<p class="font-telemetry-sm text-telemetry-sm text-on-surface">Beacon interval reconfigurado a 100 TU (Time Units standard).</p>
+</div>
+<div class="p-2 rounded bg-surface-container-high flex flex-col gap-0.5">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-primary">NUEVA ASOCIACIÓN</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">hace 7m</span>
+</div>
+<p class="font-telemetry-sm text-telemetry-sm text-on-surface">Estación Apple Inc (A4:83:E7:XX) negoció conexión WPA3 con éxito.</p>
+</div>
+</div>
+</div>
+<!-- Strategic Execution Action Buttons -->
+<div class="flex flex-col gap-space-sm pt-1">
+<button class="w-full py-2.5 px-space-md rounded-xl bg-primary text-on-primary font-headline-md text-headline-md tracking-tight hover:brightness-105 active:brightness-95 transition-all flex items-center justify-center gap-space-sm shadow-sm" id="btnMonitorPackets">
+<span class="material-symbols-outlined text-[18px]">cell_tower</span>
+            Monitorear paquetes en directo
+          </button>
+<button class="w-full py-2 px-space-md rounded-xl bg-surface-container text-secondary hover:text-on-surface hover:bg-surface-container-high transition-colors font-headline-md text-headline-md flex items-center justify-center gap-space-sm" id="btnExportPcap">
+<span class="material-symbols-outlined text-[18px]">download</span>
+            Exportar captura PCAP
+          </button>
+</div>
+</aside>
+</div>
+</div>
+</div>
+<script>
+  (function initTelemetryConsole() {
+    const rows = document.querySelectorAll('.table-row-item');
+    const searchInput = document.getElementById('ssidSearchInput');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const compactBtn = document.getElementById('densityCompact');
+    const standardBtn = document.getElementById('densityStandard');
+
+    // Inspector nodes
+    const inspectorTitle = document.getElementById('inspectorSsidTitle');
+    const inspectorBadge = document.getElementById('inspectorStatusBadge');
+    const fieldVendor = document.getElementById('fieldVendor');
+    const fieldStandard = document.getElementById('fieldStandard');
+    const fieldMaxRate = document.getElementById('fieldMaxRate');
+    const fieldBssid = document.getElementById('fieldBssid');
+    const fieldSecurity = document.getElementById('fieldSecurity');
+
+    // Row selection event binding
+    rows.forEach(row => {
+      row.addEventListener('click', () => {
+        rows.forEach(r => {
+          r.classList.remove('bg-surface-container-high', 'shadow-[inset_3px_0_0_0_#00b6fd]');
+          r.querySelector('td:nth-child(2) span:nth-child(2)')?.classList.remove('text-secondary', 'font-medium');
+        });
+
+        row.classList.add('bg-surface-container-high', 'shadow-[inset_3px_0_0_0_#00b6fd]');
+        const ssidSpan = row.querySelector('td:nth-child(2) span:nth-child(2)');
+        if (ssidSpan) {
+          ssidSpan.classList.add('text-secondary', 'font-medium');
+        }
+
+        const data = row.dataset;
+        inspectorTitle.textContent = data.ssid || 'DESCONOCIDO';
+        inspectorBadge.textContent = `ESTABLE ${data.rssi || '-60'} DBM`;
+        fieldVendor.textContent = data.vendor || 'Desconocido';
+        fieldStandard.textContent = data.standard || '802.11';
+        fieldMaxRate.textContent = data.maxrate || '54 Mbps';
+        fieldBssid.textContent = data.bssid || '00:00:00:00:00:00';
+        fieldSecurity.textContent = data.sec || 'OPEN';
+      });
+    });
+
+    // Realtime search filtering
+    searchInput?.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      rows.forEach(row => {
+        const text = (row.dataset.ssid + ' ' + row.dataset.bssid + ' ' + row.dataset.vendor).toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    });
+
+    // Keyboard shortcut [/]
+    window.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== searchInput) {
+        e.preventDefault();
+        searchInput?.focus();
+      }
+    });
+
+    // Filter Chips toggling
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => {
+          b.classList.remove('bg-surface-container-high', 'text-primary');
+          b.classList.add('bg-surface-container', 'text-on-surface-variant');
+        });
+        btn.classList.add('bg-surface-container-high', 'text-primary');
+        btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+
+        const filter = btn.dataset.filter;
+        rows.forEach(row => {
+          if (filter === 'all') {
+            row.style.display = '';
+          } else if (filter === '5g') {
+            row.style.display = (row.dataset.freq && row.dataset.freq.startsWith('5')) ? '' : 'none';
+          } else if (filter === '24g') {
+            row.style.display = (row.dataset.freq && row.dataset.freq.startsWith('24')) ? '' : 'none';
+          } else if (filter === 'enc') {
+            row.style.display = (row.dataset.sec && !row.dataset.sec.includes('OPEN')) ? '' : 'none';
+          } else if (filter === 'open') {
+            row.style.display = (row.dataset.sec && row.dataset.sec.includes('OPEN')) ? '' : 'none';
+          } else if (filter === 'hidden') {
+            row.style.display = (row.dataset.ssid && row.dataset.ssid.includes('BROADCAST')) ? '' : 'none';
+          }
+        });
+      });
+    });
+
+    // Density toggle logic
+    compactBtn?.addEventListener('click', () => {
+      compactBtn.classList.add('bg-surface-container-high', 'text-primary');
+      compactBtn.classList.remove('text-on-surface-variant');
+      standardBtn.classList.remove('bg-surface-container-high', 'text-primary');
+      standardBtn.classList.add('text-on-surface-variant');
+
+      rows.forEach(r => {
+        r.querySelectorAll('td').forEach(cell => {
+          cell.classList.remove('py-3');
+          cell.classList.add('py-1.5');
+        });
+      });
+    });
+
+    standardBtn?.addEventListener('click', () => {
+      standardBtn.classList.add('bg-surface-container-high', 'text-primary');
+      standardBtn.classList.remove('text-on-surface-variant');
+      compactBtn.classList.remove('bg-surface-container-high', 'text-primary');
+      compactBtn.classList.add('text-on-surface-variant');
+
+      rows.forEach(r => {
+        r.querySelectorAll('td').forEach(cell => {
+          cell.classList.remove('py-1.5');
+          cell.classList.add('py-3');
+        });
+      });
+    });
+
+    // Capture Simulation Microinteraction
+    const monitorBtn = document.getElementById('btnMonitorPackets');
+    let monitoring = false;
+    monitorBtn?.addEventListener('click', () => {
+      monitoring = !monitoring;
+      if (monitoring) {
+        monitorBtn.textContent = 'Detener captura en directo [WLAN0MON]';
+        monitorBtn.classList.replace('bg-primary', 'bg-tertiary-container');
+        monitorBtn.classList.replace('text-on-primary', 'text-on-tertiary-container');
+      } else {
+        monitorBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">cell_tower</span> Monitorear paquetes en directo';
+        monitorBtn.classList.replace('bg-tertiary-container', 'bg-primary');
+        monitorBtn.classList.replace('text-on-tertiary-container', 'text-on-primary');
+      }
+    });
+
+    // Export PCAP feedback
+    const exportBtn = document.getElementById('btnExportPcap');
+    exportBtn?.addEventListener('click', () => {
+      const originalText = exportBtn.innerHTML;
+      exportBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] text-primary">check_circle</span> Archivo orbital_sec.pcap generado';
+      setTimeout(() => {
+        exportBtn.innerHTML = originalText;
+      }, 2400);
+    });
+
+  })();
+</script></main></div><footer class="fixed bottom-0 left-0 right-0 h-10 bg-surface-container-low border-t border-outline-variant/30 z-50 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md overflow-x-auto"><span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant whitespace-nowrap">ADAPTADOR: <span class="text-on-surface">D-Link DWA-171 (2.4 GHz)</span></span><span class="font-telemetry-sm text-telemetry-sm text-outline">·</span><span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant whitespace-nowrap">LATENCIA: <span class="text-primary">2ms</span></span><span class="font-telemetry-sm text-telemetry-sm text-outline">·</span><span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant whitespace-nowrap">ÚLTIMA ACT: <span class="text-on-surface">hace 12s</span></span></div><div class="flex items-center gap-space-xs"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-ping"></span><span class="font-telemetry-sm text-telemetry-sm text-secondary whitespace-nowrap">[ESTADO: ESCANEANDO...]</span></div></footer></body></html>

@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aethernet"
+version = "0.1.0"
+description = "Instrumento de escritorio para auditar tu WiFi doméstico: pasivo por defecto, activo cuando lo pides, honesto sobre el hardware."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Aethernet" }]
+keywords = ["wifi", "audit", "security", "lan", "nmcli", "scapy", "sqlite"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: X11 Applications",
+  "Intended Audience :: End Users/Desktop",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: System :: Networking :: Monitoring",
+]
+dependencies = []
+
+[project.optional-dependencies]
+lan = ["scapy>=2.5"]
+monitor = ["scapy>=2.5"]
+api = ["fastapi>=0.110", "uvicorn[standard]>=0.29"]
+reports = ["reportlab>=4.0", "matplotlib>=3.8"]
+speedtest = ["speedtest-cli>=2.1"]
+ui = ["nicegui>=3.0"]
+dev = ["pytest>=8.0", "pytest-cov>=5.0", "ruff>=0.5", "mypy>=1.10", "vulture>=2.11", "scapy>=2.5"]
+all = [
+  "aethernet[lan,api,reports,speedtest,ui]",
+]
+
+[project.scripts]
+aethernet = "aethernet.cli:main"
+aethernet-ui = "aethernet.ui.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "W"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_ignores = true
+ignore_missing_imports = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "aethernet.ui.*"
+disallow_untyped_decorators = false
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = "scapy.*"
+ignore_missing_imports = true
+
+[tool.vulture]
+min_confidence = 80
+paths = ["src/aethernet/core", "src/aethernet/data"]

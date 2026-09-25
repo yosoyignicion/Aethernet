@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container":"#1c2026","secondary":"#84cfff","on-primary-fixed-variant":"#005236","inverse-primary":"#006c49","on-primary-fixed":"#002114","outline":"#84958a","surface-container-lowest":"#0a0e14","inverse-on-surface":"#2d3137","secondary-container":"#00b6fd","primary-fixed":"#47ffb8","surface-tint":"#00e29e","on-surface-variant":"#bacbbf","surface-container-low":"#181c22","outline-variant":"#3b4a41","on-error":"#690005","on-primary-container":"#006141","surface":"#10141a","on-secondary-fixed":"#001e2e","inverse-surface":"#dfe2eb","primary-container":"#00e5a0","on-secondary-container":"#004461","on-secondary-fixed-variant":"#004c6c","on-error-container":"#ffdad6","secondary-fixed-dim":"#84cfff","background":"#10141a","on-secondary":"#00344c","on-tertiary-container":"#6f4e00","tertiary-fixed":"#ffdea8","primary-fixed-dim":"#00e29e","on-primary":"#003824","surface-dim":"#10141a","tertiary-fixed-dim":"#ffba20","on-background":"#dfe2eb","surface-container-highest":"#31353c","secondary-fixed":"#c7e7ff","on-tertiary":"#412d00","error-container":"#93000a","surface-variant":"#31353c","primary":"#6effc0","surface-container-high":"#262a31","tertiary":"#ffe1b1","on-tertiary-fixed-variant":"#5e4200","on-tertiary-fixed":"#271900","tertiary-container":"#ffbe36","on-surface":"#dfe2eb","surface-bright":"#353940","error":"#ffb4ab"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-xs":"0.25rem","space-md":"1rem","margin-desktop":"2rem","space-xl":"2rem","margin":"1rem","space-sm":"0.5rem","gutter":"1rem","gutter-desktop":"1.5rem","space-lg":"1.5rem"},"fontFamily":{"headline-xl-mobile":["Space Grotesk"],"headline-lg-mobile":["Space Grotesk"],"telemetry-sm":["JetBrains Mono"],"body-sm":["Inter"],"body-lg":["Inter"],"headline-md":["Space Grotesk"],"body-md":["Inter"],"telemetry-lg":["JetBrains Mono"],"telemetry-xl":["JetBrains Mono"],"headline-lg":["Space Grotesk"],"label-caps":["JetBrains Mono"],"telemetry-md":["JetBrains Mono"],"headline-xl":["Space Grotesk"]},"fontSize":{"headline-xl-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-lg-mobile":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"500"}],"telemetry-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.02em","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0.01em","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"headline-md":["18px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"500"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"telemetry-lg":["16px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"500"}],"telemetry-xl":["24px",{"lineHeight":"28px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"500"}],"label-caps":["10px",{"lineHeight":"12px","letterSpacing":"0.08em","fontWeight":"600"}],"telemetry-md":["13px",{"lineHeight":"18px","letterSpacing":"0em","fontWeight":"400"}],"headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface-container-lowest font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 h-16 bg-surface-container-low/95 backdrop-blur-md z-40 border-b border-outline-variant/30 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md"><img alt="Aethernet Telemetry Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VABDlIpgJ4tan4eYYdnBI4W3TC3BJRh-TPk-xRyGSOlWQ3DlP5YE7DuRZKBeLUd5yoA1ooIKbtp1Ay4O5SzlDjzp7vB0B9HUkQkT5InEhAqWjzA1n6vdi8OyCRnNuj0UXYREnD-kWB0Udsa3oLIKhJ3EptEWMAum4U6h-RBp8bAILreF3URNtzuLtL8mdMRLxVGcgpfMqNr5Vgau0AsU2TerJtjEdVjgfxoOAL2WkBMWPWPdZyt7oDL4gH"/><div class="flex flex-col"><span class="font-headline-md text-headline-md tracking-tight text-on-surface">AETHERNET</span><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">RF-MONITOR // 2080</span></div><div class="hidden md:flex items-center gap-space-xs px-space-sm py-1 bg-surface-container rounded-xl border border-outline-variant/40"><span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span><span class="font-telemetry-sm text-telemetry-sm text-primary">SYS: NOMINAL // 2.4 GHz</span></div></div><div class="flex items-center gap-space-md"><button class="flex items-center gap-space-sm px-space-md py-1.5 bg-surface-container rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-outline-variant/30" type="button"><span class="material-symbols-outlined text-[18px]">search</span><span class="font-telemetry-sm text-telemetry-sm hidden sm:inline">BUSCAR</span><kbd class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container-highest font-telemetry-sm text-telemetry-sm text-on-surface">Ctrl+K</kbd></button><div class="flex items-center gap-space-xs bg-surface-container p-1 rounded-xl border border-outline-variant/30"><button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Modo Compacto" type="button"><span class="material-symbols-outlined text-[18px]">density_medium</span></button><button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Atajos de teclado" type="button"><span class="material-symbols-outlined text-[18px]">help</span></button></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><aside class="fixed left-0 top-16 bottom-10 w-64 bg-surface-container-low border-r border-outline-variant/30 z-30 flex flex-col justify-between p-space-md overflow-y-auto"><div class="flex flex-col gap-space-md"><div class="px-space-sm py-1"><span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">Módulos de Rastreo</span></div><nav class="flex flex-col gap-1" data-active-classes="bg-surface-container-high text-primary border-l-2 border-primary"><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="dashboard" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">speed</span><span class="font-telemetry-md text-telemetry-md">Dashboard</span></div><span class="font-label-caps text-label-caps text-outline">01</span></a><a aria-current="page" class="flex items-center justify-between px-space-md py-2.5 rounded-xl transition-all bg-surface-container-high text-primary border-l-2 border-primary" data-path="espectro" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">signal_cellular_alt</span><span class="font-telemetry-md text-telemetry-md">Espectro</span></div><span class="font-label-caps text-label-caps text-outline">02</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="redes" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">wifi</span><span class="font-telemetry-md text-telemetry-md">Redes</span></div><span class="font-label-caps text-label-caps text-outline">03</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="dispositivos" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">memory</span><span class="font-telemetry-md text-telemetry-md">Dispositivos</span></div><span class="font-label-caps text-label-caps text-outline">04</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="alertas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">warning</span><span class="font-telemetry-md text-telemetry-md">Alertas</span></div><span class="px-1.5 py-0.5 rounded-full bg-error-container text-error font-telemetry-sm text-telemetry-sm">1</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="informes" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">description</span><span class="font-telemetry-md text-telemetry-md">Informes</span></div><span class="font-label-caps text-label-caps text-outline">06</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="ajustes" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-telemetry-md text-telemetry-md">Ajustes</span></div><span class="font-label-caps text-label-caps text-outline">07</span></a></nav></div><div class="p-space-sm bg-surface-container rounded-xl border border-outline-variant/30 flex flex-col gap-1"><div class="flex items-center justify-between"><span class="font-label-caps text-label-caps text-outline">RX POWER</span><span class="font-telemetry-sm text-telemetry-sm text-primary">-42 dBm</span></div><div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden"><div class="bg-primary h-full w-[78%]"></div></div></div></aside><div class="pl-64"><main class="relative pt-16 pb-10 min-h-screen w-full bg-surface-container-lowest px-space-lg"><div class="flex flex-col w-full gap-space-lg text-on-surface">
+<!-- TOP INSTRUMENT STRIP / CONTROLS -->
+<header class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-md p-space-md rounded-xl bg-surface-container-low shadow-sm">
+<div class="flex flex-wrap items-center gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-caps text-label-caps text-outline uppercase">MODULO:</span>
+<span class="font-telemetry-md text-telemetry-md text-primary tracking-wider">RF_SPECTRUM_ANALYZER_v4.2</span>
+</div>
+<div class="h-4 w-px bg-surface-container-highest hidden sm:block"></div>
+<!-- Band Selector Segmented Control -->
+<div class="inline-flex p-1 rounded-xl bg-surface-container">
+<button class="px-space-md py-1 rounded-lg bg-surface-container-high text-primary font-telemetry-sm text-telemetry-sm shadow-sm transition-colors" id="band-24" type="button">
+          2.4 GHz [CH 1-13]
+        </button>
+<button class="px-space-md py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-telemetry-sm text-telemetry-sm transition-colors" id="band-50" type="button">
+          5 GHz [U-NII 1-3]
+        </button>
+</div>
+<!-- Channel Bandwidth Segmented -->
+<div class="inline-flex p-1 rounded-xl bg-surface-container">
+<button class="px-space-sm py-1 rounded-lg bg-surface-container-high text-secondary font-telemetry-sm text-telemetry-sm transition-colors" id="bw-20" type="button">
+          20 MHz
+        </button>
+<button class="px-space-sm py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-telemetry-sm text-telemetry-sm transition-colors" id="bw-40" type="button">
+          40 MHz
+        </button>
+</div>
+</div>
+<!-- Toggle & Realtime Feed Status -->
+<div class="flex flex-wrap items-center gap-space-md">
+<button class="flex items-center gap-space-xs px-space-md py-1.5 rounded-xl bg-surface-container text-on-surface-variant hover:text-primary transition-colors" id="peak-toggle" type="button">
+<span class="w-2 h-2 rounded-full bg-surface-container-highest transition-colors" id="peak-indicator"></span>
+<span class="font-telemetry-sm text-telemetry-sm">PICOS MAXIMOS</span>
+<kbd class="px-1.5 py-0.5 rounded bg-surface-container-highest font-label-caps text-label-caps text-on-surface">P</kbd>
+</button>
+<div class="flex items-center gap-space-xs px-space-md py-1.5 rounded-xl bg-surface-container-lowest text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">SWEEP:</span>
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface">18.4 MSPS</span>
+</div>
+<div class="flex items-center gap-space-xs px-space-md py-1.5 rounded-xl bg-surface-container-lowest text-on-surface-variant">
+<span class="font-telemetry-sm text-telemetry-sm text-outline">RBW:</span>
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface">100 kHz</span>
+</div>
+</div>
+</header>
+<!-- MAIN TELEMETRY GRID (2/3 & 1/3) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- LEFT COLUMN: RF SPECTRUM + HEATMAP (8 COLS) -->
+<div class="xl:col-span-8 flex flex-col gap-space-lg min-w-0">
+<!-- SECTION 1: FREQUENCY OCCUPANCY BAR OSCILLOGRAPH -->
+<section class="flex flex-col p-space-lg rounded-xl bg-surface-container-low shadow-md relative overflow-hidden">
+<div class="flex flex-wrap items-center justify-between gap-space-sm mb-space-md">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">BANCO DE CANALES // 2.412 GHz - 2.472 GHz</span>
+<span class="font-headline-md text-headline-md text-on-surface tracking-tight">Distribución de Potencia y Señal Apilada</span>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-sm bg-primary-container"></span>
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant">Bajo Ruido</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-sm bg-secondary"></span>
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant">Nominal</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-sm bg-tertiary-container"></span>
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant">Congestión</span>
+</div>
+</div>
+</div>
+<!-- Spectrum Canvas & dBm Scales -->
+<div class="relative w-full h-80 bg-surface-container-lowest rounded-xl p-space-md flex">
+<!-- Y-Axis Reticle Marks (-30 to -90 dBm) -->
+<div class="w-16 flex flex-col justify-between shrink-0 font-telemetry-sm text-telemetry-sm text-outline select-none pr-space-sm border-r border-surface-container">
+<div class="flex items-center justify-between">
+<span>-30</span>
+<span class="text-surface-container-highest">-</span>
+</div>
+<div class="flex items-center justify-between">
+<span>-45</span>
+<span class="text-surface-container-highest">-</span>
+</div>
+<div class="flex items-center justify-between">
+<span>-60</span>
+<span class="text-surface-container-highest">-</span>
+</div>
+<div class="flex items-center justify-between">
+<span>-75</span>
+<span class="text-surface-container-highest">-</span>
+</div>
+<div class="flex items-center justify-between">
+<span>-90</span>
+<span class="text-surface-container-highest">-</span>
+</div>
+</div>
+<!-- Spectrum Graph Area with Reticle Horizontal Gridlines -->
+<div class="relative flex-1 h-full pl-space-md flex flex-col justify-between">
+<div class="absolute inset-0 pl-space-md flex flex-col justify-between pointer-events-none opacity-20">
+<div class="w-full h-px bg-surface-container-highest"></div>
+<div class="w-full h-px bg-surface-container-highest"></div>
+<div class="w-full h-px bg-surface-container-highest"></div>
+<div class="w-full h-px bg-surface-container-highest"></div>
+<div class="w-full h-px bg-surface-container-highest"></div>
+</div>
+<!-- Peak Line Overlay (Hidden by default, triggered via toggle) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none opacity-0 transition-opacity duration-300 pl-space-md" id="peak-svg" preserveaspectratio="none" viewbox="0 0 1300 280">
+<path class="text-tertiary-container" d="M 50 40 L 150 160 L 250 180 L 350 200 L 450 170 L 550 48 L 650 160 L 750 170 L 850 190 L 950 180 L 1050 230 L 1150 210 L 1250 220" fill="none" stroke="currentColor" stroke-dasharray="3 3" stroke-width="1.5"></path>
+<circle class="fill-tertiary-container" cx="50" cy="40" r="3"></circle>
+<circle class="fill-tertiary-container" cx="550" cy="48" r="3"></circle>
+<circle class="fill-primary-container" cx="1050" cy="230" r="3"></circle>
+</svg>
+<!-- 13 Channel Stacked Columns -->
+<div class="relative z-10 w-full h-full flex items-end justify-between gap-1 sm:gap-2">
+<!-- CH 1 (Congested: Amber) -->
+<div class="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer" data-ap="8 APs" data-channel="1" data-freq="2.412" data-util="94%">
+<div class="w-full flex flex-col-reverse items-center justify-start rounded-t-lg overflow-hidden bg-surface-container transition-all group-hover:bg-surface-container-high h-[88%]">
+<div class="w-full bg-tertiary-container h-[55%] transition-all duration-700 animate-pulse"></div>
+<div class="w-full bg-secondary h-[30%]"></div>
+<div class="w-full bg-primary-container h-[15%]"></div>
+</div>
+</div>
+<!-- CH 2 -->
+<div class="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer" data-ap="3 APs" data-channel="2" data-freq="2.417" data-util="42%">
+<div class="w-full flex flex-col-reverse items-center justify-start rounded-t-lg overflow-hidden bg-surface-container transition-all group-hover:bg-surface-container-high h-[46%]">
+<div class="w-full bg-secondary h-[60%]"></div>
+<div class="w-full bg-primary-container h-[40%]"></div>
+</div>
+</div>
+<!-- CH 3 -->
+<div class="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer" data-ap="2 APs" data-channel="3" data-freq="2.422" data-util="35%">
+<div class="w-full flex flex-col-reverse items-center justify-start rounded-t-lg overflow-hidden bg-surface-container transition-all group-hover:bg-surface-container-high h-[38%]">
+<div class="w-full bg-primary-container h-[70%]"></div>
+<div class="w-full bg-secondary h-[30%]"></div>
+</div>
+</div>
+<!-- CH 4 -->
+<div class="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer" data-ap="2 APs" data-channel="4" data-freq="2.427" data-util="28%">
+<div class="w-full flex flex-col-reverse items-center justify-start rounded-t-lg overflow-hidden bg-surface-container transition-all group-hover:bg-surface-container-high h-[30%]">
+<div class="w-full bg-primary-container h-[85%]"></div>
+<div class="w-full bg-secondary h-[15%]"></div>
+</div>
+</div>
+<!-- CH 5 -->
+<div class="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer" data-ap="3 APs" data-channel="5" data-freq="2.432" data-util="44%">
+<div class="w-full flex flex-col-reverse items-center justify-start rounded-t-lg overflow-hidden bg-surface-container transition-all group-hover:bg-surface-container-high h-[48%]">
+<div class="w-full bg-secondary h-[50%]"></div>
+<div class="w-full bg-primary-container h-[50%]"></div>
+</div>
+</div>
+<!-- CH 6 (Congested: Amber) -->
+<div class="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer" data-ap="11 APs" data-channel="6" data-freq="2.437" data-util="89%">
+<div class="w-full flex flex-col-reverse items-center justify-start rounded-t-lg overflow-hidden bg-surface-container transition-all group-hover:bg-surface-container-high h-[84%]">
+<div class="w-full bg-tertiary-container h-[60%] transition-all duration-700"></div>
+<div class="w-full bg-secondary h-[25%]"></div>
+<div class="w-full bg-primary-container h-[15%]"></div>
+</div>
+</div>
+<!-- CH 7 -->
+<div class="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer" data-ap="3 APs" data-channel="7" data-freq="2.442" data-util="40%">
+<div class="w-full flex flex-col-reverse items-center justify-start rounded-t-lg overflow-hidden bg-surface-container transition-all group-hover:bg-surface-container-high h-[44%]">
+<div class="w-full bg-secondary h-[60%]"></div>
+<div class="w-full bg-primary-container h-[40%]"></div>
+</div>
+</div>
+<!-- CH 8 -->
+<div class="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer" data-ap="2 APs" data-channel="8" data-freq="2.447" data-util="36%">
+<div class="w-full flex flex-col-reverse items-center justify-start rounded-t-lg overflow-hidden bg-surface-container transition-all group-hover:bg-surface-container-high h-[39%]">
+<div class="w-full bg-primary-container h-[70%]"></div>
+<div class="w-full bg-secondary h-[30%]"></div>
+</div>
+</div>
+<!-- CH 9 -->
+<div class="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer" data-ap="2 APs" data-channel="9" data-freq="2.452" data-util="32%">
+<div class="w-full flex flex-col-reverse items-center justify-start rounded-t-lg overflow-hidden bg-surface-container transition-all group-hover:bg-surface-container-high h-[34%]">
+<div class="w-full bg-primary-container h-[80%]"></div>
+<div class="w-full bg-secondary h-[20%]"></div>
+</div>
+</div>
+<!-- CH 10 -->
+<div class="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer" data-ap="3 APs" data-channel="10" data-freq="2.457" data-util="34%">
+<div class="w-full flex flex-col-reverse items-center justify-start rounded-t-lg overflow-hidden bg-surface-container transition-all group-hover:bg-surface-container-high h-[36%]">
+<div class="w-full bg-primary-container h-[65%]"></div>
+<div class="w-full bg-secondary h-[35%]"></div>
+</div>
+</div>
+<!-- CH 11 (RECOMMENDED / LOW NOISE) -->
+<div class="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer" data-ap="1 AP" data-channel="11" data-freq="2.462" data-util="18%">
+<div class="w-full flex flex-col-reverse items-center justify-start rounded-t-lg overflow-hidden bg-surface-container-high ring-1 ring-primary transition-all h-[18%]">
+<div class="w-full bg-primary-container h-full"></div>
+</div>
+</div>
+<!-- CH 12 -->
+<div class="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer" data-ap="1 AP" data-channel="12" data-freq="2.467" data-util="24%">
+<div class="w-full flex flex-col-reverse items-center justify-start rounded-t-lg overflow-hidden bg-surface-container transition-all group-hover:bg-surface-container-high h-[26%]">
+<div class="w-full bg-primary-container h-[90%]"></div>
+<div class="w-full bg-secondary h-[10%]"></div>
+</div>
+</div>
+<!-- CH 13 -->
+<div class="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer" data-ap="1 AP" data-channel="13" data-freq="2.472" data-util="21%">
+<div class="w-full flex flex-col-reverse items-center justify-start rounded-t-lg overflow-hidden bg-surface-container transition-all group-hover:bg-surface-container-high h-[23%]">
+<div class="w-full bg-primary-container h-[95%]"></div>
+<div class="w-full bg-secondary h-[5%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Frequency X-Axis Sub-Labels -->
+<div class="w-full pl-16 pt-space-xs flex justify-between font-telemetry-sm text-telemetry-sm text-on-surface-variant">
+<div class="text-center w-full flex justify-between px-1">
+<span class="text-tertiary-container font-semibold">C1</span>
+<span>C2</span>
+<span>C3</span>
+<span>C4</span>
+<span>C5</span>
+<span class="text-tertiary-container font-semibold">C6</span>
+<span>C7</span>
+<span>C8</span>
+<span>C9</span>
+<span>C10</span>
+<span class="text-primary font-bold">C11</span>
+<span>C12</span>
+<span>C13</span>
+</div>
+</div>
+<div class="w-full pl-16 flex justify-between font-telemetry-sm text-[10px] text-outline">
+<span>2.412 GHz</span>
+<span>2.437 GHz</span>
+<span>2.462 GHz</span>
+<span>2.472 GHz</span>
+</div>
+<!-- Inspector tooltip pill -->
+<div class="mt-space-md p-space-sm rounded-xl bg-surface-container flex items-center justify-between font-telemetry-sm text-telemetry-sm" id="channel-tooltip">
+<div class="flex items-center gap-space-md">
+<span class="text-outline uppercase">PUNTO DE INSPECCIÓN:</span>
+<span class="text-primary font-bold" id="inspect-channel">CANAL 11 (2.462 GHz)</span>
+<span class="text-outline">·</span>
+<span class="text-on-surface" id="inspect-util">CARGA: 18%</span>
+<span class="text-outline">·</span>
+<span class="text-on-surface-variant" id="inspect-ap">AP CO-CANAL: 1</span>
+</div>
+<span class="text-primary font-label-caps text-label-caps uppercase bg-primary-container/10 px-2 py-0.5 rounded">ÓPTIMO</span>
+</div>
+</section>
+<!-- SECTION 2: 24-HOUR × 13-CHANNEL TEMPORAL SPECTRAL HEATMAP -->
+<section class="flex flex-col p-space-lg rounded-xl bg-surface-container-low shadow-md">
+<div class="flex flex-wrap items-center justify-between gap-space-sm mb-space-md">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">MATRIZ TÉCNICA RETROSPECTIVA</span>
+<span class="font-headline-md text-headline-md text-on-surface tracking-tight">Mapa de Calor Espectral 24 Horas</span>
+</div>
+<div class="flex items-center gap-space-sm font-telemetry-sm text-telemetry-sm text-outline">
+<span>HISTORIAL: 1440 MINUTOS</span>
+<span>·</span>
+<span class="text-on-surface">TASA_MUESTREO: 60s</span>
+</div>
+</div>
+<div class="w-full overflow-x-auto">
+<div class="min-w-[560px] flex flex-col gap-1.5 p-space-md rounded-xl bg-surface-container-lowest">
+<!-- Heatmap Rows: 13 Channels -->
+<!-- Channels 1 & 6 high activity (amber), CH 11 cool (mint), others mixed -->
+<!-- Helper script fills cells or pre-baked static matrix for rock-solid precision -->
+<div class="grid grid-cols-[48px_repeat(24,_1fr)] gap-1 items-center font-telemetry-sm text-[10px]">
+<!-- Time header row -->
+<span class="text-outline font-label-caps text-[9px]">HORA</span>
+<span class="text-outline text-center">00</span>
+<span class="text-outline text-center">01</span>
+<span class="text-outline text-center">02</span>
+<span class="text-outline text-center">03</span>
+<span class="text-outline text-center">04</span>
+<span class="text-outline text-center">05</span>
+<span class="text-outline text-center">06</span>
+<span class="text-outline text-center">07</span>
+<span class="text-outline text-center">08</span>
+<span class="text-outline text-center">09</span>
+<span class="text-outline text-center">10</span>
+<span class="text-outline text-center">11</span>
+<span class="text-outline text-center">12</span>
+<span class="text-outline text-center">13</span>
+<span class="text-outline text-center">14</span>
+<span class="text-outline text-center">15</span>
+<span class="text-outline text-center">16</span>
+<span class="text-outline text-center">17</span>
+<span class="text-outline text-center">18</span>
+<span class="text-outline text-center">19</span>
+<span class="text-outline text-center">20</span>
+<span class="text-outline text-center">21</span>
+<span class="text-outline text-center">22</span>
+<span class="text-outline text-center">23</span>
+<!-- C1: High congestion throughout midday to late night -->
+<span class="text-tertiary-container font-semibold">CH 01</span>
+<span class="h-4 rounded-sm bg-tertiary-container/30"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/20"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-secondary/20"></span>
+<span class="h-4 rounded-sm bg-secondary/40"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/50"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/80"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/90"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/90"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/80"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/80"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/60"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/40"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/30"></span>
+<!-- C2 -->
+<span class="text-outline">CH 02</span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-secondary/40"></span>
+<span class="h-4 rounded-sm bg-secondary/40"></span>
+<span class="h-4 rounded-sm bg-secondary/50"></span>
+<span class="h-4 rounded-sm bg-secondary/40"></span>
+<span class="h-4 rounded-sm bg-secondary/50"></span>
+<span class="h-4 rounded-sm bg-secondary/50"></span>
+<span class="h-4 rounded-sm bg-secondary/40"></span>
+<span class="h-4 rounded-sm bg-secondary/30"></span>
+<span class="h-4 rounded-sm bg-secondary/40"></span>
+<span class="h-4 rounded-sm bg-secondary/50"></span>
+<span class="h-4 rounded-sm bg-secondary/40"></span>
+<span class="h-4 rounded-sm bg-secondary/30"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<!-- C3 -->
+<span class="text-outline">CH 03</span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/40"></span>
+<span class="h-4 rounded-sm bg-secondary/30"></span>
+<span class="h-4 rounded-sm bg-secondary/30"></span>
+<span class="h-4 rounded-sm bg-secondary/40"></span>
+<span class="h-4 rounded-sm bg-secondary/30"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/40"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<!-- C6: High Congestion (Amber Core) -->
+<span class="text-tertiary-container font-semibold">CH 06</span>
+<span class="h-4 rounded-sm bg-tertiary-container/40"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/20"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-secondary/30"></span>
+<span class="h-4 rounded-sm bg-secondary/60"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/70"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/90"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/90"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/90"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/70"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/50"></span>
+<span class="h-4 rounded-sm bg-tertiary-container/30"></span>
+<!-- C11: Pristine Mint/Quiet Green Spectrum -->
+<span class="text-primary font-bold">CH 11</span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/40"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/40"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/40"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<!-- C13: Sparse -->
+<span class="text-outline">CH 13</span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-primary/10"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-primary/30"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-primary/20"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+<span class="h-4 rounded-sm bg-surface-container"></span>
+</div>
+</div>
+</div>
+<!-- Heatmap Legend Footer -->
+<div class="mt-space-md flex flex-wrap items-center justify-between gap-space-sm pt-space-sm border-t border-surface-container">
+<div class="flex items-center gap-space-md font-telemetry-sm text-telemetry-sm">
+<span class="text-outline">ESCALA TÉRMICA:</span>
+<div class="flex items-center gap-1">
+<span class="w-3 h-2 rounded-sm bg-surface-container"></span>
+<span class="text-outline">Inactivo</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-3 h-2 rounded-sm bg-primary-container/40"></span>
+<span class="text-primary">&lt;30%</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-3 h-2 rounded-sm bg-secondary"></span>
+<span class="text-secondary">30-65%</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-3 h-2 rounded-sm bg-tertiary-container"></span>
+<span class="text-tertiary-container">&gt;75% Saturado</span>
+</div>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">DELTA DE CICLO: -3.8 dBm</span>
+</div>
+</section>
+</div>
+<!-- RIGHT COLUMN: DIAGNOSTIC & ACTION DOCK (4 COLS) -->
+<div class="xl:col-span-4 flex flex-col gap-space-lg min-w-0">
+<!-- HIGHLIGHT DIAGNOSTIC CARD -->
+<section class="flex flex-col p-space-lg rounded-xl bg-surface-container-low shadow-md relative overflow-hidden">
+<!-- Retro-futuristic Status Ribbon -->
+<div class="flex items-center justify-between pb-space-sm mb-space-md border-b border-surface-container">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">DIAGNÓSTICO AUTOMÁTICO</span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm px-2 py-0.5 rounded bg-primary-container/10 text-primary">SINTONÍA PURA</span>
+</div>
+<!-- Section Title & Lead Headline -->
+<span class="font-label-caps text-label-caps text-outline uppercase">RECOMENDACIÓN DE CANAL</span>
+<div class="mt-space-sm flex items-baseline justify-between">
+<h2 class="font-headline-xl text-headline-xl text-on-surface tracking-tighter">CANAL 11</h2>
+<div class="flex flex-col items-end">
+<span class="font-telemetry-xl text-telemetry-xl text-primary font-bold">82% LIBRE</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">CAPACIDAD EFECTIVA</span>
+</div>
+</div>
+<!-- Technical Telemetry Spec Box -->
+<div class="mt-space-lg p-space-md rounded-xl bg-surface-container flex flex-col gap-space-sm">
+<div class="flex items-center justify-between font-telemetry-sm text-telemetry-sm">
+<span class="text-on-surface-variant">RELACIÓN SEÑAL/RUIDO (SNR)</span>
+<span class="text-primary font-semibold">+28 dB</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[88%]"></div>
+</div>
+<div class="flex items-center justify-between font-telemetry-sm text-telemetry-sm pt-space-xs">
+<span class="text-on-surface-variant">RUIDO DE FONDO (NOISE FLOOR)</span>
+<span class="text-on-surface font-semibold">-94 dBm</span>
+</div>
+<div class="flex items-center justify-between font-telemetry-sm text-telemetry-sm pt-space-xs">
+<span class="text-on-surface-variant">REDES SOLAPADAS</span>
+<span class="text-secondary font-semibold">1 (SSID: LabNet_Ext)</span>
+</div>
+<div class="flex items-center justify-between font-telemetry-sm text-telemetry-sm pt-space-xs">
+<span class="text-on-surface-variant">ATENUACIÓN ESTIMADA</span>
+<span class="text-on-surface font-semibold">1.2 dB/m</span>
+</div>
+</div>
+<!-- Interactive Actions -->
+<div class="mt-space-lg flex flex-col gap-space-sm">
+<!-- Copy to Clipboard Button with inline feedback -->
+<button class="w-full flex items-center justify-center gap-space-sm px-space-md py-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-secondary hover:text-primary transition-colors font-telemetry-md text-telemetry-md" id="copy-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+<span id="copy-text">Copiar al portapapeles</span>
+<kbd class="px-1.5 py-0.5 rounded bg-surface-container-highest font-label-caps text-label-caps text-on-surface">C</kbd>
+</button>
+<!-- Primary Commit Action: Apply to Router -->
+<button class="w-full flex items-center justify-center gap-space-sm px-space-md py-3 rounded-xl bg-primary-container text-on-primary-container hover:opacity-95 active:scale-[0.99] transition-all font-headline-md text-headline-md tracking-tight font-medium shadow-md" id="apply-btn" type="button">
+<span class="material-symbols-outlined text-[20px]">router</span>
+<span>Aplicar configuración a router</span>
+</button>
+</div>
+<!-- Operational Safeguard Notice -->
+<div class="mt-space-md p-space-sm rounded-lg bg-surface-container-lowest text-outline font-telemetry-sm text-[11px] leading-relaxed flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container shrink-0 mt-0.5">verified_user</span>
+<span>El cambio forzará una resincronización de balizas de 3.2s en la interfaz WAN sin corte de sesiones activas TCP/IP.</span>
+</div>
+</section>
+<!-- SECONDARY DIAGNOSTIC CARD: INTERFERENCE MATRIX -->
+<section class="flex flex-col p-space-lg rounded-xl bg-surface-container-low shadow-md">
+<div class="flex items-center justify-between mb-space-md">
+<span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">REGISTRO DE CO-INTERFERENCIA</span>
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant">4 DETECTADAS</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<div class="p-space-sm rounded-lg bg-surface-container flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-telemetry-md text-telemetry-md text-on-surface">DIRECT-R3-HP420</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">CH 06 · BSSID: 4C:5E:0C:12:9A</span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm text-tertiary-container bg-tertiary-container/10 px-2 py-0.5 rounded">-44 dBm</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-telemetry-md text-telemetry-md text-on-surface">VODAFONE_GUEST_99</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">CH 01 · BSSID: 88:E3:AB:FF:01</span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm text-tertiary-container bg-tertiary-container/10 px-2 py-0.5 rounded">-51 dBm</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-telemetry-md text-telemetry-md text-on-surface">IoT_Mesh_Node_04</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">CH 01 · BSSID: E0:D5:5E:2B:10</span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm text-secondary bg-secondary/10 px-2 py-0.5 rounded">-68 dBm</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-telemetry-md text-telemetry-md text-on-surface">LabNet_Ext</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">CH 11 · BSSID: 00:1F:33:41:CA</span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded">-86 dBm</span>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- INTERACTIVE VANILLA JS CONTROLLER -->
+<script>
+    (function initSpectrumController() {
+      // 1. Channel Bars Hover / Inspection
+      const bars = document.querySelectorAll('[data-channel]');
+      const inspectChannel = document.getElementById('inspect-channel');
+      const inspectUtil = document.getElementById('inspect-util');
+      const inspectAp = document.getElementById('inspect-ap');
+
+      bars.forEach(bar => {
+        bar.addEventListener('mouseenter', () => {
+          const ch = bar.getAttribute('data-channel');
+          const freq = bar.getAttribute('data-freq');
+          const util = bar.getAttribute('data-util');
+          const ap = bar.getAttribute('data-ap');
+
+          inspectChannel.textContent = `CANAL ${ch} (${freq} GHz)`;
+          inspectUtil.textContent = `CARGA: ${util}`;
+          inspectAp.textContent = `AP CO-CANAL: ${ap}`;
+        });
+      });
+
+      // 2. Peak Overlay Toggle & Hotkey [P]
+      const peakToggle = document.getElementById('peak-toggle');
+      const peakIndicator = document.getElementById('peak-indicator');
+      const peakSvg = document.getElementById('peak-svg');
+      let peaksActive = false;
+
+      function togglePeaks() {
+        peaksActive = !peaksActive;
+        if (peaksActive) {
+          peakSvg.classList.remove('opacity-0');
+          peakSvg.classList.add('opacity-100');
+          peakIndicator.classList.remove('bg-surface-container-highest');
+          peakIndicator.classList.add('bg-tertiary-container');
+        } else {
+          peakSvg.classList.remove('opacity-100');
+          peakSvg.classList.add('opacity-0');
+          peakIndicator.classList.remove('bg-tertiary-container');
+          peakIndicator.classList.add('bg-surface-container-highest');
+        }
+      }
+
+      peakToggle.addEventListener('click', togglePeaks);
+
+      // 3. Copy to Clipboard Button with Feedback & Hotkey [C]
+      const copyBtn = document.getElementById('copy-btn');
+      const copyText = document.getElementById('copy-text');
+      const payload = "CONFIG_RF_CHANNEL: 11; FREQ: 2.462GHz; SNR: +28dB; NOISE: -94dBm; BW: 20MHz";
+
+      function executeCopy() {
+        navigator.clipboard?.writeText(payload);
+        const originalText = copyText.textContent;
+        copyText.textContent = "COPIADO [OK]";
+        copyBtn.classList.add('text-primary');
+        setTimeout(() => {
+          copyText.textContent = originalText;
+          copyBtn.classList.remove('text-primary');
+        }, 1800);
+      }
+
+      copyBtn.addEventListener('click', executeCopy);
+
+      // 4. Global Keyboard Accelerators
+      document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (e.key === 'p' || e.key === 'P') {
+          togglePeaks();
+        }
+        if (e.key === 'c' || e.key === 'C') {
+          executeCopy();
+        }
+      });
+
+      // 5. Band and Bandwidth Switcher Visual State
+      const b24 = document.getElementById('band-24');
+      const b50 = document.getElementById('band-50');
+      b50.addEventListener('click', () => {
+        b50.classList.add('bg-surface-container-high', 'text-primary', 'shadow-sm');
+        b50.classList.remove('text-on-surface-variant');
+        b24.classList.remove('bg-surface-container-high', 'text-primary', 'shadow-sm');
+        b24.classList.add('text-on-surface-variant');
+      });
+      b24.addEventListener('click', () => {
+        b24.classList.add('bg-surface-container-high', 'text-primary', 'shadow-sm');
+        b24.classList.remove('text-on-surface-variant');
+        b50.classList.remove('bg-surface-container-high', 'text-primary', 'shadow-sm');
+        b50.classList.add('text-on-surface-variant');
+      });
+
+      const bw20 = document.getElementById('bw-20');
+      const bw40 = document.getElementById('bw-40');
+      bw40.addEventListener('click', () => {
+        bw40.classList.add('bg-surface-container-high', 'text-secondary');
+        bw40.classList.remove('text-on-surface-variant');
+        bw20.classList.remove('bg-surface-container-high', 'text-secondary');
+        bw20.classList.add('text-on-surface-variant');
+      });
+      bw20.addEventListener('click', () => {
+        bw20.classList.add('bg-surface-container-high', 'text-secondary');
+        bw20.classList.remove('text-on-surface-variant');
+        bw40.classList.remove('bg-surface-container-high', 'text-secondary');
+        bw40.classList.add('text-on-surface-variant');
+      });
+
+      // 6. Router Apply Visual Trigger
+      const applyBtn = document.getElementById('apply-btn');
+      applyBtn.addEventListener('click', () => {
+        const original = applyBtn.innerHTML;
+        applyBtn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">sync</span><span>Sincronizando con Router...</span>`;
+        applyBtn.disabled = true;
+        setTimeout(() => {
+          applyBtn.innerHTML = `<span class="material-symbols-outlined text-[20px]">task_alt</span><span>Canal 11 Aplicado</span>`;
+          setTimeout(() => {
+            applyBtn.innerHTML = original;
+            applyBtn.disabled = false;
+          }, 2400);
+        }, 1500);
+      });
+    })();
+  </script>
+</div></main></div><footer class="fixed bottom-0 left-0 right-0 h-10 bg-surface-container-low border-t border-outline-variant/30 z-50 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md overflow-x-auto"><span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant whitespace-nowrap">ADAPTADOR: <span class="text-on-surface">D-Link DWA-171 (2.4 GHz)</span></span><span class="font-telemetry-sm text-telemetry-sm text-outline">·</span><span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant whitespace-nowrap">LATENCIA: <span class="text-primary">2ms</span></span><span class="font-telemetry-sm text-telemetry-sm text-outline">·</span><span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant whitespace-nowrap">ÚLTIMA ACT: <span class="text-on-surface">hace 12s</span></span></div><div class="flex items-center gap-space-xs"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-ping"></span><span class="font-telemetry-sm text-telemetry-sm text-secondary whitespace-nowrap">[ESTADO: ESCANEANDO...]</span></div></footer></body></html>

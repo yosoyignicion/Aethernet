@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container":"#1c2026","secondary":"#84cfff","on-primary-fixed-variant":"#005236","inverse-primary":"#006c49","on-primary-fixed":"#002114","outline":"#84958a","surface-container-lowest":"#0a0e14","inverse-on-surface":"#2d3137","secondary-container":"#00b6fd","primary-fixed":"#47ffb8","surface-tint":"#00e29e","on-surface-variant":"#bacbbf","surface-container-low":"#181c22","outline-variant":"#3b4a41","on-error":"#690005","on-primary-container":"#006141","surface":"#10141a","on-secondary-fixed":"#001e2e","inverse-surface":"#dfe2eb","primary-container":"#00e5a0","on-secondary-container":"#004461","on-secondary-fixed-variant":"#004c6c","on-error-container":"#ffdad6","secondary-fixed-dim":"#84cfff","background":"#10141a","on-secondary":"#00344c","on-tertiary-container":"#6f4e00","tertiary-fixed":"#ffdea8","primary-fixed-dim":"#00e29e","on-primary":"#003824","surface-dim":"#10141a","tertiary-fixed-dim":"#ffba20","on-background":"#dfe2eb","surface-container-highest":"#31353c","secondary-fixed":"#c7e7ff","on-tertiary":"#412d00","error-container":"#93000a","surface-variant":"#31353c","primary":"#6effc0","surface-container-high":"#262a31","tertiary":"#ffe1b1","on-tertiary-fixed-variant":"#5e4200","on-tertiary-fixed":"#271900","tertiary-container":"#ffbe36","on-surface":"#dfe2eb","surface-bright":"#353940","error":"#ffb4ab"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-xs":"0.25rem","space-md":"1rem","margin-desktop":"2rem","space-xl":"2rem","margin":"1rem","space-sm":"0.5rem","gutter":"1rem","gutter-desktop":"1.5rem","space-lg":"1.5rem"},"fontFamily":{"headline-xl-mobile":["Space Grotesk"],"headline-lg-mobile":["Space Grotesk"],"telemetry-sm":["JetBrains Mono"],"body-sm":["Inter"],"body-lg":["Inter"],"headline-md":["Space Grotesk"],"body-md":["Inter"],"telemetry-lg":["JetBrains Mono"],"telemetry-xl":["JetBrains Mono"],"headline-lg":["Space Grotesk"],"label-caps":["JetBrains Mono"],"telemetry-md":["JetBrains Mono"],"headline-xl":["Space Grotesk"]},"fontSize":{"headline-xl-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-lg-mobile":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"500"}],"telemetry-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.02em","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0.01em","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"headline-md":["18px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"500"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"telemetry-lg":["16px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"500"}],"telemetry-xl":["24px",{"lineHeight":"28px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"500"}],"label-caps":["10px",{"lineHeight":"12px","letterSpacing":"0.08em","fontWeight":"600"}],"telemetry-md":["13px",{"lineHeight":"18px","letterSpacing":"0em","fontWeight":"400"}],"headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface-container-lowest font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 h-16 bg-surface-container-low/95 backdrop-blur-md z-40 border-b border-outline-variant/30 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md"><img alt="Aethernet Telemetry Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VABDlIpgJ4tan4eYYdnBI4W3TC3BJRh-TPk-xRyGSOlWQ3DlP5YE7DuRZKBeLUd5yoA1ooIKbtp1Ay4O5SzlDjzp7vB0B9HUkQkT5InEhAqWjzA1n6vdi8OyCRnNuj0UXYREnD-kWB0Udsa3oLIKhJ3EptEWMAum4U6h-RBp8bAILreF3URNtzuLtL8mdMRLxVGcgpfMqNr5Vgau0AsU2TerJtjEdVjgfxoOAL2WkBMWPWPdZyt7oDL4gH"/><div class="flex flex-col"><span class="font-headline-md text-headline-md tracking-tight text-on-surface">AETHERNET</span><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">RF-MONITOR // 2080</span></div><div class="hidden md:flex items-center gap-space-xs px-space-sm py-1 bg-surface-container rounded-xl border border-outline-variant/40"><span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span><span class="font-telemetry-sm text-telemetry-sm text-primary">SYS: NOMINAL // 2.4 GHz</span></div></div><div class="flex items-center gap-space-md"><button class="flex items-center gap-space-sm px-space-md py-1.5 bg-surface-container rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors border border-outline-variant/30" type="button"><span class="material-symbols-outlined text-[18px]">search</span><span class="font-telemetry-sm text-telemetry-sm hidden sm:inline">BUSCAR</span><kbd class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container-highest font-telemetry-sm text-telemetry-sm text-on-surface">Ctrl+K</kbd></button><div class="flex items-center gap-space-xs bg-surface-container p-1 rounded-xl border border-outline-variant/30"><button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Modo Compacto" type="button"><span class="material-symbols-outlined text-[18px]">density_medium</span></button><button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Atajos de teclado" type="button"><span class="material-symbols-outlined text-[18px]">help</span></button></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><aside class="fixed left-0 top-16 bottom-10 w-64 bg-surface-container-low border-r border-outline-variant/30 z-30 flex flex-col justify-between p-space-md overflow-y-auto"><div class="flex flex-col gap-space-md"><div class="px-space-sm py-1"><span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">Módulos de Rastreo</span></div><nav class="flex flex-col gap-1" data-active-classes="bg-surface-container-high text-primary border-l-2 border-primary"><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="dashboard" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">speed</span><span class="font-telemetry-md text-telemetry-md">Dashboard</span></div><span class="font-label-caps text-label-caps text-outline">01</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="espectro" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">signal_cellular_alt</span><span class="font-telemetry-md text-telemetry-md">Espectro</span></div><span class="font-label-caps text-label-caps text-outline">02</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="redes" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">wifi</span><span class="font-telemetry-md text-telemetry-md">Redes</span></div><span class="font-label-caps text-label-caps text-outline">03</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="dispositivos" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">memory</span><span class="font-telemetry-md text-telemetry-md">Dispositivos</span></div><span class="font-label-caps text-label-caps text-outline">04</span></a><a aria-current="page" class="flex items-center justify-between px-space-md py-2.5 rounded-xl transition-all bg-surface-container-high text-primary border-l-2 border-primary" data-path="alertas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">warning</span><span class="font-telemetry-md text-telemetry-md">Alertas</span></div><span class="px-1.5 py-0.5 rounded-full bg-error-container text-error font-telemetry-sm text-telemetry-sm">1</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="informes" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">description</span><span class="font-telemetry-md text-telemetry-md">Informes</span></div><span class="font-label-caps text-label-caps text-outline">06</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="ajustes" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-telemetry-md text-telemetry-md">Ajustes</span></div><span class="font-label-caps text-label-caps text-outline">07</span></a></nav></div><div class="p-space-sm bg-surface-container rounded-xl border border-outline-variant/30 flex flex-col gap-1"><div class="flex items-center justify-between"><span class="font-label-caps text-label-caps text-outline">RX POWER</span><span class="font-telemetry-sm text-telemetry-sm text-primary">-42 dBm</span></div><div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden"><div class="bg-primary h-full w-[78%]"></div></div></div></aside><div class="pl-64"><main class="relative pt-16 pb-10 min-h-screen w-full bg-surface-container-lowest px-space-lg"><div class="flex flex-col w-full gap-space-lg text-on-surface">
+<!-- CONTROL STRIP & SEVERITY MONITOR -->
+<section class="flex flex-col gap-space-md p-space-lg bg-surface-container-low rounded-xl shadow-md">
+<div class="flex flex-wrap items-center justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">MATRIZ DE INCIDENCIAS RF</span>
+<span class="w-1.5 h-1.5 rounded-full bg-error animate-ping"></span>
+<span class="font-telemetry-sm text-telemetry-sm text-error uppercase">ESTADO DE ALERTA ACTIVA</span>
+</div>
+<div class="flex items-baseline gap-space-sm">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Centro de Alertas de Espectro</h1>
+<span class="font-telemetry-md text-telemetry-md text-outline">/ SENSOR D-LINK 2.4G</span>
+</div>
+</div>
+<!-- Live Counters -->
+<div class="flex items-center gap-space-sm bg-surface-container p-1 rounded-xl">
+<div class="px-space-md py-1.5 rounded-lg flex items-center gap-space-sm bg-surface-container-high">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="font-telemetry-sm text-telemetry-sm text-error font-medium">1 CRÍTICA</span>
+</div>
+<div class="px-space-md py-1.5 rounded-lg flex items-center gap-space-sm">
+<span class="w-2 h-2 rounded-full bg-tertiary-container"></span>
+<span class="font-telemetry-sm text-telemetry-sm text-tertiary font-medium">2 ADVERTENCIAS</span>
+</div>
+<div class="px-space-md py-1.5 rounded-lg flex items-center gap-space-sm">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="font-telemetry-sm text-telemetry-sm text-secondary font-medium">5 INFORMATIVAS</span>
+</div>
+</div>
+<!-- Action Cluster -->
+<div class="flex items-center gap-space-sm">
+<button class="flex items-center gap-space-xs px-space-md py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-all shadow-sm" id="btn-silence" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_off</span>
+<span class="font-telemetry-sm text-telemetry-sm">SILENCIAR TIPO</span>
+<kbd class="px-1 py-0.5 rounded bg-surface-container-highest text-outline font-label-caps text-label-caps ml-1">M</kbd>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-2 rounded-xl bg-primary hover:bg-primary-fixed text-on-primary font-headline-md text-body-sm transition-all shadow-md" id="btn-export" type="button">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span>EXPORTAR BITÁCORA</span>
+</button>
+</div>
+</div>
+<!-- Filter Matrix -->
+<div class="flex flex-wrap items-center justify-between gap-space-md pt-space-xs">
+<div class="flex flex-wrap items-center gap-space-xs">
+<span class="font-label-caps text-label-caps text-outline mr-1">SEVERIDAD:</span>
+<button class="filter-sev active px-space-sm py-1 rounded-xl bg-surface-container-highest text-primary font-telemetry-sm text-telemetry-sm flex items-center gap-1.5" type="button">
+<span>TODAS</span><span class="text-on-surface font-semibold">8</span>
+</button>
+<button class="filter-sev px-space-sm py-1 rounded-xl bg-surface-container hover:bg-surface-container-high text-error font-telemetry-sm text-telemetry-sm flex items-center gap-1.5 transition-colors" type="button">
+<span>CRÍTICA</span><span class="bg-error-container text-error px-1 rounded text-[10px]">1</span>
+</button>
+<button class="filter-sev px-space-sm py-1 rounded-xl bg-surface-container hover:bg-surface-container-high text-tertiary font-telemetry-sm text-telemetry-sm flex items-center gap-1.5 transition-colors" type="button">
+<span>ADVERTENCIA</span><span class="bg-surface-container-highest text-tertiary px-1 rounded text-[10px]">2</span>
+</button>
+<button class="filter-sev px-space-sm py-1 rounded-xl bg-surface-container hover:bg-surface-container-high text-secondary font-telemetry-sm text-telemetry-sm flex items-center gap-1.5 transition-colors" type="button">
+<span>INFORMATIVA</span><span class="bg-surface-container-highest text-secondary px-1 rounded text-[10px]">5</span>
+</button>
+</div>
+<div class="flex flex-wrap items-center gap-space-xs">
+<span class="font-label-caps text-label-caps text-outline mr-1">TIPO:</span>
+<button class="px-space-sm py-1 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps transition-colors" type="button">COLISIÓN RF</button>
+<button class="px-space-sm py-1 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps transition-colors" type="button">BSSID GEMELO / SPOOFING</button>
+<button class="px-space-sm py-1 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps transition-colors" type="button">INUNDACIÓN DEAUTHS</button>
+<button class="px-space-sm py-1 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps transition-colors" type="button">DISPOSITIVO EXTRAÑO</button>
+</div>
+</div>
+</section>
+<!-- MAIN OPERATIONAL TWO-COLUMN WORKSPACE -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- CENTRAL CHRONOLOGICAL TIMELINE (7 COLUMNS) -->
+<div class="xl:col-span-7 flex flex-col gap-space-md">
+<div class="flex items-center justify-between px-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">FLUJO TEMPORAL DE TELEMETRÍA ANÓMALA</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">· BUFFER FIFO 256/256</span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm text-primary">SINCRO: CONTINUA</span>
+</div>
+<!-- Timeline Stream Container -->
+<div class="relative pl-6 flex flex-col gap-space-lg">
+<!-- Structural Vertical Track -->
+<div class="absolute left-2.5 top-3 bottom-6 w-0.5 bg-surface-container-highest"></div>
+<!-- EVENT 1: CRITICAL (CHANNEL COLLISION) -->
+<article class="timeline-node relative flex flex-col gap-space-sm p-space-lg bg-surface-container-low hover:bg-surface-container transition-all rounded-xl shadow-md group">
+<!-- Pulse Dot -->
+<div class="absolute -left-6 top-6 w-3 h-3 rounded-full bg-error ring-4 ring-error/20 -translate-x-1/2 flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-lowest"></span>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="px-2 py-0.5 rounded-lg bg-error-container text-error font-label-caps text-label-caps tracking-widest uppercase">CRÍTICA // 0xAF4</span>
+<span class="font-telemetry-sm text-telemetry-sm text-error font-medium">COLISIÓN RF</span>
+</div>
+<div class="flex items-center gap-space-xs font-telemetry-sm text-telemetry-sm text-outline">
+<span class="text-on-surface">hace 4 min</span>
+<span>·</span>
+<span class="text-on-surface-variant font-mono">[14:22:18 UTC]</span>
+</div>
+</div>
+<div class="flex items-start gap-space-md mt-1">
+<div class="p-2.5 rounded-xl bg-surface-container shrink-0 text-error">
+<span class="material-symbols-outlined text-[24px]">crisis_alert</span>
+</div>
+<div class="flex flex-col gap-1 min-w-0">
+<h2 class="font-headline-md text-headline-md text-on-surface leading-tight">COLISIÓN SEVERA EN CANAL 6 — SOLAPAMIENTO DE 14 BSSID</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                La tasa de retransmisión de paquetes Beacon superó el <span class="text-error font-mono">43.8%</span>. Posible degradación crítica de enlace en frecuencias <span class="text-on-surface font-mono">2.437 GHz</span>. Origen principal identificado: <code class="font-telemetry-sm text-telemetry-sm text-primary px-1.5 py-0.5 rounded bg-surface-container">9C:35:EB:42:01:DF</code>
+</p>
+</div>
+</div>
+<!-- Micro Spectrum Sparkline -->
+<div class="p-space-sm rounded-xl bg-surface-container mt-1 flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-caps text-label-caps text-outline">
+<span>SATURACIÓN DE CANAL (2.412 - 2.472 GHz)</span>
+<span class="text-error">PICO: +43.8% BEACONS</span>
+</div>
+<div class="h-10 w-full flex items-end gap-1 pt-1">
+<div class="flex-1 bg-surface-container-highest h-2 rounded-t"></div>
+<div class="flex-1 bg-surface-container-highest h-3 rounded-t"></div>
+<div class="flex-1 bg-surface-container-highest h-4 rounded-t"></div>
+<div class="flex-1 bg-surface-container-highest h-6 rounded-t"></div>
+<div class="flex-1 bg-surface-container-highest h-7 rounded-t"></div>
+<!-- Channel 6 peak -->
+<div class="flex-1 bg-error h-full rounded-t relative">
+<span class="absolute -top-3 left-1/2 -translate-x-1/2 font-telemetry-sm text-[9px] text-error">CH6</span>
+</div>
+<div class="flex-1 bg-error/70 h-7 rounded-t"></div>
+<div class="flex-1 bg-surface-container-highest h-4 rounded-t"></div>
+<div class="flex-1 bg-surface-container-highest h-3 rounded-t"></div>
+<div class="flex-1 bg-surface-container-highest h-2 rounded-t"></div>
+<div class="flex-1 bg-primary/40 h-5 rounded-t"></div>
+</div>
+</div>
+<!-- Card Actions -->
+<div class="flex items-center justify-between pt-space-xs mt-1">
+<div class="flex items-center gap-space-sm">
+<button class="btn-inspect flex items-center gap-space-xs px-space-md py-1.5 rounded-xl bg-primary text-on-primary font-telemetry-sm text-telemetry-sm hover:brightness-105 transition-all shadow-sm" data-alert-id="ALT-0xAF4" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>VER EVIDENCIA</span>
+<kbd class="px-1 py-0.2 rounded bg-surface-container-lowest/30 text-on-primary font-label-caps text-label-caps ml-1">E</kbd>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-telemetry-sm text-telemetry-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">do_not_disturb_on</span>
+<span>Silenciar este tipo</span>
+</button>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">PRIORIDAD: URGENTE</span>
+</div>
+</article>
+<!-- EVENT 2: WARNING (STRANGE DEVICE) -->
+<article class="timeline-node relative flex flex-col gap-space-sm p-space-lg bg-surface-container-low hover:bg-surface-container transition-all rounded-xl shadow-md group">
+<!-- Pulse Dot -->
+<div class="absolute -left-6 top-6 w-3 h-3 rounded-full bg-tertiary ring-4 ring-tertiary/20 -translate-x-1/2 flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-lowest"></span>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="px-2 py-0.5 rounded-lg bg-surface-container-highest text-tertiary font-label-caps text-label-caps tracking-widest uppercase">ADVERTENCIA // 0xBE2</span>
+<span class="font-telemetry-sm text-telemetry-sm text-tertiary font-medium">DISPOSITIVO EXTRAÑO</span>
+</div>
+<div class="flex items-center gap-space-xs font-telemetry-sm text-telemetry-sm text-outline">
+<span class="text-on-surface">hace 32 min</span>
+<span>·</span>
+<span class="text-on-surface-variant font-mono">[13:54:02 UTC]</span>
+</div>
+</div>
+<div class="flex items-start gap-space-md mt-1">
+<div class="p-2.5 rounded-xl bg-surface-container shrink-0 text-tertiary">
+<span class="material-symbols-outlined text-[24px]">device_unknown</span>
+</div>
+<div class="flex flex-col gap-1 min-w-0">
+<h2 class="font-headline-md text-headline-md text-on-surface leading-tight">DISPOSITIVO NO RECONOCIDO ASOCIADO A RED DE INGENIERÍA</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                Nueva dirección MAC generada aleatoriamente (OUI local <code class="font-telemetry-sm text-telemetry-sm text-secondary px-1 rounded bg-surface-container">4A:2B:88:1C:99:E0</code>) solicitó asignación DHCP en <span class="font-mono text-on-surface">192.168.1.189</span> sin credenciales previas.
+              </p>
+</div>
+</div>
+<!-- Card Actions -->
+<div class="flex items-center justify-between pt-space-xs mt-1">
+<div class="flex items-center gap-space-sm">
+<button class="btn-inspect flex items-center gap-space-xs px-space-md py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-secondary font-telemetry-sm text-telemetry-sm transition-all shadow-sm" data-alert-id="ALT-0xBE2" type="button">
+<span class="material-symbols-outlined text-[16px]">pageview</span>
+<span>Ver evidencia</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-1.5 rounded-xl bg-error-container text-error hover:brightness-110 font-telemetry-sm text-telemetry-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">block</span>
+<span>Aislar MAC</span>
+</button>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">SSID: LAB_SYS_ENG</span>
+</div>
+</article>
+<!-- EVENT 3: WARNING (DEAUTH FLOOD) -->
+<article class="timeline-node relative flex flex-col gap-space-sm p-space-lg bg-surface-container-low hover:bg-surface-container transition-all rounded-xl shadow-md group">
+<!-- Pulse Dot -->
+<div class="absolute -left-6 top-6 w-3 h-3 rounded-full bg-tertiary ring-4 ring-tertiary/20 -translate-x-1/2 flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-lowest"></span>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="px-2 py-0.5 rounded-lg bg-surface-container-highest text-tertiary font-label-caps text-label-caps tracking-widest uppercase">ADVERTENCIA // 0x7CA</span>
+<span class="font-telemetry-sm text-telemetry-sm text-tertiary font-medium">INUNDACIÓN DEAUTHS</span>
+</div>
+<div class="flex items-center gap-space-xs font-telemetry-sm text-telemetry-sm text-outline">
+<span class="text-on-surface">hace 2 h</span>
+<span>·</span>
+<span class="text-on-surface-variant font-mono">[12:18:44 UTC]</span>
+</div>
+</div>
+<div class="flex items-start gap-space-md mt-1">
+<div class="p-2.5 rounded-xl bg-surface-container shrink-0 text-tertiary">
+<span class="material-symbols-outlined text-[24px]">cell_tower</span>
+</div>
+<div class="flex flex-col gap-1 min-w-0">
+<h2 class="font-headline-md text-headline-md text-on-surface leading-tight">ANOMALÍA EN TASA DE MARCOS DE DESAUTENTICACIÓN</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                Ráfaga de <span class="text-tertiary font-mono">128 marcos DeAuth en 3 segundos</span> hacia AP de laboratorio. Posible barrido de reconocimiento pasivo o vector de ataque WPA Handshake harvest.
+              </p>
+</div>
+</div>
+<!-- Card Actions -->
+<div class="flex items-center justify-between pt-space-xs mt-1">
+<div class="flex items-center gap-space-sm">
+<button class="btn-inspect flex items-center gap-space-xs px-space-md py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-secondary font-telemetry-sm text-telemetry-sm transition-all shadow-sm" data-alert-id="ALT-0x7CA" type="button">
+<span class="material-symbols-outlined text-[16px]">pageview</span>
+<span>Ver evidencia</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-telemetry-sm text-telemetry-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">do_not_disturb_on</span>
+<span>Silenciar este tipo</span>
+</button>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">VECTOR: 802.11 MGT FRAME</span>
+</div>
+</article>
+<!-- EVENT 4: INFORMATIVE (FREQUENCY MIGRATION) -->
+<article class="timeline-node relative flex flex-col gap-space-sm p-space-lg bg-surface-container-low hover:bg-surface-container transition-all rounded-xl shadow-md group">
+<!-- Pulse Dot -->
+<div class="absolute -left-6 top-6 w-3 h-3 rounded-full bg-secondary ring-4 ring-secondary/20 -translate-x-1/2 flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-lowest"></span>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="px-2 py-0.5 rounded-lg bg-surface-container-highest text-secondary font-label-caps text-label-caps tracking-widest uppercase">INFORMATIVA // 0x310</span>
+<span class="font-telemetry-sm text-telemetry-sm text-secondary font-medium">REASIGNACIÓN DE ESPECTRO</span>
+</div>
+<div class="flex items-center gap-space-xs font-telemetry-sm text-telemetry-sm text-outline">
+<span class="text-on-surface">hace 5 h</span>
+<span>·</span>
+<span class="text-on-surface-variant font-mono">[09:30:11 UTC]</span>
+</div>
+</div>
+<div class="flex items-start gap-space-md mt-1">
+<div class="p-2.5 rounded-xl bg-surface-container shrink-0 text-secondary">
+<span class="material-symbols-outlined text-[24px]">tune</span>
+</div>
+<div class="flex flex-col gap-1 min-w-0">
+<h2 class="font-headline-md text-headline-md text-on-surface leading-tight">MIGRACIÓN AUTOMÁTICA DE FRECUENCIA COMPLETADA</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                El nodo <span class="font-mono text-primary">AP-02</span> migró dinámicamente de canal 01 a canal 11 reduciendo la interferencia acumulada en un <span class="text-primary font-mono">28%</span> sin caída de clientes activos.
+              </p>
+</div>
+</div>
+<!-- Card Actions -->
+<div class="flex items-center justify-between pt-space-xs mt-1">
+<button class="btn-inspect flex items-center gap-space-xs px-space-md py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-secondary font-telemetry-sm text-telemetry-sm transition-all shadow-sm" data-alert-id="ALT-0x310" type="button">
+<span class="material-symbols-outlined text-[16px]">pageview</span>
+<span>Ver evidencia</span>
+</button>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">DFS/AUTO-CH: CONCLUIDO</span>
+</div>
+</article>
+</div>
+</div>
+<!-- RIGHT RAIL: LIVE EVIDENCE INSPECTOR (5 COLUMNS) -->
+<aside class="xl:col-span-5 flex flex-col gap-space-md sticky top-20">
+<div class="flex items-center justify-between px-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">INSPECTOR DE EVIDENCIA EN VIVO</span>
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm text-primary">ACTIVO: ALT-0xAF4</span>
+</div>
+<div class="flex flex-col gap-space-md p-space-lg bg-surface-container-low rounded-xl shadow-lg">
+<!-- Target Header & Metrics Summary -->
+<div class="flex items-start justify-between pb-space-sm">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-outline uppercase">INCIDENCIA SELECCIONADA</span>
+<span class="font-headline-md text-headline-md text-error">COLISIÓN SEVERA CH#06</span>
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant">TARGET: BSSID 9C:35:EB:42:01:DF</span>
+</div>
+<div class="px-space-sm py-1 rounded-xl bg-surface-container flex flex-col items-end">
+<span class="font-label-caps text-label-caps text-outline">SNR DEL SENSOR</span>
+<span class="font-telemetry-md text-telemetry-md text-primary">+18.4 dB</span>
+</div>
+</div>
+<!-- High-Precision RF Miniature Graph -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">MUESTREO ESPECTRAL IQ CAPTURA DE RÁFAGA</span>
+<span class="font-telemetry-sm text-telemetry-sm text-outline">FREQ: 2.437 GHz</span>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-container-lowest flex flex-col gap-2">
+<!-- Inline SVG Spectrogram -->
+<svg class="w-full h-36" fill="none" preserveaspectratio="none" viewbox="0 0 400 140">
+<!-- Grid lines -->
+<line class="text-surface-container-high" stroke="currentColor" stroke-dasharray="2 4" stroke-width="1" x1="0" x2="400" y1="35" y2="35"></line>
+<line class="text-surface-container-high" stroke="currentColor" stroke-dasharray="2 4" stroke-width="1" x1="0" x2="400" y1="70" y2="70"></line>
+<line class="text-surface-container-high" stroke="currentColor" stroke-dasharray="2 4" stroke-width="1" x1="0" x2="400" y1="105" y2="105"></line>
+<line class="text-surface-container-high" stroke="currentColor" stroke-dasharray="2 4" stroke-width="1" x1="100" x2="100" y1="0" y2="140"></line>
+<line class="text-surface-container-high" stroke="currentColor" stroke-dasharray="2 4" stroke-width="1" x1="200" x2="200" y1="0" y2="140"></line>
+<line class="text-surface-container-high" stroke="currentColor" stroke-dasharray="2 4" stroke-width="1" x1="300" x2="300" y1="0" y2="140"></line>
+<!-- Threshold Limit Line -->
+<line class="text-error/80" stroke="currentColor" stroke-width="1.5" x1="0" x2="400" y1="42" y2="42"></line>
+<text class="text-error font-telemetry-sm" fill="currentColor" font-size="9" x="320" y="38">UMBRAL CRÍTICO</text>
+<!-- Dense Signal Curves -->
+<path class="text-error" d="M0,120 Q50,115 90,95 T160,80 T190,20 T210,18 T240,75 T320,110 T400,125" fill="none" stroke="currentColor" stroke-width="2"></path>
+<path class="text-tertiary/70" d="M0,125 Q60,120 120,110 T190,35 T220,38 T280,105 T400,130" fill="none" stroke="currentColor" stroke-dasharray="4 2" stroke-width="1"></path>
+<path class="text-primary/40" d="M0,130 Q70,128 140,120 T200,60 T250,90 T400,135" fill="none" stroke="currentColor" stroke-width="1"></path>
+<!-- Data Points -->
+<circle class="text-error" cx="200" cy="20" fill="currentColor" r="4"></circle>
+<circle class="text-error/30 animate-ping" cx="200" cy="20" fill="currentColor" r="8"></circle>
+</svg>
+<div class="flex items-center justify-between font-telemetry-sm text-telemetry-sm text-outline px-1">
+<span>-95 dBm</span>
+<span>CH 06: -42.1 dBm (OVERDRIVE)</span>
+<span>-20 dBm</span>
+</div>
+</div>
+</div>
+<!-- Raw Packet Dump (Hex / ASCII) -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">VOLCADO RAW FRAME [HEX/ASCII]</span>
+<span class="font-telemetry-sm text-telemetry-sm text-secondary">LEN: 148 BYTES</span>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-lowest font-telemetry-sm text-telemetry-sm text-on-surface overflow-x-auto space-y-1">
+<div class="flex items-center justify-between text-outline border-b border-surface-container-highest pb-1">
+<span>OFFSET</span>
+<span>VALORES HEXADECIMALES</span>
+<span>ASCII</span>
+</div>
+<div class="flex items-center justify-between gap-space-sm hover:bg-surface-container/60 px-1 py-0.5 rounded">
+<span class="text-outline">0000</span>
+<span class="text-on-surface">80 00 00 00 FF FF FF FF FF FF</span>
+<span class="text-primary">........</span>
+</div>
+<div class="flex items-center justify-between gap-space-sm hover:bg-surface-container/60 px-1 py-0.5 rounded bg-error-container/10">
+<span class="text-error">0010</span>
+<span class="text-error font-medium">9C 35 EB 42 01 DF 9C 35 EB 42</span>
+<span class="text-error">.5.B..5.B</span>
+</div>
+<div class="flex items-center justify-between gap-space-sm hover:bg-surface-container/60 px-1 py-0.5 rounded">
+<span class="text-outline">0020</span>
+<span class="text-on-surface">01 DF 00 00 B0 48 E1 12 00 00</span>
+<span class="text-secondary">.....H...</span>
+</div>
+<div class="flex items-center justify-between gap-space-sm hover:bg-surface-container/60 px-1 py-0.5 rounded">
+<span class="text-outline">0030</span>
+<span class="text-on-surface">64 00 31 04 00 0A 41 45 54 48</span>
+<span class="text-on-surface">d.1...AETH</span>
+</div>
+<div class="flex items-center justify-between gap-space-sm hover:bg-surface-container/60 px-1 py-0.5 rounded">
+<span class="text-outline">0040</span>
+<span class="text-on-surface">45 52 4E 45 54 5F 44 45 56 01</span>
+<span class="text-primary font-medium">ERNET_DEV.</span>
+</div>
+</div>
+</div>
+<!-- Evidence Meta Readouts -->
+<div class="grid grid-cols-2 gap-space-sm pt-space-xs">
+<div class="p-space-sm rounded-xl bg-surface-container flex flex-col">
+<span class="font-label-caps text-label-caps text-outline">CAPTURADOR PHY</span>
+<span class="font-telemetry-md text-telemetry-md text-on-surface">D-LINK DWA-171</span>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-container flex flex-col">
+<span class="font-label-caps text-label-caps text-outline">TASA REPETICIONES</span>
+<span class="font-telemetry-md text-telemetry-md text-error">43.8% BEACON</span>
+</div>
+</div>
+<!-- Inspector Tool Belt -->
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 flex items-center justify-center gap-space-xs py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-telemetry-sm text-telemetry-sm transition-colors" id="btn-copy-pcap" type="button">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+<span>COPIAR PCAP</span>
+</button>
+<button class="flex-1 flex items-center justify-center gap-space-xs py-2 rounded-xl bg-secondary-container text-on-secondary font-headline-md text-body-sm hover:brightness-105 transition-all" id="btn-escalate" type="button">
+<span class="material-symbols-outlined text-[18px]">security_update_warning</span>
+<span>AISLAR CANAL 06</span>
+</button>
+</div>
+</div>
+</aside>
+</div>
+</div>
+<script>
+  // Quick Interaction logic for Keyboard Shortcuts & UI State toggling
+  document.addEventListener('DOMContentLoaded', () => {
+    // Keyboard Shortcuts: 'M' to Silence, 'E' to inspect active
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key.toLowerCase() === 'm') {
+        const silenceBtn = document.getElementById('btn-silence');
+        if (silenceBtn) silenceBtn.click();
+      }
+      if (e.key.toLowerCase() === 'e') {
+        const firstInspectBtn = document.querySelector('.btn-inspect');
+        if (firstInspectBtn) firstInspectBtn.click();
+      }
+    });
+
+    // Severity Filters Click Event
+    const filters = document.querySelectorAll('.filter-sev');
+    filters.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filters.forEach(f => f.classList.remove('bg-surface-container-highest', 'text-primary'));
+        filters.forEach(f => f.classList.add('bg-surface-container'));
+        btn.classList.add('bg-surface-container-highest', 'text-primary');
+        btn.classList.remove('bg-surface-container');
+      });
+    });
+
+    // Inspect Click Selection
+    const inspectButtons = document.querySelectorAll('.btn-inspect');
+    inspectButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const alertId = btn.getAttribute('data-alert-id');
+        const inspectorLabel = document.querySelector('aside .text-primary');
+        if (inspectorLabel && alertId) {
+          inspectorLabel.textContent = `ACTIVO: ${alertId}`;
+        }
+      });
+    });
+
+    // Quick Feedback for Actions
+    const silenceBtn = document.getElementById('btn-silence');
+    if (silenceBtn) {
+      silenceBtn.addEventListener('click', () => {
+        const originalText = silenceBtn.innerHTML;
+        silenceBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">done</span><span class="font-telemetry-sm text-telemetry-sm">SILENCIADO</span>';
+        setTimeout(() => { silenceBtn.innerHTML = originalText; }, 1800);
+      });
+    }
+
+    const exportBtn = document.getElementById('btn-export');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => {
+        const originalText = exportBtn.innerHTML;
+        exportBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check_circle</span><span>GENERANDO CSV...</span>';
+        setTimeout(() => { exportBtn.innerHTML = originalText; }, 1800);
+      });
+    }
+
+    const copyBtn = document.getElementById('btn-copy-pcap');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        copyBtn.textContent = 'PCAP COPIADO (148B)';
+        setTimeout(() => {
+          copyBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">content_copy</span><span>COPIAR PCAP</span>';
+        }, 1500);
+      });
+    }
+  });
+</script></main></div><footer class="fixed bottom-0 left-0 right-0 h-10 bg-surface-container-low border-t border-outline-variant/30 z-50 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md overflow-x-auto"><span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant whitespace-nowrap">ADAPTADOR: <span class="text-on-surface">D-Link DWA-171 (2.4 GHz)</span></span><span class="font-telemetry-sm text-telemetry-sm text-outline">·</span><span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant whitespace-nowrap">LATENCIA: <span class="text-primary">2ms</span></span><span class="font-telemetry-sm text-telemetry-sm text-outline">·</span><span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant whitespace-nowrap">ÚLTIMA ACT: <span class="text-on-surface">hace 12s</span></span></div><div class="flex items-center gap-space-xs"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-ping"></span><span class="font-telemetry-sm text-telemetry-sm text-secondary whitespace-nowrap">[ESTADO: ESCANEANDO...]</span></div></footer></body></html>

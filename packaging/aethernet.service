@@ -1,0 +1,15 @@
+[Unit]
+Description=Aethernet RF monitor (daemon pasivo)
+After=network.target NetworkManager.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/aethernet daemon run
+Restart=on-failure
+RestartSec=10
+# El monitor pasivo requiere privilegios; ejecútalo como usuario con capacidad
+# CAP_NET_ADMIN/CAP_NET_RAW o habilita monitor desde la UI con consentimiento.
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

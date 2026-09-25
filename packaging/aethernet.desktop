@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Aethernet
+GenericName=RF Monitor
+Comment=Auditoría WiFi doméstica pasiva y honesta
+Exec=aethernet-ui
+Icon=network-wireless
+Terminal=false
+Categories=Network;Security;Monitor;
+Keywords=wifi;rf;monitor;network;security;
+StartupWMClass=Aethernet
