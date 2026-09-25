@@ -221,6 +221,55 @@ def evaluate_channel(
     return result
 
 
+def advise_channel_change(
+    table: list[dict[str, Any]], current: int, min_improvement: int = 15
+) -> dict[str, Any] | None:
+    """Sugiere cambiar de canal si hay uno claramente mejor que ``current``.
+
+    ``min_improvement`` es el porcentaje mínimo de reducción de interferencia
+    para no molestar con avisos por diferencias irrelevantes.
+    """
+    if not (1 <= current <= 13) or not table:
+        return None
+    current_row = next((r for r in table if r["channel"] == current), None)
+    if current_row is None:
+        return None
+    best = min(table, key=lambda r: r["interference"])
+    if best["channel"] == current or current_row["interference"] <= 0:
+        return None
+    improvement = (current_row["interference"] - best["interference"]) / current_row["interference"]
+    pct = round(improvement * 100)
+    if pct < min_improvement:
+        return None
+    return {
+        "current": current,
+        "recommended": best["channel"],
+        "improvement_pct": pct,
+        "current_availability": current_row["availability"],
+        "recommended_availability": best["availability"],
+    }
+
+
+def occupancy_split(
+    scan: WifiScan,
+    my_ssids: tuple[str, ...] = (),
+    my_bssids: tuple[str, ...] = (),
+    band: Band | str = Band.GHZ_24,
+) -> list[dict[str, Any]]:
+    """Ocupación por canal separando **tu red** de los **vecinos**."""
+    channels = band_channels(band)
+    ssid_set = {s.lower() for s in my_ssids}
+    bssid_set = {b.upper() for b in my_bssids}
+    mine: dict[int, int] = {c: 0 for c in channels}
+    others: dict[int, int] = {c: 0 for c in channels}
+    for ap in scan.aps:
+        if ap.channel not in mine:
+            continue
+        is_mine = ap.bssid in bssid_set or (ap.ssid and ap.ssid.lower() in ssid_set) or "connected" in ap.tags
+        (mine if is_mine else others)[ap.channel] += 1
+    return [{"channel": c, "mine": mine[c], "others": others[c]} for c in channels]
+
+
 def heatmap(rows: list[dict[str, Any]]) -> dict[str, Any]:
     """Matriz hora-del-día × canal a partir de filas agregadas del repositorio."""
     hours = list(range(24))

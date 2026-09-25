@@ -13,12 +13,14 @@ from ...core.spectrum import (
     channel_table,
     evaluate_channel,
     occupancy,
+    occupancy_split,
     polar_points,
     recommend_channel,
     recommend_from_stats,
 )
 from ...core.spectrum import heatmap as build_heatmap
 from ...models import Band
+from ...report import export_channel_markdown
 from ...utils import humanize_age
 from .. import charts
 from ..components import empty_state, kv_row, label_caps, panel_header, status_dot
@@ -67,6 +69,24 @@ def spectrum_page() -> None:
                         ui.echart(
                             charts.channel_bars(occupancy_rows, recommendation["channel"])
                         ).classes("w-full").style("height:280px")
+
+                    with ui.element("div").classes("ae-panel flex flex-col gap-3"):
+                        panel_header(
+                            "cell_tower",
+                            "TU RED vs VECINOS",
+                            "OCUPACIÓN POR CANAL // SEPARA TU RED DEL ENTORNO",
+                            COLORS["cyan"],
+                        )
+                        split = occupancy_split(
+                            scan,
+                            tuple(context.settings.my_ssids),
+                            tuple(context.settings.my_bssids),
+                            band,
+                        )
+                        if any(row["mine"] or row["others"] for row in split):
+                            ui.echart(charts.channel_bars_split(split)).classes("w-full").style("height:240px")
+                        else:
+                            empty_state("Sin redes en esta banda.", "cell_tower")
 
                     with ui.element("div").classes("ae-panel flex flex-col gap-3"):
                         panel_header("grid_on", "MAPA DE CALOR ESPECTRAL 24 HORAS", "OCUPACIÓN POR CANAL Y HORA // OBSERVACIONES REALES", COLORS["cyan"])
@@ -310,9 +330,11 @@ def spectrum_page() -> None:
         ui.timer(60.0, render_forecast.refresh)
 
         # -- Gestor de canal: selección manual con veredicto de mejora -----#
+        manager = {"hours": context.settings.forecast_window_hours}
+
         @ui.refreshable
         def render_manager() -> None:
-            stats = context.repo.channel_stats(hours=context.settings.forecast_window_hours)
+            stats = context.repo.channel_stats(hours=manager["hours"])
             table = channel_table(stats, Band.GHZ_24)
             best = min(table, key=lambda r: r["rank"])
             current = int(context.settings.my_channel or 0)
@@ -348,9 +370,29 @@ def spectrum_page() -> None:
                         "SELECCIÓN MANUAL EN VIVO · AETHERNET NO TOCA TU ROUTER",
                         COLORS["amber"],
                     )
-                    copy_btn = ui.button("COPIAR INSTRUCCIONES", icon="content_copy").props(
-                        "unelevated no-caps"
-                    ).style(f"background:{COLORS['amber']};color:#030603")
+                    with ui.row().classes("items-center gap-2 flex-wrap"):
+                        label_caps("VENTANA:")
+                        for hours, text in ((6, "6 H"), (24, "24 H"), (168, "7 D")):
+                            active = manager["hours"] == hours
+                            chip = ui.html(text).classes(
+                                "ae-chip" + (" active" if active else "")
+                            ).style("cursor:pointer")
+                            chip.on("click", lambda _=None, h=hours: _set_window_mgr(h))
+                        export_btn = ui.button("INFORME", icon="description").props(
+                            "unelevated no-caps"
+                        ).style(f"background:{COLORS['surface-2']};color:{COLORS['text']}")
+                        copy_btn = ui.button("COPIAR", icon="content_copy").props(
+                            "unelevated no-caps"
+                        ).style(f"background:{COLORS['amber']};color:#030603")
+
+                        def _export() -> None:
+                            path = export_channel_markdown(
+                                context.repo, context.settings,
+                                context.paths.report_dir / f"aethernet-canal-{time.strftime('%Y%m%d-%H%M%S')}.md",
+                            )
+                            ui.notify(f"Informe: {path.name}", position="top", timeout=3000)
+
+                        export_btn.on("click", _export)
 
                 with ui.row().classes("items-end gap-6 flex-wrap"):
                     with ui.column().classes("gap-1"):
@@ -415,6 +457,10 @@ def spectrum_page() -> None:
         def _set_channel(event: Any) -> None:
             context.settings.my_channel = int(event.value or 0)
             save_settings(context.settings, context.paths)
+            render_manager.refresh()
+
+        def _set_window_mgr(hours: int) -> None:
+            manager["hours"] = hours
             render_manager.refresh()
 
         render_manager()

@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Literal
 
 from .base import ReportData, ReportDependencyError, build_report_data, output_path, redact_mac
+from .channel import export_channel_markdown, render_channel_markdown
 
 Format = Literal["md", "markdown", "json", "csv", "pdf"]
 
@@ -38,6 +39,8 @@ __all__ = [
     "ReportDependencyError",
     "build_report_data",
     "export",
+    "export_channel_markdown",
     "output_path",
     "redact_mac",
+    "render_channel_markdown",
 ]

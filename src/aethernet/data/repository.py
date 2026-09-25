@@ -729,6 +729,43 @@ class Repository:
     def channel_advisory_count(self, band: str = "2.4 GHz") -> int:
         return int(self.db.scalar("SELECT COUNT(*) FROM channel_advisory WHERE band=?", (band,), default=0))
 
+    # ------------------------------------------------------------------ #
+    # Lista de vigilancia (watchlist)
+    # ------------------------------------------------------------------ #
+    def add_watch(
+        self,
+        bssid: str,
+        *,
+        ssid: str = "",
+        note: str = "",
+        expected_channel: int | None = None,
+        expected_security: str | None = None,
+    ) -> None:
+        with self.db.transaction() as conn:
+            conn.execute(
+                """
+                INSERT INTO watchlist (bssid, ssid, note, expected_channel, expected_security, created_at)
+                VALUES (?,?,?,?,?,?)
+                ON CONFLICT(bssid) DO UPDATE SET
+                    ssid=excluded.ssid, note=excluded.note,
+                    expected_channel=excluded.expected_channel,
+                    expected_security=excluded.expected_security
+                """,
+                (bssid.upper(), ssid or None, note or None, expected_channel, expected_security, time.time()),
+            )
+
+    def remove_watch(self, bssid: str) -> bool:
+        with self.db.transaction() as conn:
+            cursor = conn.execute("DELETE FROM watchlist WHERE bssid=?", (bssid.upper(),))
+            return cursor.rowcount > 0
+
+    def list_watch(self) -> list[dict[str, Any]]:
+        rows = self.db.query("SELECT * FROM watchlist ORDER BY created_at DESC")
+        return [dict(r) for r in rows]
+
+    def watch_map(self) -> dict[str, dict[str, Any]]:
+        return {str(row["bssid"]): row for row in self.list_watch()}
+
     def channel_advisory_recent(self, limit: int = 30, band: str = "2.4 GHz") -> list[dict[str, Any]]:
         rows = self.db.query(
             "SELECT ts, hour, weekday, best_channel, availability, interference, samples "

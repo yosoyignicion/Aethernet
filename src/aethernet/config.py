@@ -181,6 +181,11 @@ class Settings:
     # Canal en el que está tu router (para comparar y ver cuánto mejorarías)
     my_channel: int = 0
 
+    # Vigilancia de canal en segundo plano: avisa si tu canal se satura y hay uno mejor
+    channel_watch_enabled: bool = True
+    channel_watch_hours: int = 3
+    channel_watch_min_improvement: int = 15
+
     def merged_with(self, data: dict[str, Any]) -> Settings:
         known = {f.name for f in fields(self)}
         for key, value in data.items():

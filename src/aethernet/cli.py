@@ -29,7 +29,7 @@ from .integration.importer import import_and_save
 from .integration.speedtest import correlate_with_congestion, run_speedtest
 from .logging_setup import get_logger, setup_logging
 from .models import Finding, Severity
-from .report import build_report_data, export, output_path
+from .report import build_report_data, export, export_channel_markdown, output_path
 from .service.control import ControlChannel
 from .service.daemon import MonitorService, daemon_is_running, run_daemon
 from .utils import humanize_age
@@ -205,6 +205,7 @@ def cmd_analyze(ctx: Context) -> int:
         known_lan_macs={d.mac for d in ctx.repo.devices()},
         trusted_macs=set(ctx.settings.trusted_macs) | set(ctx.repo.trusted_macs()),
         signal_history=history,
+        watchlist=ctx.repo.watch_map(),
         disabled_rules=set(ctx.settings.muted_rules),
     )
     findings = run_rules(context)
@@ -242,6 +243,16 @@ def cmd_events(ctx: Context) -> int:
 
 def cmd_report(ctx: Context) -> int:
     args = ctx.args
+    if args.kind == "channel":
+        destination = Path(args.output) if args.output else output_path(
+            ctx.paths.report_dir, "aethernet-canal", "md"
+        )
+        path = export_channel_markdown(ctx.repo, ctx.settings, destination)
+        if args.json:
+            _emit_json({"file": str(path)})
+        else:
+            print(f"Informe de canal escrito: {path}")
+        return 0
     data = build_report_data(ctx.repo, ctx.settings, event_limit=args.limit)
     fmt = args.format
     if args.output:
@@ -408,6 +419,50 @@ def cmd_monitor(ctx: Context) -> int:
                 f"  {stamp} [{row['kind']:6}] {row['ssid'] or row['bssid'] or row['source_mac']} "
                 f"×{row['count']} ch{row['channel']}"
             )
+        return 0
+    return 1
+
+
+def cmd_watch(ctx: Context) -> int:
+    args = ctx.args
+    action = args.action
+    if action == "list":
+        rows = ctx.repo.list_watch()
+        if args.json:
+            _emit_json(rows)
+            return 0
+        if not rows:
+            print("Lista de vigilancia vacía.")
+            return 0
+        for row in rows:
+            print(
+                f"  {row['bssid']}  {row.get('ssid') or '-'}  "
+                f"CH{row.get('expected_channel') or '?'}  {row.get('expected_security') or '?'}  "
+                f"{row.get('note') or ''}"
+            )
+        return 0
+    if action == "add":
+        if not args.bssid:
+            print("Uso: aethernet watch add <BSSID> [--ssid S] [--note N]")
+            return 1
+        bssid = args.bssid.upper()
+        scan = ctx.repo.latest_wifi_scan()
+        ap = next((a for a in scan.aps if a.bssid == bssid), None) if scan else None
+        ctx.repo.add_watch(
+            bssid,
+            ssid=args.ssid or (ap.ssid if ap else ""),
+            note=args.note or "",
+            expected_channel=ap.channel if ap else None,
+            expected_security=ap.security if ap else None,
+        )
+        print(f"Vigilando {bssid}" + (f" (CH{ap.channel}, {ap.security})" if ap else ""))
+        return 0
+    if action == "remove":
+        if not args.bssid:
+            print("Uso: aethernet watch remove <BSSID>")
+            return 1
+        removed = ctx.repo.remove_watch(args.bssid)
+        print("Eliminado de vigilancia." if removed else "No estaba en la lista.")
         return 0
     return 1
 
@@ -694,6 +749,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_rep = sub.add_parser("report", help="genera un informe exportable")
     p_rep.add_argument("--format", choices=["md", "markdown", "json", "csv", "pdf"], default="md")
+    p_rep.add_argument("--kind", choices=["wifi", "channel"], default="wifi", help="tipo de informe")
     p_rep.add_argument("--output", help="ruta del archivo de salida")
     p_rep.add_argument("--limit", type=int, default=50, help="eventos incluidos")
     add_json(p_rep)
@@ -723,6 +779,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_mon.add_argument("--kind", help="filtra por tipo (deauth|probe|beacon|eapol)")
     add_json(p_mon)
     p_mon.set_defaults(func=cmd_monitor)
+
+    p_watch = sub.add_parser("watch", help="lista de vigilancia de redes (avisos de cambio)")
+    p_watch.add_argument("action", choices=["list", "add", "remove"])
+    p_watch.add_argument("bssid", nargs="?")
+    p_watch.add_argument("--ssid")
+    p_watch.add_argument("--note")
+    add_json(p_watch)
+    p_watch.set_defaults(func=cmd_watch)
 
     p_fc = sub.add_parser("forecast", help="previsión de canal por hora/día (histórico)")
     p_fc.add_argument("action", nargs="?", default="show", choices=["show", "week", "record"])

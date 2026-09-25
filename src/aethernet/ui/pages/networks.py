@@ -9,7 +9,7 @@ from nicegui import ui
 from ...core.oui import vendor_for
 from ...models import AccessPoint
 from .. import charts
-from ..components import empty_state, kv_row, label_caps, panel_header
+from ..components import empty_state, kv_row, label_caps, panel_header, toast
 from ..shell import shell
 from ..state import fmt_age, get_context, security_label
 from ..theme import COLORS, icon
@@ -96,6 +96,31 @@ def networks_page() -> None:
                         "mismo equipo (o de un vecino); no es prueba de suplantación. Solo sería "
                         "sospechoso si imitara TU red con otro BSSID."
                     ).classes("text-[11px] text-[#86B89B] italic")
+
+                ui.element("div").classes("ae-divider")
+                watched = ap.bssid in context.repo.watch_map()
+                watch_btn = ui.button(
+                    "Dejar de vigilar" if watched else "Vigilar cambios",
+                    icon="visibility_off" if watched else "visibility",
+                ).props("unelevated no-caps dense").style(
+                    f"background:{COLORS['surface-2']};color:{COLORS['amber'] if not watched else COLORS['text-dim']}"
+                )
+
+                def toggle_watch(_: Any = None, bssid: str = ap.bssid) -> None:
+                    if bssid in context.repo.watch_map():
+                        context.repo.remove_watch(bssid)
+                        toast("Ya no vigilas esta red", icon_name="visibility_off")
+                    else:
+                        context.repo.add_watch(
+                            bssid,
+                            ssid=ap.ssid,
+                            expected_channel=ap.channel,
+                            expected_security=ap.security,
+                        )
+                        toast("Vigilando cambios de canal/seguridad", icon_name="visibility")
+                    render_inspector.refresh(ap)
+
+                watch_btn.on("click", toggle_watch)
 
         with ui.element("div").classes("grid grid-cols-1 xl:grid-cols-12 gap-5 w-full"):
             with ui.element("div").classes("xl:col-span-8"):

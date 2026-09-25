@@ -99,3 +99,44 @@ def test_evaluate_channel_improvement_vs_current():
     assert result["vs_current"]["better"] is True
     assert result["vs_current"]["interference_delta"] > 0
     assert result["vs_current"]["availability_delta"] > 0
+
+
+def test_advise_channel_change():
+    from aethernet.core.spectrum import advise_channel_change
+
+    table = [
+        {"channel": 6, "interference": 4.0, "availability": 0, "rank": 3, "networks": 8},
+        {"channel": 11, "interference": 0.0, "availability": 100, "rank": 1, "networks": 0},
+        {"channel": 1, "interference": 1.0, "availability": 75, "rank": 2, "networks": 1},
+    ]
+    advice = advise_channel_change(table, 6, min_improvement=15)
+    assert advice is not None
+    assert advice["recommended"] == 11
+    assert advice["improvement_pct"] == 100
+    assert advise_channel_change(table, 11) is None
+
+
+def test_advise_threshold_ignores_marginal():
+    from aethernet.core.spectrum import advise_channel_change
+
+    table = [
+        {"channel": 6, "interference": 1.0, "availability": 75, "rank": 2, "networks": 1},
+        {"channel": 11, "interference": 0.95, "availability": 76, "rank": 1, "networks": 1},
+    ]
+    assert advise_channel_change(table, 6, min_improvement=15) is None
+
+
+def test_occupancy_split_separates_mine_from_neighbors():
+    from aethernet.core.spectrum import occupancy_split
+
+    s = scan(
+        ap("MiRed", "AA:BB:CC:00:00:01", channel=6, tags=("connected",)),
+        ap("Vecino", "AA:BB:CC:00:00:02", channel=6),
+        ap("Vecino2", "AA:BB:CC:00:00:03", channel=6),
+        ap("Otro", "AA:BB:CC:00:00:04", channel=1),
+    )
+    rows = {r["channel"]: r for r in occupancy_split(s, my_ssids=("MiRed",))}
+    assert rows[6]["mine"] == 1
+    assert rows[6]["others"] == 2
+    assert rows[1]["mine"] == 0
+    assert rows[1]["others"] == 1

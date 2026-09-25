@@ -139,12 +139,27 @@ def resolve_hostnames(devices: list[LanDevice], timeout: float = 1.0, workers: i
 
     socket.setdefaulttimeout(timeout)
 
+    def _reverse(ip: str) -> str | None:
+        try:
+            hostname, _, _ = socket.gethostbyaddr(ip)
+            return hostname
+        except (OSError, socket.herror):
+            pass
+        result = run_command(["getent", "hosts", ip], timeout=timeout + 1)
+        if result.ok and result.stdout.strip():
+            parts = result.stdout.split()
+            if len(parts) >= 2:
+                return parts[1]
+        result = run_command(["avahi-resolve", "-a", ip], timeout=timeout + 1)
+        if result.ok and "\t" in result.stdout:
+            return result.stdout.split("\t", 1)[1].strip()
+        return None
+
     def resolve(device: LanDevice) -> LanDevice:
         if not device.ip:
             return device
-        try:
-            hostname, _, _ = socket.gethostbyaddr(device.ip)
-        except (OSError, socket.herror):
+        hostname = _reverse(device.ip)
+        if hostname is None:
             return device
         return LanDevice(
             mac=device.mac,

@@ -174,6 +174,17 @@ MIGRATIONS: tuple[str, ...] = (
     CREATE INDEX IF NOT EXISTS idx_chadv_slot ON channel_advisory(weekday, hour, band);
     CREATE INDEX IF NOT EXISTS idx_chadv_ts   ON channel_advisory(ts DESC);
     """,
+    # v4 — lista de vigilancia de redes concretas
+    """
+    CREATE TABLE IF NOT EXISTS watchlist (
+        bssid             TEXT PRIMARY KEY,
+        ssid              TEXT,
+        note              TEXT,
+        expected_channel  INTEGER,
+        expected_security TEXT,
+        created_at        REAL NOT NULL
+    );
+    """,
 )
 
 

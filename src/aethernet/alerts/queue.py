@@ -92,6 +92,7 @@ class AlertQueue:
         kind: str = "general",
         fingerprint: str = "",
         notify: bool = False,
+        dedup_window_min: int = 0,
     ) -> int:
         event = Event(
             severity=severity,
@@ -101,8 +102,8 @@ class AlertQueue:
             fingerprint=fingerprint,
             created_at=time.time(),
         )
-        event_id, _created = self.repo.add_event(event)
-        if notify and self.settings.notifications and not self.filter.quiet_now():
+        event_id, created_new = self.repo.add_event(event, dedup_window_sec=dedup_window_min * 60)
+        if created_new and notify and self.settings.notifications and not self.filter.quiet_now():
             try:
                 self.notifier.notify(title, body, severity)
             except Exception as exc:

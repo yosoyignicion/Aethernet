@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from nicegui import ui
 
+from ...core.spectrum import advise_channel_change, channel_table
+from ...models import Band
 from .. import charts
 from ..components import label_caps, panel_header, status_dot, toast
 from ..shell import shell
@@ -77,6 +79,22 @@ def dashboard() -> None:
                                 label_caps(badge, accent)
                             metric_refs[key] = value_label
 
+        # -- tarjeta de canal (semáforo accionable) ---------------------#
+        with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-4 w-full"):
+            with ui.row().classes("items-center gap-3"):
+                canal_dot = ui.html(
+                    f'<span style="display:inline-block;width:10px;height:10px;border-radius:9999px;'
+                    f'background:{COLORS["text-muted"]}"></span>'
+                )
+                with ui.column().classes("gap-0"):
+                    label_caps("CANAL 2.4 GHz")
+                    canal_label = ui.label("—").classes("ae-headline text-base text-[#D8F5E3]")
+            canal_reco = ui.label("").classes("ae-mono text-[12px] text-[#86B89B]")
+            canal_btn = ui.button("GESTOR DE CANAL", icon="tune").props("unelevated no-caps").style(
+                f"background:{COLORS['surface-2']};color:{COLORS['text']}"
+            )
+            canal_btn.on("click", lambda: ui.navigate.to("/espectro"))
+
         # -- histórico de congestión ------------------------------------#
         with ui.element("div").classes("ae-panel flex flex-col gap-4 w-full"):
             panel_header("show_chart", "HISTÓRICO DE CONGESTIÓN 24H", "RESOLUCIÓN TEMPORAL 15 MIN // OBSERVACIONES REALES", COLORS["mint"])
@@ -106,6 +124,36 @@ def dashboard() -> None:
         else:
             unread_label.classes(remove="ae-glitch")
         charts.update(congestion_chart, charts.congestion_area(context.repo.hourly_congestion(24)))
+
+        # canal actual vs recomendado
+        current_channel = int(context.settings.my_channel or 0)
+        stats = context.repo.channel_stats(hours=context.settings.forecast_window_hours)
+        table = channel_table(stats, Band.GHZ_24)
+        best = min(table, key=lambda r: r["rank"]) if table else None
+        if current_channel:
+            advice = advise_channel_change(
+                table, current_channel, context.settings.channel_watch_min_improvement
+            )
+            if advice:
+                color = COLORS["amber"]
+                canal_label.set_text(f"CH{current_channel:02d} · saturado")
+                canal_reco.set_text(
+                    f"Mejor: CH{advice['recommended']:02d} (menos interferencia ~{advice['improvement_pct']}%)"
+                )
+            else:
+                color = COLORS["mint"]
+                canal_label.set_text(f"CH{current_channel:02d} · óptimo")
+                canal_reco.set_text("Tu canal actual es el mejor observado.")
+        else:
+            color = COLORS["text-muted"]
+            canal_label.set_text("sin definir")
+            canal_reco.set_text(
+                f"Mejor ahora: CH{best['channel']:02d}" if best else "Define tu canal en el gestor."
+            )
+        canal_dot.set_content(
+            f'<span style="display:inline-block;width:10px;height:10px;border-radius:9999px;'
+            f'background:{color}"></span>'
+        )
 
     def _after_scan(_result: object) -> None:
         ui.timer(0.1, refresh, once=True)

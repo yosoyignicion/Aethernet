@@ -22,10 +22,10 @@ from ..core.analysis import AnalysisContext, MonitorEvent, run_rules
 from ..core.health import score_health
 from ..core.lan_scan import scan_lan
 from ..core.monitor.capture import MonitorCapture
-from ..core.spectrum import recommend_from_stats
+from ..core.spectrum import advise_channel_change, channel_table, recommend_from_stats
 from ..core.wifi_scan import scan_wifi
 from ..logging_setup import get_logger
-from ..models import Band, Finding, HealthScore, LanScan, WifiScan
+from ..models import Band, Finding, HealthScore, LanScan, Severity, WifiScan
 from ..utils import atomic_write
 from .control import ControlChannel
 
@@ -139,6 +139,7 @@ class MonitorService:
                 trusted_macs=set(self.settings.trusted_macs) | set(self.repo.trusted_macs()),
                 signal_history=history,
                 monitor_events=drained,
+                watchlist=self.repo.watch_map(),
                 disabled_rules=set(self.settings.muted_rules),
             )
             result.findings = run_rules(context)
@@ -156,6 +157,10 @@ class MonitorService:
                     self.record_advisory()
                 except Exception as exc:  # la previsión nunca debe romper un escaneo
                     log.debug("no se pudo registrar la previsión de canal: %s", exc)
+            try:
+                self.check_channel_watch()
+            except Exception as exc:  # la vigilancia nunca debe romper un escaneo
+                log.debug("vigilancia de canal falló: %s", exc)
 
             self.scan_count += 1
             self.last_result = result
@@ -283,6 +288,36 @@ class MonitorService:
             ranking=[int(c) for c in recommendation.get("ranking", [])],
         )
         return recommendation
+
+    def check_channel_watch(self) -> dict[str, Any] | None:
+        """Avisa (con dedup) si tu canal está saturado y hay uno claramente mejor."""
+        if not self.settings.channel_watch_enabled or not self.settings.my_channel:
+            return None
+        stats = self.repo.channel_stats(hours=self.settings.channel_watch_hours)
+        if not stats:
+            return None
+        table = channel_table(stats, Band.GHZ_24)
+        advice = advise_channel_change(
+            table, int(self.settings.my_channel), self.settings.channel_watch_min_improvement
+        )
+        if advice is None:
+            return None
+        title = f"Tu canal CH{advice['current']:02d} está saturado; CH{advice['recommended']:02d} es mejor"
+        body = (
+            f"Reducirías la interferencia ~{advice['improvement_pct']}% "
+            f"({advice['current_availability']}% → {advice['recommended_availability']}% de disponibilidad) "
+            f"en las últimas {self.settings.channel_watch_hours} h. Aplícalo en el panel de tu router."
+        )
+        self.alerts.add_event(
+            title=title,
+            body=body,
+            severity=Severity.WARNING,
+            kind="channel_advisor",
+            fingerprint=f"channel_advisor:{advice['current']}->{advice['recommended']}",
+            notify=True,
+            dedup_window_min=self.settings.dedup_window_min,
+        )
+        return advice
 
     # ------------------------------------------------------------------ #
     # Bucle

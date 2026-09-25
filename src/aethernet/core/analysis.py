@@ -48,6 +48,7 @@ class AnalysisContext:
     trusted_macs: set[str] = field(default_factory=set)
     signal_history: dict[str, list[int]] = field(default_factory=dict)
     monitor_events: list[MonitorEvent] = field(default_factory=list)
+    watchlist: dict[str, dict[str, Any]] = field(default_factory=dict)
     disabled_rules: set[str] = field(default_factory=set)
     now: float = field(default_factory=time.time)
 
@@ -476,6 +477,65 @@ class NewLanDeviceRule:
         return findings
 
 
+class WatchlistChangeRule:
+    rule_id = "watchlist_change"
+    severity = Severity.WARNING
+
+    def evaluate(self, ctx: AnalysisContext) -> list[Finding]:
+        if not ctx.watchlist:
+            return []
+        current = ctx.scan.by_bssid()
+        previous = ctx.previous.by_bssid() if ctx.previous else {}
+        findings: list[Finding] = []
+        for bssid, meta in ctx.watchlist.items():
+            ap = current.get(bssid)
+            ssid = str(meta.get("ssid") or "")
+            if ap is None:
+                if bssid in previous:
+                    findings.append(
+                        _finding(
+                            self.rule_id,
+                            Severity.WARNING,
+                            f"Red vigilada desapareció: {ssid or bssid}",
+                            "El BSSID que estabas vigilando ya no está visible.",
+                            suggestion="Puede haberse apagado, movido o cambiado de BSSID.",
+                            subject=bssid,
+                            evidence={"bssid": bssid, "ssid": ssid},
+                            timestamp=ctx.now,
+                        )
+                    )
+                continue
+            expected_channel = meta.get("expected_channel")
+            expected_security = meta.get("expected_security")
+            if expected_channel and ap.channel and int(ap.channel) != int(expected_channel):
+                findings.append(
+                    _finding(
+                        self.rule_id,
+                        Severity.WARNING,
+                        f"Red vigilada cambió de canal: {ssid or bssid}",
+                        f"Pasó de CH{int(expected_channel):02d} a CH{ap.channel:02d}.",
+                        suggestion="Si no lo cambiaste tú, revisa el router.",
+                        subject=bssid,
+                        evidence={"bssid": bssid, "from": expected_channel, "to": ap.channel},
+                        timestamp=ctx.now,
+                    )
+                )
+            if expected_security and ap.security != expected_security:
+                findings.append(
+                    _finding(
+                        self.rule_id,
+                        Severity.ALERT,
+                        f"Red vigilada cambió de seguridad: {ssid or bssid}",
+                        f"Pasó de {expected_security} a {ap.security}.",
+                        suggestion="Un cambio a 'open'/'wep' es mala señal.",
+                        subject=bssid,
+                        evidence={"bssid": bssid, "from": expected_security, "to": ap.security},
+                        timestamp=ctx.now,
+                    )
+                )
+        return findings
+
+
 class CongestionRule:
     rule_id = "channel_congestion"
     severity = Severity.WARNING
@@ -548,6 +608,7 @@ DEFAULT_RULES: tuple[type, ...] = (
     DeauthFloodRule,
     ProbeRequestRule,
     NewLanDeviceRule,
+    WatchlistChangeRule,
     CongestionRule,
 )
 

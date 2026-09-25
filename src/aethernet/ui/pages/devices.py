@@ -7,37 +7,12 @@ from typing import Any
 
 from nicegui import ui
 
+from ...core.devices import classify_device
 from ...models import LanDevice
 from ..components import empty_state, label_caps, toast
 from ..shell import shell
 from ..state import fmt_age, get_context
 from ..theme import COLORS, icon
-
-_TYPE_HINTS = (
-    ("raspberry", "IOT", "sensors"),
-    ("espressif", "IOT", "sensors"),
-    ("sonoff", "IOT", "sensors"),
-    ("apple", "MÓVIL", "smartphone"),
-    ("samsung", "MÓVIL", "smartphone"),
-    ("xiaomi", "MÓVIL", "smartphone"),
-    ("sony", "TV", "tv"),
-    ("lg electronics", "TV", "tv"),
-    ("intel", "PC", "laptop_mac"),
-    ("dell", "PC", "laptop_chromebook"),
-    ("hewlett", "PC", "laptop_mac"),
-    ("vmware", "VIRTUAL", "developer_board"),
-    ("router", "ROUTER", "router"),
-)
-
-
-def _device_type(device: LanDevice) -> tuple[str, str]:
-    if device.is_gateway:
-        return "ROUTER", "router"
-    haystack = f"{device.vendor or ''} {device.hostname or ''}".lower()
-    for needle, label, icon_name in _TYPE_HINTS:
-        if needle in haystack:
-            return label, icon_name
-    return "DESCONOCIDO", "device_unknown"
 
 
 @ui.page("/dispositivos")
@@ -133,14 +108,14 @@ def devices_page() -> None:
 
 
 def _device_card(context: Any, device: LanDevice, refresh: Callable[..., Any]) -> None:
-    type_label, type_icon = _device_type(device)
+    kind = classify_device(device)
     trusted = device.trusted or device.is_gateway
     accent = COLORS["mint"] if trusted else COLORS["amber"]
     with ui.element("div").classes("ae-card flex flex-col gap-3").style(
         f"border-color:{accent if not trusted else COLORS['border']}"
     ):
         with ui.row().classes("items-center justify-between w-full"):
-            ui.html(f'<span class="ae-chip">{icon(type_icon, size=13)} {type_label}</span>')
+            ui.html(f'<span class="ae-chip">{icon(kind.icon, size=13)} {kind.label}</span>')
             ui.html(
                 f'<span class="ae-chip{" active" if trusted else ""}">'
                 f'{"SEGURO // VERIFICADO" if trusted else "NO CONFIABLE"}</span>'
@@ -151,7 +126,9 @@ def _device_card(context: Any, device: LanDevice, refresh: Callable[..., Any]) -
         with ui.column().classes("gap-1 w-full"):
             _line("DIRECCIÓN IP", device.ip)
             _line("DIRECCIÓN MAC", device.mac)
+            _line("HOSTNAME", device.hostname or "sin resolver")
             _line("FABRICANTE (OUI)", device.vendor or "Sin identificar")
+            _line("IDENTIFICACIÓN", f"{kind.label} ({kind.confidence}) · {kind.reason}")
             _line("ÚLTIMA VEZ", fmt_age(device.last_seen))
         with ui.row().classes("items-center gap-2 w-full"):
             label = "Revocar Confianza" if trusted else "Marcar Confiable"

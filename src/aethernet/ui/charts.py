@@ -275,6 +275,54 @@ def sparkline(series: list[tuple[float, int]], color: str | None = None) -> dict
     }
 
 
+def channel_bars_split(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Barras apiladas por canal: tu red vs vecinos."""
+    labels = [f"C{r['channel']}" for r in rows]
+    mine = [int(r.get("mine", 0)) for r in rows]
+    others = [int(r.get("others", 0)) for r in rows]
+    options = _base()
+    options.update(
+        {
+            "grid": {"left": 34, "right": 12, "top": 26, "bottom": 24},
+            "legend": {
+                "data": ["Tu red", "Vecinos"],
+                "textStyle": {"color": COLORS["text-dim"], "fontSize": 10, "fontFamily": _MONO},
+                "top": 0,
+                "right": 0,
+            },
+            "xAxis": {
+                "type": "category",
+                "data": labels,
+                "axisLine": {"lineStyle": {"color": COLORS["border"]}},
+                "axisLabel": {"color": _AXIS, "fontSize": 9, "fontFamily": _MONO},
+            },
+            "yAxis": {
+                "type": "value",
+                "splitLine": {"lineStyle": {"color": _GRID}},
+                "axisLabel": {"color": _AXIS, "fontSize": 9, "fontFamily": _MONO},
+            },
+            "series": [
+                {
+                    "name": "Vecinos",
+                    "type": "bar",
+                    "stack": "total",
+                    "data": others,
+                    "itemStyle": {"color": COLORS["cyan"]},
+                    "barWidth": "62%",
+                },
+                {
+                    "name": "Tu red",
+                    "type": "bar",
+                    "stack": "total",
+                    "data": mine,
+                    "itemStyle": {"color": COLORS["mint"], "borderRadius": [3, 3, 0, 0]},
+                },
+            ],
+        }
+    )
+    return options
+
+
 def forecast_bars(hours: list[dict[str, Any]]) -> dict[str, Any]:
     """Disponibilidad prevista por hora, coloreada por canal recomendado."""
     labels = [f"{h['hour']:02d}" for h in hours]
