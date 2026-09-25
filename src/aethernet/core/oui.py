@@ -73,10 +73,13 @@ _BUNDLED: dict[str, str] = {
     "F8D111": "TP-Link",
 }
 
-_PATTERNS = (
-    re.compile(r"^(?P<prefix>[0-9A-Fa-f]{2}[:-]){2}(?P<last>[0-9A-Fa-f]{2})\s*\(hex\)\s*(?P<vendor>.+)$"),
-    re.compile(r"^(?P<prefix>[0-9A-Fa-f]{6})\s+(?P<vendor>.+)$"),
+# Líneas oficiales IEEE: "08-60-83   (hex)   zte corporation" y su duplicado
+# "086083     (base 16)   zte corporation". Também aceptamos TSV "086083\tVendor".
+_OUI_IEEE = re.compile(
+    r"^(?P<prefix>[0-9A-Fa-f]{2}(?:[:-]?[0-9A-Fa-f]{2}){2})"
+    r"\s+\((?P<kind>hex|base\s*16)\)\s*(?P<vendor>.+)$"
 )
+_OUI_TSV = re.compile(r"^(?P<prefix>[0-9A-Fa-f]{6})[ \t]+(?P<vendor>[A-Za-z(].+)$")
 
 
 class OuiDatabase:
@@ -126,10 +129,18 @@ class OuiDatabase:
         text = path.read_text(encoding="utf-8", errors="replace")
         if path == getattr(self._paths, "oui_cache", None):
             self._parse_tsv(text)
-        elif text.lstrip().startswith(("Registry", "Assignment")):
+        elif self._looks_like_csv(text):
             self._parse_csv(text)
         else:
             self._parse_text(text)
+
+    @staticmethod
+    def _looks_like_csv(text: str) -> bool:
+        lines = text.lstrip().splitlines()
+        if not lines:
+            return False
+        header = lines[0]
+        return "," in header and "Assignment" in header
 
     def _parse_tsv(self, text: str) -> None:
         for line in text.splitlines():
@@ -146,18 +157,15 @@ class OuiDatabase:
                 self._table.setdefault(value[:6], vendor)
 
     def _parse_text(self, text: str) -> None:
-        for line in text.splitlines():
-            for pattern in _PATTERNS:
-                match = pattern.match(line.strip())
-                if match:
-                    vendor = match.group("vendor").strip()
-                    if "prefix" in match.groupdict():
-                        prefix = re.sub(r"[^0-9A-Fa-f]", "", match.group("prefix"))
-                    else:  # pragma: no cover - formato alternativo
-                        prefix = ""
-                    if prefix and vendor:
-                        self._table.setdefault(prefix.upper(), vendor)
-                    break
+        for raw_line in text.splitlines():
+            line = raw_line.strip()
+            match = _OUI_IEEE.match(line) or _OUI_TSV.match(line)
+            if match is None:
+                continue
+            prefix = re.sub(r"[^0-9A-Fa-f]", "", match.group("prefix")).upper()[:6]
+            vendor = match.group("vendor").strip()
+            if len(prefix) == 6 and vendor and not vendor.startswith("("):
+                self._table.setdefault(prefix, vendor)
 
     def save_cache(self) -> bool:
         if self._paths is None:
