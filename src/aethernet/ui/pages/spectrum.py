@@ -7,6 +7,7 @@ from typing import Any
 
 from nicegui import ui
 
+from ...core.forecast import WEEKDAYS, coverage, predict_channel, weekly_grid
 from ...core.spectrum import heatmap as build_heatmap
 from ...core.spectrum import occupancy, polar_points, recommend_channel, recommend_from_stats
 from ...models import Band
@@ -232,3 +233,70 @@ def spectrum_page() -> None:
 
         render_advisor()
         ui.timer(15.0, render_advisor.refresh)
+
+        # -- Previsión por hora/día (histórico) ---------------------------#
+        forecast_day = {"weekday": time.localtime().tm_wday}
+
+        @ui.refreshable
+        def render_forecast() -> None:
+            band = Band.GHZ_24.value
+            buckets = context.repo.channel_advisory_buckets(band)
+            cov = coverage(buckets)
+            today = time.localtime().tm_wday
+            now_hour = time.localtime().tm_hour
+            prediction = predict_channel(buckets, forecast_day["weekday"], now_hour)
+            grid = weekly_grid(buckets, forecast_day["weekday"])
+            with ui.element("div").classes("ae-panel flex flex-col gap-3 w-full"):
+                with ui.row().classes("items-center justify-between w-full flex-wrap gap-3"):
+                    panel_header(
+                        "schedule",
+                        "PREVISIÓN POR HORA (HISTÓRICO)",
+                        f"{cov['slots']}/168 FRANJAS VISTAS · {cov['observations']} OBSERVACIONES",
+                        COLORS["cyan"],
+                    )
+                    with ui.row().classes("items-center gap-1"):
+                        for index, name in enumerate(WEEKDAYS):
+                            active = forecast_day["weekday"] == index
+                            chip = ui.html(name).classes(
+                                "ae-chip" + (" active" if active else "")
+                            ).style("cursor:pointer")
+                            chip.on("click", lambda _=None, w=index: _set_day(w))
+
+                if prediction is not None and forecast_day["weekday"] == today:
+                    with ui.row().classes("items-center gap-5 flex-wrap"):
+                        for caption, value, color in (
+                            ("AHORA (PREVISTO)", f"CANAL {prediction.channel}", COLORS["mint"]),
+                            ("CONFIANZA", f"{prediction.confidence:.0%}", COLORS["cyan"]),
+                            ("MUESTRAS", str(prediction.samples), COLORS["amber"]),
+                        ):
+                            with ui.column().classes("gap-0"):
+                                label_caps(caption)
+                                ui.label(value).classes("ae-metric text-2xl").style(f"color:{color}")
+                else:
+                    ui.label(
+                        "Selecciona el día de hoy o acumula más días para ver la previsión."
+                    ).classes("text-[11px] text-[#86B89B]")
+
+                if cov["slots"] == 0:
+                    empty_state("Aún no hay historial. Deja Aethernet (o el daemon) escaneando unos días.", "schedule")
+                else:
+                    ui.echart(charts.forecast_bars(grid["hours"])).classes("w-full").style("height:230px")
+                    with ui.row().classes("items-center gap-3"):
+                        for channel, color in ((1, COLORS["mint"]), (6, COLORS["cyan"]), (11, COLORS["amber"])):
+                            with ui.row().classes("items-center gap-1"):
+                                ui.element("div").style(
+                                    f"width:10px;height:4px;border-radius:2px;background:{color}"
+                                )
+                                label_caps(f"CH{channel}")
+
+                ui.label(
+                    "Cada escaneo guarda el mejor canal del momento por hora y día. Con 1-2 semanas "
+                    "obtienes el patrón para adelantarte a la saturación según el reloj del PC."
+                ).classes("text-[11px] text-[#86B89B] italic")
+
+        def _set_day(weekday: int) -> None:
+            forecast_day["weekday"] = weekday
+            render_forecast.refresh()
+
+        render_forecast()
+        ui.timer(60.0, render_forecast.refresh)

@@ -96,8 +96,24 @@ Interpretación en UI: redes vecinas con SSID repetido o MAC virtual se etiqueta
 como *malla/multi-banda (informativo)*, no como amenaza; solo sería sospechoso
 imitar tu propio SSID con otro BSSID.
 
+## Previsión de canal por hora/día
+
+Cada escaneo guarda **el mejor canal del momento** etiquetado por hora y día de
+la semana (tabla `channel_advisory`, migración v3). Con 1-2 semanas de datos:
+
+- `aethernet forecast show` → canal previsto para la hora/día actuales + confianza.
+- `aethernet forecast week` → cuadrícula de las 24 h del día actual.
+- `aethernet forecast record` → fuerza un registro manual.
+- UI `/espectro` → panel **"Previsión por hora (histórico)"** con selector de día,
+  confianza, muestras y gráfico de disponibilidad por hora (color = canal).
+
+Permite **adelantarse a la saturación** según el reloj del PC sin tocar el router.
+La recogida es automática en `MonitorService.scan_once` (también vía daemon).
+
 ## Changelog
 
+- **2026-09-26** — Previsión de canal por hora/día: histórico SQLite, recogida
+  automática, CLI `forecast` y panel de UI con gráfico semanal.
 - **2026-09-26** — Asesor de canal 2.4 GHz en vivo (histórico, estable) e
   interpretación de SSID compartido / MAC virtual en la UI.
 - **2026-09-25** — Rename total a Aethernet + migración de datos.

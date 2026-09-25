@@ -18,6 +18,7 @@ from .config import bootstrap_paths, load_settings, save_settings
 from .core.adapter import hardware_suggestions, honest_limits, probe_adapter
 from .core.analysis import AnalysisContext, run_rules
 from .core.didactic import all_topics, glossary_term
+from .core.forecast import WEEKDAYS, coverage, predict_channel, weekly_grid
 from .core.health import score_health
 from .core.oui import OuiDatabase
 from .core.snapshot import diff_scans, wifi_snapshot
@@ -411,6 +412,63 @@ def cmd_monitor(ctx: Context) -> int:
     return 1
 
 
+def cmd_forecast(ctx: Context) -> int:
+    args = ctx.args
+    band = args.band
+    if args.action == "record":
+        rec = ctx.service.record_advisory()
+        if rec is None:
+            print("Sin datos de espectro todavía; no se registró nada.")
+            return 1
+        if args.json:
+            _emit_json(rec)
+        else:
+            print(f"Registrado: canal {rec['channel']} ({rec['availability']}% disponibilidad).")
+        return 0
+
+    buckets = ctx.repo.channel_advisory_buckets(band)
+    now = time.localtime()
+    hour, weekday = now.tm_hour, now.tm_wday
+
+    if args.action == "show":
+        prediction = predict_channel(buckets, weekday, hour)
+        payload = {
+            "band": band,
+            "weekday": weekday,
+            "hour": hour,
+            "coverage": coverage(buckets),
+            "prediction": prediction.to_dict() if prediction else None,
+        }
+        if args.json:
+            _emit_json(payload)
+            return 0
+        cov = payload["coverage"]
+        print(f"Previsión de canal · {band} · {WEEKDAYS[weekday]} {hour:02d}:00")
+        print(f"  Cobertura: {cov['slots']}/{cov['slots_total']} franjas · {cov['observations']} observaciones")
+        if prediction is None:
+            print("  Aún sin datos suficientes para esta hora. Sigue usando Aethernet (o el daemon).")
+            return 1
+        print(f"  Canal predicho: {prediction.channel} (confianza {prediction.confidence:.0%}, "
+              f"{prediction.samples} muestras, {prediction.avg_availability}% disponible)")
+        print(f"  {prediction.reason}")
+        return 0
+
+    if args.action == "week":
+        grid = weekly_grid(buckets, weekday)
+        if args.json:
+            _emit_json(grid)
+            return 0
+        print(f"Previsión por hora · {grid['label']} · {band}")
+        marks = {1: "1", 6: "6", 11: "B", 0: "·"}
+        line = "".join(marks.get(h["channel"], "?") for h in grid["hours"])
+        print("  Hora  00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23")
+        print("  Canal " + "  ".join(marks.get(h["channel"], "?") for h in grid["hours"]))
+        print("  (1/6/11 = canal recomendado · · = sin datos)")
+        _ = line
+        return 0
+    return 1
+
+
 def cmd_doctor(ctx: Context) -> int:
     report = detect(ctx.settings.interface)
     adapter = probe_adapter(ctx.settings.interface or "")
@@ -665,6 +723,12 @@ def build_parser() -> argparse.ArgumentParser:
     p_mon.add_argument("--kind", help="filtra por tipo (deauth|probe|beacon|eapol)")
     add_json(p_mon)
     p_mon.set_defaults(func=cmd_monitor)
+
+    p_fc = sub.add_parser("forecast", help="previsión de canal por hora/día (histórico)")
+    p_fc.add_argument("action", nargs="?", default="show", choices=["show", "week", "record"])
+    p_fc.add_argument("--band", default="2.4 GHz")
+    add_json(p_fc)
+    p_fc.set_defaults(func=cmd_forecast)
 
     p_doc = sub.add_parser("doctor", help="capacidades reales del hardware y del sistema")
     add_json(p_doc)

@@ -275,6 +275,45 @@ def sparkline(series: list[tuple[float, int]], color: str | None = None) -> dict
     }
 
 
+def forecast_bars(hours: list[dict[str, Any]]) -> dict[str, Any]:
+    """Disponibilidad prevista por hora, coloreada por canal recomendado."""
+    labels = [f"{h['hour']:02d}" for h in hours]
+    palette = {1: COLORS["mint"], 6: COLORS["cyan"], 11: COLORS["amber"]}
+    data = []
+    for row in hours:
+        channel = int(row.get("channel") or 0)
+        availability = int(row.get("availability") or 0)
+        if channel == 0:
+            data.append({"value": 0, "itemStyle": {"color": COLORS["surface-high"], "borderRadius": [3, 3, 0, 0]}})
+        else:
+            data.append(
+                {
+                    "value": availability,
+                    "itemStyle": {"color": palette.get(channel, COLORS["coral"]), "borderRadius": [3, 3, 0, 0]},
+                }
+            )
+    options = _base()
+    options.update(
+        {
+            "grid": {"left": 34, "right": 12, "top": 16, "bottom": 24},
+            "xAxis": {
+                "type": "category",
+                "data": labels,
+                "axisLine": {"lineStyle": {"color": COLORS["border"]}},
+                "axisLabel": {"color": _AXIS, "fontSize": 9, "fontFamily": _MONO},
+            },
+            "yAxis": {
+                "type": "value",
+                "max": 100,
+                "splitLine": {"lineStyle": {"color": _GRID}},
+                "axisLabel": {"color": _AXIS, "fontSize": 9, "fontFamily": _MONO},
+            },
+            "series": [{"type": "bar", "data": data, "barWidth": "70%"}],
+        }
+    )
+    return options
+
+
 def occupancy_report_bars(values: list[int], labels: list[str], peak_index: int | None = None) -> dict[str, Any]:
     colors = [
         COLORS["amber"] if peak_index is not None and i == peak_index else COLORS["mint"]

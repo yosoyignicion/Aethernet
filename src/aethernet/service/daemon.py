@@ -22,9 +22,10 @@ from ..core.analysis import AnalysisContext, MonitorEvent, run_rules
 from ..core.health import score_health
 from ..core.lan_scan import scan_lan
 from ..core.monitor.capture import MonitorCapture
+from ..core.spectrum import recommend_from_stats
 from ..core.wifi_scan import scan_wifi
 from ..logging_setup import get_logger
-from ..models import Finding, HealthScore, LanScan, WifiScan
+from ..models import Band, Finding, HealthScore, LanScan, WifiScan
 from ..utils import atomic_write
 from .control import ControlChannel
 
@@ -150,6 +151,12 @@ class MonitorService:
             )
             result.alerts = self.alerts.submit_findings(result.findings)
 
+            if self.settings.forecast_enabled:
+                try:
+                    self.record_advisory()
+                except Exception as exc:  # la previsión nunca debe romper un escaneo
+                    log.debug("no se pudo registrar la previsión de canal: %s", exc)
+
             self.scan_count += 1
             self.last_result = result
             self.last_error = None
@@ -253,6 +260,29 @@ class MonitorService:
 
     def monitor_running(self) -> bool:
         return self._capture is not None and self._capture.running
+
+    # ------------------------------------------------------------------ #
+    # Previsión de canal (histórico por hora/día)
+    # ------------------------------------------------------------------ #
+    def record_advisory(self, band: Band = Band.GHZ_24) -> dict[str, Any] | None:
+        """Calcula y guarda el mejor canal del momento para el histórico."""
+        stats = self.repo.channel_stats(hours=self.settings.forecast_window_hours)
+        if not stats:
+            return None
+        recommendation = recommend_from_stats(stats, band)
+        local = time.localtime()
+        self.repo.record_channel_advisory(
+            ts=time.time(),
+            hour=local.tm_hour,
+            weekday=local.tm_wday,
+            band=band.value,
+            best_channel=int(recommendation["channel"]),
+            availability=int(recommendation["availability"]),
+            interference=float(recommendation["interference"]),
+            samples=len(stats),
+            ranking=[int(c) for c in recommendation.get("ranking", [])],
+        )
+        return recommendation
 
     # ------------------------------------------------------------------ #
     # Bucle

@@ -175,6 +175,10 @@ class Settings:
     probe_min_rssi: int = -80
     consent_monitor: bool = False
 
+    # Previsión de canal: guarda el mejor canal por hora/día para anticipar saturación
+    forecast_enabled: bool = True
+    forecast_window_hours: int = 6
+
     def merged_with(self, data: dict[str, Any]) -> Settings:
         known = {f.name for f in fields(self)}
         for key, value in data.items():

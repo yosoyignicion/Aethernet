@@ -157,6 +157,23 @@ MIGRATIONS: tuple[str, ...] = (
     CREATE INDEX IF NOT EXISTS idx_monev_ts   ON monitor_events(ts DESC);
     CREATE INDEX IF NOT EXISTS idx_monev_kind ON monitor_events(kind, ts);
     """,
+    # v3 — histórico del mejor canal por hora/día para previsión
+    """
+    CREATE TABLE IF NOT EXISTS channel_advisory (
+        id           INTEGER PRIMARY KEY AUTOINCREMENT,
+        ts           REAL NOT NULL,
+        hour         INTEGER NOT NULL,
+        weekday      INTEGER NOT NULL,
+        band         TEXT NOT NULL DEFAULT '2.4 GHz',
+        best_channel INTEGER NOT NULL,
+        availability INTEGER NOT NULL,
+        interference REAL NOT NULL,
+        samples      INTEGER NOT NULL DEFAULT 0,
+        ranking      TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_chadv_slot ON channel_advisory(weekday, hour, band);
+    CREATE INDEX IF NOT EXISTS idx_chadv_ts   ON channel_advisory(ts DESC);
+    """,
 )
 
 

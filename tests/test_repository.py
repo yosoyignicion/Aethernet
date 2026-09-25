@@ -125,3 +125,16 @@ def test_event_evidence_roundtrip(repo):
     repo.add_event(Event(severity=Severity.WARNING, title="t", evidence={"bssid": "AA", "n": 3}))
     stored = repo.list_events()[0]
     assert stored.evidence == {"bssid": "AA", "n": 3}
+
+
+def test_channel_advisory_history(repo):
+    for hour in (0, 0, 13):
+        repo.record_channel_advisory(
+            ts=1000.0 + hour, hour=hour, weekday=5, band="2.4 GHz",
+            best_channel=1, availability=100, interference=0.0, samples=4, ranking=[1, 6, 11],
+        )
+    assert repo.channel_advisory_count() == 3
+    buckets = repo.channel_advisory_buckets()
+    slot = [b for b in buckets if b["hour"] == 0]
+    assert slot and slot[0]["n"] == 2
+    assert repo.channel_advisory_recent(limit=2)

@@ -666,6 +666,78 @@ class Repository:
         return [dict(r) for r in rows]
 
     # ------------------------------------------------------------------ #
+    # Histórico de canal (previsión por hora/día)
+    # ------------------------------------------------------------------ #
+    def record_channel_advisory(
+        self,
+        *,
+        ts: float,
+        hour: int,
+        weekday: int,
+        band: str,
+        best_channel: int,
+        availability: int,
+        interference: float,
+        samples: int,
+        ranking: list[int] | None = None,
+    ) -> int:
+        with self.db.transaction() as conn:
+            cursor = conn.execute(
+                """
+                INSERT INTO channel_advisory
+                    (ts, hour, weekday, band, best_channel, availability, interference, samples, ranking)
+                VALUES (?,?,?,?,?,?,?,?,?)
+                """,
+                (
+                    ts,
+                    hour,
+                    weekday,
+                    band,
+                    best_channel,
+                    availability,
+                    interference,
+                    samples,
+                    _dumps(ranking) if ranking else None,
+                ),
+            )
+            return int(cursor.lastrowid or 0)
+
+    def channel_advisory_buckets(self, band: str = "2.4 GHz", *, weeks: float | None = None) -> list[dict[str, Any]]:
+        sql = (
+            "SELECT weekday, hour, best_channel, COUNT(*) AS n, "
+            "AVG(availability) AS availability, MAX(interference) AS interference "
+            "FROM channel_advisory WHERE band = ?"
+        )
+        params: list[Any] = [band]
+        if weeks is not None:
+            sql += " AND ts >= ?"
+            params.append(time.time() - weeks * 7 * 86400)
+        sql += " GROUP BY weekday, hour, best_channel"
+        rows = self.db.query(sql, params)
+        return [
+            {
+                "weekday": int(r["weekday"]),
+                "hour": int(r["hour"]),
+                "best_channel": int(r["best_channel"]),
+                "n": int(r["n"]),
+                "availability": round(float(r["availability"] or 0)),
+                "interference": round(float(r["interference"] or 0), 3),
+            }
+            for r in rows
+        ]
+
+    def channel_advisory_count(self, band: str = "2.4 GHz") -> int:
+        return int(self.db.scalar("SELECT COUNT(*) FROM channel_advisory WHERE band=?", (band,), default=0))
+
+    def channel_advisory_recent(self, limit: int = 30, band: str = "2.4 GHz") -> list[dict[str, Any]]:
+        rows = self.db.query(
+            "SELECT ts, hour, weekday, best_channel, availability, interference, samples "
+            "FROM channel_advisory WHERE band=? ORDER BY ts DESC LIMIT ?",
+            (band, limit),
+        )
+        return [dict(r) for r in rows]
+
+    # ------------------------------------------------------------------ #
     # Snapshots
     # ------------------------------------------------------------------ #
     def save_snapshot(self, snapshot: Snapshot) -> int:
