@@ -15,11 +15,22 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: X11 Applications",
   "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Topic :: System :: Networking :: Monitoring",
+  "Topic :: Security",
+  "Typing :: Typed",
 ]
 dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/yosoyignicion/Aethernet"
+Repository = "https://github.com/yosoyignicion/Aethernet"
+Issues = "https://github.com/yosoyignicion/Aethernet/issues"
+Changelog = "https://github.com/yosoyignicion/Aethernet/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/yosoyignicion/Aethernet/blob/main/docs/GUIA_USO.md"
 
 [project.optional-dependencies]
 lan = ["scapy>=2.5"]
@@ -39,6 +50,9 @@ aethernet-ui = "aethernet.ui.app:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"aethernet.ui" = ["fonts/*.woff2", "fonts/*.css"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

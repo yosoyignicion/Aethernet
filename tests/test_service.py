@@ -66,6 +66,28 @@ def test_control_channel_roundtrip(tmp_paths):
     assert channel.poll() is None
 
 
+def test_retention_purges_old_records(repo, tmp_paths):
+    service = MonitorService(repo, Settings(notifications=False, retention_days=90), tmp_paths)
+    repo.save_wifi_scan(scan(ap("Vieja", MINE), ts=1000.0))
+    assert repo.wifi_scan_count() == 1
+    removed = service.maybe_purge(now=1000.0 + 91 * 86400)
+    assert removed is not None and removed >= 1
+    assert repo.wifi_scan_count() == 0
+
+
+def test_retention_throttles_and_can_be_disabled(repo, tmp_paths):
+    service = MonitorService(repo, Settings(notifications=False, retention_days=30), tmp_paths)
+    assert service.maybe_purge(now=1_000_000.0) == 0
+    repo.save_wifi_scan(scan(ap("Vieja", MINE), ts=1_000_000.0 - 40 * 86400))
+    assert service.maybe_purge(now=1_000_000.0 + 60) is None
+    assert repo.wifi_scan_count() == 1
+    assert service.maybe_purge(now=1_000_000.0 + 86_401) is not None
+    assert repo.wifi_scan_count() == 0
+
+    disabled = MonitorService(repo, Settings(notifications=False, retention_days=0), tmp_paths)
+    assert disabled.maybe_purge(now=2_000_000.0) is None
+
+
 def test_monitor_uses_monitor_events(repo, tmp_paths):
     from aethernet.core.analysis import MonitorEvent
 

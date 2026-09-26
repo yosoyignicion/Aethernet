@@ -14,7 +14,7 @@ from typing import Any
 
 from . import APP_TITLE, __version__
 from .capabilities import detect
-from .config import bootstrap_paths, load_settings, save_settings
+from .config import api_token_path, bootstrap_paths, load_settings, resolve_api_token, save_settings
 from .core.adapter import hardware_suggestions, honest_limits, probe_adapter
 from .core.analysis import AnalysisContext, run_rules
 from .core.didactic import all_topics, glossary_term
@@ -91,7 +91,7 @@ def cmd_scan(ctx: Context) -> int:
 def cmd_status(ctx: Context) -> int:
     scan = ctx.repo.latest_wifi_scan()
     counts = ctx.repo.counts()
-    history = {ap.bssid: [s for _, s in ctx.repo.signal_series(ap.bssid, 24)] for ap in (scan.aps if scan else [])}
+    history = ctx.repo.signal_history([ap.bssid for ap in scan.aps], 24) if scan else {}
     health = (
         score_health(
             scan,
@@ -194,7 +194,7 @@ def cmd_analyze(ctx: Context) -> int:
     scans = ctx.repo.recent_scans(2)
     if len(scans) > 1:
         previous = ctx.repo.get_wifi_scan(scans[1]["id"])
-    history = {ap.bssid: [s for _, s in ctx.repo.signal_series(ap.bssid, 24)] for ap in scan.aps}
+    history = ctx.repo.signal_history([ap.bssid for ap in scan.aps], 24)
     context = AnalysisContext(
         scan=scan,
         previous=previous,
@@ -655,6 +655,29 @@ def cmd_db(ctx: Context) -> int:
     return 1
 
 
+def cmd_api(ctx: Context) -> int:
+    from .api import serve
+    from .api.server import APIDependencyError
+
+    if ctx.args.print_token:
+        token = resolve_api_token(ctx.paths)
+        if ctx.args.json:
+            _emit_json({"token": token, "path": str(api_token_path(ctx.paths))})
+        else:
+            print(token)
+        return 0
+    host = ctx.args.host or ctx.settings.api_host
+    port = ctx.args.port or ctx.settings.api_port
+    print(f"API local en http://{host}:{port}")
+    print(f"Token de API (cabecera X-Aethernet-Token): {api_token_path(ctx.paths)}")
+    try:
+        serve(ctx.repo, ctx.settings, host=ctx.args.host, port=ctx.args.port, paths=ctx.paths)
+    except APIDependencyError as exc:
+        print(f"API no disponible: {exc}")
+        return 1
+    return 0
+
+
 def cmd_tutorial(ctx: Context) -> int:
     if ctx.args.term:
         found = glossary_term(ctx.args.term)
@@ -823,6 +846,13 @@ def build_parser() -> argparse.ArgumentParser:
     p_db.add_argument("--days", type=int, default=90, help="días de histórico a conservar")
     add_json(p_db)
     p_db.set_defaults(func=cmd_db)
+
+    p_api = sub.add_parser("api", help="API local de solo lectura (FastAPI, opcional)")
+    p_api.add_argument("--host", help="interfaz de escucha (por defecto 127.0.0.1)")
+    p_api.add_argument("--port", type=int, help="puerto (por defecto 8765)")
+    p_api.add_argument("--print-token", dest="print_token", action="store_true", help="muestra el token de la API")
+    add_json(p_api)
+    p_api.set_defaults(func=cmd_api)
 
     p_tut = sub.add_parser("tutorial", help="explicaciones y glosario")
     p_tut.add_argument("term", nargs="?", help="término a explicar")

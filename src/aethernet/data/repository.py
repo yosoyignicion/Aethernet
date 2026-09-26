@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import time
+from collections.abc import Iterable
 from typing import Any
 
 from ..logging_setup import get_logger
@@ -210,6 +211,24 @@ class Repository:
             (bssid, since),
         )
         return [(r["timestamp"], r["signal_dbm"]) for r in rows]
+
+    def signal_history(self, bssids: Iterable[str], hours: float = 24.0) -> dict[str, list[int]]:
+        """Serie de RSSI por BSSID en una sola consulta (evita el patrón N+1)."""
+        ids = [b for b in dict.fromkeys(bssids) if b]
+        if not ids:
+            return {}
+        since = time.time() - hours * 3600
+        placeholders = ",".join("?" for _ in ids)
+        rows = self.db.query(
+            f"SELECT bssid, signal_dbm FROM ap_observations "
+            f"WHERE bssid IN ({placeholders}) AND timestamp >= ? "
+            f"ORDER BY bssid, timestamp",
+            [*ids, since],
+        )
+        history: dict[str, list[int]] = {bssid: [] for bssid in ids}
+        for row in rows:
+            history[row["bssid"]].append(row["signal_dbm"])
+        return history
 
     def channel_stats(self, hours: float = 24.0) -> list[dict[str, Any]]:
         """Ocupación media por canal en la ventana indicada."""

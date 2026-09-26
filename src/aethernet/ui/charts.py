@@ -36,6 +36,11 @@ def _base() -> dict[str, Any]:
 
 
 def gauge(score: int, grade: str) -> dict[str, Any]:
+    """Arco de progreso limpio: sin aguja ni etiquetas (el valor va centrado).
+
+    La aguja y los números del eje se solapaban con el marcador central; un arco
+    con brillo y marcas sutiles es más legible y no reinicia el layout.
+    """
     color = GRADE_COLORS.get(grade, COLORS["amber"])
     return {
         "backgroundColor": "transparent",
@@ -46,14 +51,19 @@ def gauge(score: int, grade: str) -> dict[str, Any]:
                 "endAngle": -45,
                 "min": 0,
                 "max": 100,
-                "radius": "92%",
-                "progress": {"show": True, "roundCap": True, "width": 12, "itemStyle": {"color": color}},
-                "axisLine": {"roundCap": True, "lineStyle": {"width": 12, "color": [[1, _GRID]]}},
-                "pointer": {"show": True, "length": "58%", "width": 3, "itemStyle": {"color": COLORS["text"]}},
-                "anchor": {"show": True, "size": 12, "itemStyle": {"color": COLORS["text"]}},
-                "axisTick": {"distance": -18, "splitNumber": 5, "lineStyle": {"color": _AXIS}},
-                "splitLine": {"distance": -20, "length": 10, "lineStyle": {"color": _AXIS}},
-                "axisLabel": {"distance": -6, "color": _AXIS, "fontSize": 9, "fontFamily": _MONO},
+                "radius": "94%",
+                "progress": {
+                    "show": True,
+                    "roundCap": True,
+                    "width": 14,
+                    "itemStyle": {"color": color, "shadowBlur": 16, "shadowColor": color},
+                },
+                "axisLine": {"roundCap": True, "lineStyle": {"width": 14, "color": [[1, _GRID]]}},
+                "pointer": {"show": False},
+                "anchor": {"show": False},
+                "axisTick": {"show": False},
+                "splitLine": {"distance": -13, "length": 7, "lineStyle": {"color": _AXIS, "width": 1.2}},
+                "axisLabel": {"show": False},
                 "detail": {"show": False},
                 "data": [{"value": score}],
             }
@@ -111,12 +121,37 @@ def congestion_area(hourly: list[dict[str, Any]]) -> dict[str, Any]:
     hours = [f"{r['hour']:02d}:00" for r in hourly]
     band24 = [r["band24"] for r in hourly]
     band5 = [r["band5"] for r in hourly]
+    has_5 = any(band5)
+    series: list[dict[str, Any]] = [
+        {
+            "name": "2.4 GHz",
+            "type": "line",
+            "smooth": True,
+            "symbol": "none",
+            "data": band24,
+            "lineStyle": {"color": COLORS["mint"], "width": 2},
+            "areaStyle": {"color": "rgba(0,255,156,0.18)"},
+        }
+    ]
+    legend_data = ["2.4 GHz"]
+    if has_5:  # no dibujar una banda que el hardware no puede ver (honestidad)
+        legend_data.append("5 GHz")
+        series.append(
+            {
+                "name": "5 GHz",
+                "type": "line",
+                "smooth": True,
+                "symbol": "none",
+                "data": band5,
+                "lineStyle": {"color": COLORS["cyan"], "width": 1.5, "type": "dashed"},
+            }
+        )
     options = _base()
     options.update(
         {
             "grid": {"left": 36, "right": 16, "top": 20, "bottom": 28},
             "legend": {
-                "data": ["2.4 GHz", "5 GHz"],
+                "data": legend_data,
                 "textStyle": {"color": COLORS["text-dim"], "fontSize": 10, "fontFamily": _MONO},
                 "top": 0,
                 "right": 0,
@@ -133,25 +168,7 @@ def congestion_area(hourly: list[dict[str, Any]]) -> dict[str, Any]:
                 "splitLine": {"lineStyle": {"color": _GRID}},
                 "axisLabel": {"color": _AXIS, "fontSize": 9, "fontFamily": _MONO},
             },
-            "series": [
-                {
-                    "name": "2.4 GHz",
-                    "type": "line",
-                    "smooth": True,
-                    "symbol": "none",
-                    "data": band24,
-                    "lineStyle": {"color": COLORS["mint"], "width": 2},
-                    "areaStyle": {"color": "rgba(0,229,160,0.22)"},
-                },
-                {
-                    "name": "5 GHz",
-                    "type": "line",
-                    "smooth": True,
-                    "symbol": "none",
-                    "data": band5,
-                    "lineStyle": {"color": COLORS["cyan"], "width": 1.5, "type": "dashed"},
-                },
-            ],
+            "series": series,
         }
     )
     return options

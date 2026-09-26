@@ -6,6 +6,8 @@ clases CSS semánticas para no depender de utilidades arbitrarias del runtime.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from ..models import Severity
 
 # --------------------------------------------------------------------------- #
@@ -62,16 +64,19 @@ NAV_ITEMS: tuple[tuple[str, str, str], ...] = (
     ("settings", "Ajustes", "/ajustes"),
 )
 
-_FONTS = (
-    '<link rel="preconnect" href="https://fonts.googleapis.com">'
-    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-    '<link href="https://fonts.googleapis.com/css2?'
-    "family=Inter:wght@400;500;600&"
-    "family=JetBrains+Mono:wght@400;500;600;700&"
-    "family=Space+Grotesk:wght@500;600;700&"
-    'family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
-    '&display=swap" rel="stylesheet">'
-)
+_FONT_DIR = Path(__file__).resolve().parent / "fonts"
+
+
+def _font_faces() -> str:
+    """Reglas ``@font-face`` auto-hospedadas (sin red saliente).
+
+    Los woff2 viven en ``ui/fonts`` y se sirven por ``/ae-fonts``; si faltan
+    (por ejemplo, un paquete incompleto) se degrada a las fuentes del sistema.
+    """
+    try:
+        return (_FONT_DIR / "_faces.css").read_text(encoding="utf-8")
+    except OSError:
+        return ""
 
 _CSS = """
 :root {
@@ -88,8 +93,10 @@ body { font-family: 'Inter', system-ui, sans-serif; overscroll-behavior: none; }
 ::-webkit-scrollbar-track { background: var(--ae-void); }
 ::-webkit-scrollbar-thumb { background: var(--ae-surface-high); border-radius: 9999px; }
 
-.ae-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
-.ae-headline { font-family: 'Space Grotesk', 'Inter', sans-serif; }
+.ae-mono { font-family: 'JetBrains Mono', ui-monospace, 'DejaVu Sans Mono', monospace; }
+.ae-headline { font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif; }
+:focus-visible { outline: 2px solid var(--ae-mint); outline-offset: 2px; border-radius: 6px; }
+.q-field--outlined .q-field__control:focus-within { box-shadow: inset 0 0 0 1px var(--ae-mint); }
 .ae-label {
   font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--ae-text-dim);
@@ -141,6 +148,7 @@ body { font-family: 'Inter', system-ui, sans-serif; overscroll-behavior: none; }
   position: absolute; inset: 0; border-radius: 9999px; pointer-events: none;
   background: conic-gradient(from 0deg, rgba(0,255,156,.30), transparent 55%);
   animation: ae-sweep 4s linear infinite; transform-origin: 50% 50%;
+  will-change: transform; contain: paint;
 }
 @keyframes ae-glow { 0%,100% { box-shadow: 0 0 0 rgba(0,255,156,0); } 50% { box-shadow: 0 0 18px rgba(0,255,156,.35); } }
 .ae-glow { animation: ae-glow 2.8s ease-in-out infinite; }
@@ -178,13 +186,15 @@ _head_installed = False
 
 
 def install_shared() -> None:
-    """Inyecta fuentes y CSS compartidos una sola vez (seguro en startup)."""
+    """Inyecta fuentes locales y CSS compartidos una sola vez (seguro en startup)."""
     global _head_installed
     if _head_installed:
         return
-    from nicegui import ui
+    from nicegui import app, ui
 
-    ui.add_head_html(_FONTS + f"<style>{_CSS}</style>", shared=True)
+    if _FONT_DIR.is_dir():
+        app.add_static_files("/ae-fonts", str(_FONT_DIR))
+    ui.add_head_html(f"<style>{_font_faces()}{_CSS}</style>", shared=True)
     _head_installed = True
 
 

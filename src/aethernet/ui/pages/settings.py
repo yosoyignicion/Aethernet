@@ -35,7 +35,7 @@ _SHORTCUTS = (
 def settings_page() -> None:
     context = get_context()
     with shell("/ajustes", "Ajustes"):
-        with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3"):
+        with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3 w-full"):
             with ui.column().classes("gap-0"):
                 ui.label("CONFIGURACIÓN Y CALIBRACIÓN DE FIRMWARE").classes("ae-headline text-lg text-[#D8F5E3]")
                 label_caps("SISTEMA // PANEL 07")
@@ -179,8 +179,12 @@ def settings_page() -> None:
                     kv_row("RUTA", str(context.paths.db_path))
                     kv_row("TAMAÑO", f"{size / 1_048_576:.2f} MB")
                     kv_row("REGISTROS", str(sum(context.counts().get(k, 0) for k in ("wifi_scans", "visible_networks"))))
+                    label_caps("RETENCIÓN AUTOMÁTICA (DÍAS · 0 = DESACTIVADA)")
+                    retention = ui.number(
+                        value=context.settings.retention_days, min=0, max=3650, step=30
+                    ).props("dense outlined").classes("w-full")
                     with ui.row().classes("items-center gap-2 w-full"):
-                        purge_btn = ui.button("PURGAR >90 d", icon="auto_delete").props("unelevated no-caps dense").style(
+                        purge_btn = ui.button("PURGAR AHORA", icon="auto_delete").props("unelevated no-caps dense").style(
                             f"background:{COLORS['surface-2']};color:{COLORS['amber']};flex:1"
                         )
                         backup_btn = ui.button("RESPALDO .TAR.GZ", icon="archive").props("unelevated no-caps dense").style(
@@ -228,9 +232,10 @@ def settings_page() -> None:
             toast(f"Diagnóstico: {ok}/{total} componentes disponibles", icon_name="check_circle")
 
         def purge() -> None:
-            removed = context.repo.purge_old(90)
+            days = context.settings.retention_days or 90
+            removed = context.repo.purge_old(days)
             total = sum(removed.values())
-            persist(f"Purgados {total} registros >90 días")
+            persist(f"Purgados {total} registros >{days} días")
 
         def backup() -> None:
             target = context.paths.data_dir / f"aethernet-backup-{time.strftime('%Y%m%d-%H%M%S')}.tar.gz"
@@ -245,6 +250,7 @@ def settings_page() -> None:
         sound_switch.on_value_change(lambda e: on_setting("sound", bool(e.value)))
         quiet_switch.on_value_change(lambda e: on_setting("quiet_enabled", bool(e.value)))
         redact_switch.on_value_change(lambda e: on_setting("redact_macs_in_reports", bool(e.value)))
+        retention.on_value_change(lambda e: on_setting("retention_days", int(e.value or 0)))
         test_btn.on("click", run_selftest)
         purge_btn.on("click", purge)
         backup_btn.on("click", backup)

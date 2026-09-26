@@ -23,7 +23,7 @@ def devices_page() -> None:
 
         lan = context.repo.latest_lan_scan()
         subnet = lan.subnet if lan else "—"
-        with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3"):
+        with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3 w-full"):
             with ui.column().classes("gap-0"):
                 header_label = ui.label("0 Dispositivos en LAN local").classes("ae-headline text-lg text-[#D8F5E3]")
                 with ui.row().classes("items-center gap-2"):
@@ -151,4 +151,4 @@ def _device_card(context: Any, device: LanDevice, refresh: Callable[..., Any]) -
 def _line(key: str, value: str) -> None:
     with ui.row().classes("items-center justify-between w-full"):
         label_caps(key)
-        ui.label(value).classes("ae-mono text-[11px] text-[#D8F5E3] truncate max-w-[60%]")
+        ui.label(value).classes("ae-mono text-[11px] text-[#D8F5E3] truncate max-w-[60%]").tooltip(value)

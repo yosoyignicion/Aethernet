@@ -23,14 +23,20 @@ export XDG_DATA_HOME="$TMP/data" XDG_CONFIG_HOME="$TMP/config" XDG_CACHE_HOME="$
 SERVER_PID=$!
 trap 'kill "$SERVER_PID" 2>/dev/null || true; rm -rf "$TMP"' EXIT
 
-for _ in $(seq 1 30); do
-  curl -s -o /dev/null "http://127.0.0.1:$PORT/" && break
+ready=0
+for _ in $(seq 1 40); do
+  if curl -s -o /dev/null "http://127.0.0.1:$PORT/"; then ready=1; break; fi
   sleep 0.5
 done
+if [ "$ready" -ne 1 ]; then
+  echo "La UI no respondió en 20 s. Últimas líneas del log:"
+  tail -20 "$TMP/ui.log" || true
+  exit 1
+fi
 
 status=0
 for path in / /espectro /redes /dispositivos /alertas /informes /ajustes; do
-  code="$(curl -s --max-time 8 -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PORT$path")"
+  code="$(curl -s --max-time 8 -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PORT$path" || true)"
   echo "$path -> $code"
   [ "$code" = "200" ] || status=1
 done

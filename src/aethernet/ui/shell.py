@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from contextlib import contextmanager
+from typing import Any
 
 from nicegui import ui
 
@@ -194,10 +195,48 @@ def _footer() -> None:
         ui.timer(0.5, update_state)
 
 
+_NAV_BY_DIGIT = {str(index): item for index, item in enumerate(NAV_ITEMS, start=1)}
+
+
+def _keyboard() -> None:
+    """Atajos globales anunciados en Ajustes (respetan campos de texto)."""
+    context = get_context()
+
+    def on_key(event: Any) -> None:
+        if not event.action.keydown:
+            return
+        key = event.key.name
+        mods = event.modifiers
+        plain = not (mods.ctrl or mods.alt or mods.meta)
+        if (mods.ctrl and key == "k") or key == "/":
+            ui.navigate.to("/redes")
+        elif plain and key in _NAV_BY_DIGIT:
+            ui.navigate.to(_NAV_BY_DIGIT[key][2])
+        elif plain and key == "r":
+            started = context.scan_async()
+            toast("Escaneo RF iniciado" if started else "Escaneo ya en curso", icon_name="sync")
+        elif mods.ctrl and key == "e":
+            try:
+                paths = context.export_report("md")
+                toast(f"Informe generado: {paths[0].name}", icon_name="download")
+            except Exception as exc:  # noqa: BLE001
+                toast(f"No se pudo exportar: {exc}", icon_name="error", color=COLORS["coral"])
+        elif plain and key == "c":
+            channel = int(context.settings.my_channel or 0)
+            if channel:
+                ui.run_javascript(
+                    f"navigator.clipboard && navigator.clipboard.writeText('CH{channel:02d}')"
+                )
+                toast(f"Canal CH{channel:02d} copiado al portapapeles", icon_name="content_copy")
+
+    ui.keyboard(on_key=on_key)
+
+
 @contextmanager
 def shell(active: str, title: str) -> Iterator[ui.column]:
     """Monta el shell y devuelve el contenedor de contenido."""
     theme.install()
+    _keyboard()
     ui.page_title(f"{title} · AETHERNET")
     if get_context().settings.compact:
         ui.run_javascript("document.documentElement.classList.add('ae-compact')")

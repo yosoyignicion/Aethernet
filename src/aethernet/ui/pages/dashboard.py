@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from nicegui import ui
 
 from ...core.spectrum import advise_channel_change, channel_table
@@ -17,8 +19,9 @@ from ..theme import COLORS, GRADE_COLORS, icon
 def dashboard() -> None:
     context = get_context()
     with shell("/", "Dashboard"):
+        state: dict[str, Any] = {"gauge": None, "congestion": None}
         # -- barra de operaciones rápidas -------------------------------#
-        with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3"):
+        with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3 w-full"):
             with ui.row().classes("items-center gap-3"):
                 ui.html(icon("radar", size=22, color=COLORS["cyan"]))
                 with ui.column().classes("gap-0"):
@@ -39,7 +42,7 @@ def dashboard() -> None:
                     with ui.row().classes("items-center gap-2"):
                         status_dot(COLORS["amber"], pulse=True)
                         label_caps("GAUGE // RF HEALTH")
-                    label_caps("SENSOR 2.4/5G")
+                    label_caps("SENSOR " + ("2.4/5 GHz" if context.adapter.supports_5ghz else "2.4 GHz"))
                 gauge_container = ui.element("div").classes("relative w-full items-center justify-center").style("height:260px")
                 with gauge_container:
                     gauge_chart = ui.echart(charts.gauge(0, "sin datos")).classes("w-full h-full")
@@ -105,7 +108,10 @@ def dashboard() -> None:
         health = context.health()
         scan = context.last_scan()
         if health and scan:
-            charts.update(gauge_chart, charts.gauge(health.total, health.grade))
+            gauge_sig = (health.total, health.grade)
+            if gauge_sig != state["gauge"]:
+                charts.update(gauge_chart, charts.gauge(health.total, health.grade))
+                state["gauge"] = gauge_sig
             score_label.set_text(str(health.total))
             score_label.style(f"color:{GRADE_COLORS.get(health.grade, COLORS['text'])}")
             grade_label.set_text(health.grade.upper())
@@ -123,7 +129,11 @@ def dashboard() -> None:
             unread_label.classes(add="ae-glitch")
         else:
             unread_label.classes(remove="ae-glitch")
-        charts.update(congestion_chart, charts.congestion_area(context.repo.hourly_congestion(24)))
+        congestion = context.repo.hourly_congestion(24)
+        congestion_sig = tuple((r["hour"], r["band24"], r["band5"]) for r in congestion)
+        if congestion_sig != state["congestion"]:
+            charts.update(congestion_chart, charts.congestion_area(congestion))
+            state["congestion"] = congestion_sig
 
         # canal actual vs recomendado
         current_channel = int(context.settings.my_channel or 0)
@@ -172,4 +182,4 @@ def dashboard() -> None:
     scan_btn.on("click", do_scan)
     export_btn.on("click", do_export)
     refresh()
-    ui.timer(3.0, refresh)
+    ui.timer(5.0, refresh)

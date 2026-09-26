@@ -1,0 +1,57 @@
+name: Informe de error
+description: Algo no funciona o da resultados incorrectos
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportar. Cuanta más evidencia (salida de `aethernet doctor`,
+        logs, versión), más rápido se reproduce. **No pegues secretos ni MACs reales.**
+  - type: textarea
+    id: que-pasa
+    attributes:
+      label: Qué ocurre
+      description: Comportamiento observado y qué esperabas.
+    validations:
+      required: true
+  - type: textarea
+    id: reproducir
+    attributes:
+      label: Pasos para reproducir
+      placeholder: |
+        1. Ejecuto `aethernet ...`
+        2. ...
+        3. Veo ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versión
+      description: Salida de `aethernet --version` (o el commit).
+    validations:
+      required: true
+  - type: textarea
+    id: entorno
+    attributes:
+      label: Entorno
+      description: |
+        SO y versión, Python, y salida de `aethernet doctor`.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / trazas
+      description: Salida relevante. Redacta MACs, SSID y BSSID si son sensibles.
+      render: shell
+  - type: checkboxes
+    id: comprobaciones
+    attributes:
+      label: Comprobaciones
+      options:
+        - label: He revisado que no haya un issue abierto igual.
+          required: true
+        - label: No incluyo secretos, MACs ni datos personales sin redactar.
+          required: true

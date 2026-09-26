@@ -1,6 +1,8 @@
 """API HTTP local (FastAPI) de solo lectura sobre la base de datos.
 
 Por defecto escucha en 127.0.0.1 y no expone ninguna operación destructiva.
+Los endpoints que mutan estado o activan hardware (``POST``) exigen la cabecera
+``X-Aethernet-Token`` con el token por instalación (ver ``resolve_api_token``).
 FastAPI/uvicorn son opcionales; si faltan, se avisa con claridad.
 """
 
@@ -8,8 +10,9 @@ from __future__ import annotations
 
 from typing import Any, cast
 
+from .. import __version__
 from ..capabilities import detect
-from ..config import Settings
+from ..config import Paths, Settings, api_token_path, resolve_api_token, tokens_match
 from ..core.health import score_health
 from ..core.spectrum import spectrum_snapshot
 from ..logging_setup import get_logger
@@ -23,10 +26,15 @@ class APIDependencyError(RuntimeError):
     pass
 
 
-def create_app(repo: Any, settings: Settings, service: MonitorService | None = None) -> Any:
+def create_app(
+    repo: Any,
+    settings: Settings,
+    service: MonitorService | None = None,
+    paths: Paths | None = None,
+) -> Any:
     """Fábrica de la app FastAPI. Se importa FastAPI aquí para no exigirlo siempre."""
     try:
-        from fastapi import FastAPI, HTTPException, Query
+        from fastapi import Depends, FastAPI, Header, HTTPException, Query
     except ImportError as exc:  # pragma: no cover
         raise APIDependencyError(
             "La API local requiere FastAPI: pip install 'aethernet[api]'"
@@ -34,9 +42,19 @@ def create_app(repo: Any, settings: Settings, service: MonitorService | None = N
 
     app = FastAPI(
         title="Aethernet API",
-        version="0.1.0",
+        version=__version__,
         description="Consulta local de la base de datos de Aethernet. Solo localhost.",
     )
+
+    token_file = api_token_path(paths)
+    expected_token = resolve_api_token(paths)
+
+    def require_token(x_aethernet_token: str | None = Header(default=None)) -> None:
+        """Exige el token de la API en operaciones que mutan estado o hardware."""
+        if not tokens_match(expected_token, x_aethernet_token):
+            raise HTTPException(status_code=401, detail="token de API inválido o ausente")
+
+    mutate = [Depends(require_token)]
 
     @app.get("/health")
     def health() -> dict[str, Any]:
@@ -45,6 +63,7 @@ def create_app(repo: Any, settings: Settings, service: MonitorService | None = N
             "status": "ok",
             "capabilities": capabilities,
             "daemon": repo.kv_get("daemon_status", {}),
+            "api_token_file": str(token_file),
         }
 
     @app.get("/score")
@@ -52,7 +71,7 @@ def create_app(repo: Any, settings: Settings, service: MonitorService | None = N
         scan = repo.latest_wifi_scan()
         if scan is None:
             return {"total": None, "detail": "sin escaneos"}
-        history = {ap.bssid: [s for _, s in repo.signal_series(ap.bssid, 24)] for ap in scan.aps}
+        history = repo.signal_history([ap.bssid for ap in scan.aps], 24)
         health_score = score_health(
             scan,
             my_ssids=tuple(settings.my_ssids),
@@ -115,7 +134,7 @@ def create_app(repo: Any, settings: Settings, service: MonitorService | None = N
         events_list = repo.list_events(limit=limit, min_severity=min_severity, unread_only=unread_only)
         return {"count": len(events_list), "events": [e.to_dict() for e in events_list]}
 
-    @app.post("/events/{event_id}/read")
+    @app.post("/events/{event_id}/read", dependencies=mutate)
     def read_event(event_id: int) -> dict[str, Any]:
         updated = repo.mark_event_read(event_id)
         if not updated:
@@ -127,7 +146,7 @@ def create_app(repo: Any, settings: Settings, service: MonitorService | None = N
         items = repo.list_snapshots(kind, limit)
         return {"count": len(items), "snapshots": [s.to_dict() for s in items]}
 
-    @app.post("/scan")
+    @app.post("/scan", dependencies=mutate)
     def trigger_scan(active: bool = False) -> dict[str, Any]:
         if service is None:
             raise HTTPException(status_code=503, detail="servicio no disponible")
@@ -146,13 +165,13 @@ def create_app(repo: Any, settings: Settings, service: MonitorService | None = N
         rows = repo.list_monitor_events(limit=limit, kind=kind)
         return {"count": len(rows), "events": rows, "stats": repo.monitor_stats()}
 
-    @app.post("/monitor/start")
+    @app.post("/monitor/start", dependencies=mutate)
     def monitor_start() -> dict[str, Any]:
         if service is None:
             raise HTTPException(status_code=503, detail="servicio no disponible")
         return service.start_monitor()
 
-    @app.post("/monitor/stop")
+    @app.post("/monitor/stop", dependencies=mutate)
     def monitor_stop() -> dict[str, Any]:
         if service is None:
             raise HTTPException(status_code=503, detail="servicio no disponible")
@@ -161,12 +180,27 @@ def create_app(repo: Any, settings: Settings, service: MonitorService | None = N
     return app
 
 
-def serve(repo: Any, settings: Settings, host: str | None = None, port: int | None = None) -> None:
+_LOOPBACK_HOSTS = frozenset({"127.0.0.1", "localhost", "::1"})
+
+
+def serve(
+    repo: Any,
+    settings: Settings,
+    host: str | None = None,
+    port: int | None = None,
+    paths: Paths | None = None,
+) -> None:
     """Arranca uvicorn en primer plano."""
     try:
         import uvicorn
     except ImportError as exc:  # pragma: no cover
         raise APIDependencyError("uvicorn no está instalado: pip install 'aethernet[api]'") from exc
 
-    app = create_app(repo, settings)
-    uvicorn.run(app, host=host or settings.api_host, port=port or settings.api_port, log_level="info")
+    app = create_app(repo, settings, paths=paths)
+    bound_host = host or settings.api_host
+    if bound_host not in _LOOPBACK_HOSTS:
+        log.warning(
+            "la API escucha en %s (no es loopback): el token de API es tu única defensa",
+            bound_host,
+        )
+    uvicorn.run(app, host=bound_host, port=port or settings.api_port, log_level="info")

@@ -20,7 +20,7 @@ _PRESETS = {"24H": 24, "07D": 7 * 24, "30D": 30 * 24, "90D": 90 * 24}
 _FORMATS = (
     ("markdown", "MARKDOWN (.MD)", "code", "M"),
     ("pdf", "DOCUMENTO PDF (.PDF)", "picture_as_pdf", "P"),
-    ("json", "DATASET JSON (.JSON)", "data_object", "J"),
+    ("json", "DATASET JSON (.JSON)", "data_array", "J"),
     ("csv", "TABLA CSV (.CSV)", "table_chart", "C"),
 )
 
@@ -34,7 +34,7 @@ def reports_page() -> None:
             "modules": {"congestion", "inventory", "incidents", "untrusted"},
         }
 
-        with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3"):
+        with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3 w-full"):
             with ui.row().classes("items-center gap-3"):
                 ui.html(icon("description", size=22, color=COLORS["cyan"]))
                 with ui.column().classes("gap-0"):

@@ -99,9 +99,7 @@ def build_report_data(
     lan = repo.latest_lan_scan()
     history: dict[str, list[int]] = {}
     if scan is not None:
-        for ap in scan.aps:
-            points = repo.signal_series(ap.bssid, hours=48)
-            history[ap.bssid] = [s for _, s in points]
+        history = repo.signal_history([ap.bssid for ap in scan.aps], hours=48)
     health = (
         score_health(
             scan,

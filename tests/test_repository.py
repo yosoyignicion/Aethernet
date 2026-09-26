@@ -34,6 +34,24 @@ def test_signal_history_and_channel_stats(repo):
     assert stats[0]["samples"] == 2
 
 
+def test_signal_history_batches_bssids(repo):
+    now = time.time()
+    _store_scan(
+        repo,
+        now - 200,
+        ap("A", "AA:BB:CC:00:00:01", dbm=-40),
+        ap("B", "AA:BB:CC:00:00:02", dbm=-60),
+    )
+    _store_scan(repo, now - 100, ap("A", "AA:BB:CC:00:00:01", dbm=-55))
+    history = repo.signal_history(
+        ["AA:BB:CC:00:00:01", "AA:BB:CC:00:00:02", "AA:BB:CC:00:00:09"]
+    )
+    assert history["AA:BB:CC:00:00:01"] == [-40, -55]
+    assert history["AA:BB:CC:00:00:02"] == [-60]
+    assert history["AA:BB:CC:00:00:09"] == []
+    assert repo.signal_history([]) == {}
+
+
 def test_ap_first_seen_is_preserved(repo):
     now = time.time()
     _store_scan(repo, now - 400, ap("A", "AA:BB:CC:00:00:01", dbm=-40))

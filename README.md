@@ -1,105 +1,131 @@
+<div align="center">
+
 # Aethernet
 
-Instrumento local para auditar tu WiFi doméstico. No es un script con botones
-pegados: es una arquitectura en capas, sin nube, sin telemetría y honesta sobre
-lo que el hardware realmente puede hacer.
+**Instrumento local para auditar tu WiFi doméstico.**
+Pasivo por defecto · sin nube · sin telemetría · honesto con tu hardware.
 
-> Pasiva por defecto, activa cuando tú lo pides. Backend completo (CLI + API) e
-> interfaz gráfica "AETHERNET" en NiceGUI, traducida del diseño retro-futurista
-> de Stitch.
+[![CI](https://github.com/yosoyignicion/Aethernet/actions/workflows/ci.yml/badge.svg)](https://github.com/yosoyignicion/Aethernet/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white)](#requisitos)
+[![License: MIT](https://img.shields.io/badge/license-MIT-00FF9C.svg)](LICENSE)
+[![mypy: strict](https://img.shields.io/badge/mypy-strict-2A6DB2.svg)](#calidad)
 
-## Arquitectura (tres capas, cero acoplamiento)
+[Guía de uso](docs/GUIA_USO.md) · [Changelog](CHANGELOG.md) · [Contribuir](CONTRIBUTING.md) · [Seguridad](SECURITY.md)
 
-| Capa | Paquete | Responsabilidad |
-| --- | --- | --- |
-| Core | `aethernet.core` | Lógica pura y testeable: parseo `nmcli`/`iw`, ARP, motor de reglas, salud, espectro, snapshots, OUI, didáctica. |
-| Datos | `aethernet.data` | SQLite con WAL, migraciones, histórico, snapshots y eventos. |
-| Servicio | `aethernet.service` | Daemon de vigilancia continua; nunca dibuja. La GUI solo lee la DB. |
-| Alertas | `aethernet.alerts` | Cola, deduplicación, filtros (horas silenciosas, mutings) y `notify-send`. |
-| Informes | `aethernet.report` | Exportadores Markdown / JSON / CSV / PDF. |
-| API | `aethernet.api` | FastAPI opcional en `127.0.0.1` para tus scripts. |
-| Integraciones | `aethernet.integration` | `speedtest-cli` e importación de JSON de WiFi Analyzer. |
+</div>
 
-Principios: los *parsers* son funciones puras (se testean sin hardware), las
-reglas son clases independientes, y las dependencias pesadas (`scapy`,
-`reportlab`, `matplotlib`, `fastapi`) son **opcionales** con degradación
-graciosa.
+![Dashboard de AETHERNET](docs/img/dashboard.png)
+
+Aethernet mide tu entorno WiFi, detecta solapamiento de canales y dispositivos
+desconocidos en tu LAN, y opcionalmente captura tramas de gestión. No es un
+script con botones pegados: es una arquitectura en capas, con CLI + API + una
+interfaz gráfica "AETHERNET" que consume exactamente los mismos servicios.
+
+| Espectro | Redes |
+| --- | --- |
+| ![Espectro](docs/img/espectro.png) | ![Redes](docs/img/redes.png) |
+
+## Características
+
+- **Escaneo pasivo** con `nmcli`; activo (ARP con `scapy`) solo si lo pides.
+- **Motor de reglas** con hallazgos accionables (evil twin, deauth, canal saturado…).
+- **Salud de la red** con gauge, histórico de congestión y asesor de canal 2.4 GHz.
+- **Inventario LAN** con confianza, alias y detección de MAC aleatoria.
+- **Monitor pasivo** no disruptivo (interfaz *virtual*, nunca corta tu WiFi).
+- **Informes** Markdown / PDF / JSON / CSV y snapshots comparables.
+- **Daemon** de vigilancia continua y **alertas** con deduplicación y horas silenciosas.
+- **API local** opcional (FastAPI) protegida por token.
+
+## Requisitos
+
+Linux con **NetworkManager** (`nmcli`) y **Python 3.11+**. Recomendado: `iw`,
+`ethtool`, `notify-send`. `scapy` + `root` habilitan LAN activo y captura;
+`iw` habilita monitor mode. Todo es **opcional y degrada con gracia**.
+
+```bash
+aethernet doctor        # veredicto honesto de tu hardware
+```
 
 ## Instalación
 
 ```bash
+git clone https://github.com/yosoyignicion/Aethernet.git
+cd aethernet
 python3 -m venv .venv && source .venv/bin/activate
-pip install -e .                 # solo stdlib
-pip install -e '.[lan,reports,api,speedtest,ui]'   # extras opcionales (ui = NiceGUI)
+pip install -e '.[ui]'                                # núcleo + interfaz
+# o todo: pip install -e '.[lan,reports,api,speedtest,ui]'
 ```
-
-Requisitos del sistema: `nmcli` (NetworkManager). Recomendado: `iw`, `ethtool`,
-`notify-send`. `scapy` + root habilitan el ARP scan activo; `iw` habilita el
-diagnóstico de bandas y monitor mode.
 
 ## Uso rápido
 
 ```bash
-aethernet doctor                      # qué puede y qué no tu hardware
-aethernet scan --no-lan               # escaneo pasivo
-aethernet scan --active --lan         # barrido activo + inventario LAN
-aethernet status                      # saludo, contadores y última amenaza
-aethernet networks --open             # inventario con filtros
-aethernet analyze                     # motor de reglas sobre el último escaneo
-aethernet events --unread             # bandeja de eventos
-aethernet report --format md          # informe Markdown
-aethernet compare                     # diff entre los dos últimos escaneos
-aethernet daemon start                # vigilancia continua en background
-aethernet config set my_ssids MiRed    # define tu red para evil twin/health
-aethernet monitor status              # monitor pasivo (honesto si falta hardware)
-aethernet monitor start               # captura deauth/probes/beacons/EAPOL
-aethernet monitor events              # eventos capturados
+# CLI
+aethernet scan --no-lan            # escaneo pasivo
+aethernet analyze                  # reglas sobre el último escaneo
+aethernet networks --open          # inventario filtrado
+aethernet config set my_ssids MiRed
+aethernet daemon start             # vigilancia continua
+
+# Interfaz gráfica
+aethernet-ui                       # o: python -m aethernet.ui --web --port 8080
+
+# API local (opcional)
+aethernet api --print-token        # cabecera X-Aethernet-Token
+aethernet api
 ```
 
-### Monitor pasivo (no disruptivo)
+Todos los comandos aceptan `--json`. La guía completa, pantalla por pantalla,
+está en **[docs/GUIA_USO.md](docs/GUIA_USO.md)**.
 
-Aethernet nunca cambia el tipo de tu interfaz gestionada: crea una **interfaz
-virtual** de monitor (`iw phy … interface add … type monitor`). Si el driver no
-lo permite, se deshabilita con mensaje claro en lugar de cortar tu WiFi. Solo
-escucha — no inyecta ni captura material sensible a disco.
+### Atajos de la interfaz
 
-Requiere: adaptador con monitor mode, `iw`, `scapy` (`pip install 'aethernet[monitor]'`)
-y privilegios (root / `CAP_NET_ADMIN`). `aethernet doctor` reporta el veredicto.
+`1`…`7` módulos · `R` escanear · `/` o `Ctrl+K` buscar redes · `Ctrl+E` exportar · `C` copiar canal.
 
-Todos los comandos aceptan `--json` para integrarlos con otras herramientas.
+## Arquitectura
 
-## Interfaz gráfica (AETHERNET)
+| Capa | Paquete | Responsabilidad |
+| --- | --- | --- |
+| Core | `aethernet.core` | Lógica pura y testeable: parseo `nmcli`/`iw`, ARP, reglas, salud, espectro, OUI. |
+| Datos | `aethernet.data` | SQLite con WAL, migraciones e histórico. |
+| Servicio | `aethernet.service` | Daemon de vigilancia; **nunca dibuja**. |
+| Alertas | `aethernet.alerts` | Cola, deduplicación, filtros y `notify-send`. |
+| Informes | `aethernet.report` | Exportadores Markdown / JSON / CSV / PDF. |
+| API | `aethernet.api` | FastAPI local opcional. |
+| UI | `aethernet.ui` | NiceGUI "AETHERNET"; solo lee la DB / consume servicios. |
 
-```bash
-pip install -e '.[ui]'
-aethernet-ui              # ventana nativa si hay pywebview; si no, navegador
-python -m aethernet.ui --web --port 8080
-```
+Los *parsers* son funciones puras (se testean sin hardware) y las dependencias
+pesadas son **extras opcionales** con degradación graciosa.
 
-Pantallas: Dashboard (`/`), Espectro (`/espectro`), Redes (`/redes`),
-Dispositivos (`/dispositivos`), Alertas (`/alertas`), Informes (`/informes`) y
-Ajustes (`/ajustes`). Consume los mismos servicios que el CLI; los escaneos
-corren en segundo plano y la UI nunca bloquea. Las métricas que no se pueden
-medir se muestran como `n/d` (honestidad por diseño).
+## Privacidad
 
-Identidad visual "AETHERNET": paleta matrix verde sobre negro profundo y
-animaciones sutiles (`ae-fade-up`, `ae-sweep`, `ae-glitch`, `ae-glow`), todas
-respetando `prefers-reduced-motion`.
+Sin red saliente: la interfaz sirve fuentes e iconos localmente (`/ae-fonts`).
+Nada sale de tu equipo. Datos en rutas XDG:
 
-## Dónde vive todo
-
-- Configuración: `~/.config/aethernet/config.toml`
-- Datos y DB: `~/.local/share/aethernet/aethernet.db`
+- Config: `~/.config/aethernet/config.toml`
+- Datos/DB: `~/.local/share/aethernet/aethernet.db`
 - Informes: `~/.local/share/aethernet/reports/`
-- Caché OUI: `~/.cache/aethernet/oui.tsv`
 
-## Tests
+## Calidad
 
 ```bash
-pip install -e '.[dev]'
-pytest
-ruff check src tests
+./scripts/ci.sh      # ruff + mypy --strict + vulture + pytest
+./scripts/smoke.sh   # E2E UI headless: 7 rutas + monitor status
 ```
 
-La suite cubre parseo, reglas, salud, espectro, snapshots, repositorio,
-filtros de alerta y el servicio con escáneres simulados.
+`mypy --strict` (0 errores) y `vulture` (0 en `core/`+`data/`) son parte del gate.
+Hay CI en GitHub Actions para Python 3.11 y 3.12.
+
+## Contribuir
+
+Lee **[CONTRIBUTING.md](CONTRIBUTING.md)**. Reglas clave: pasivo por defecto, sin
+nube, honestidad (si no se mide, `n/d`), migraciones append-only y Conventional
+Commits en español.
+
+## Aviso legal
+
+Para auditar **tu propia red**. Auditar redes ajenas sin autorización puede ser
+ilegal. El modo activo solo en equipos/redes que controles o tengas permiso.
+
+## Licencia
+
+[MIT](LICENSE) © The Aethernet Authors.

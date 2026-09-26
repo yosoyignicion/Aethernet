@@ -7,6 +7,8 @@ base de datos: nunca se bloquea y el daemon nunca dibuja.
 
 from __future__ import annotations
 
+import contextlib
+import os
 import signal
 import threading
 import time
@@ -86,6 +88,7 @@ class MonitorService:
         self._paused = False
         self._as_process = False
         self._lock = threading.Lock()
+        self._last_purge: float | None = None
         self.scan_count = 0
         self.last_result: ScanResult | None = None
         self.last_error: str | None = None
@@ -116,9 +119,7 @@ class MonitorService:
             scan = self.scanner(self.settings.interface, active=use_active)
             result.scan = scan
 
-            history: dict[str, list[int]] = {}
-            for ap in scan.aps:
-                history[ap.bssid] = [signal for _, signal in self.repo.signal_series(ap.bssid, hours=24)]
+            history = self.repo.signal_history([ap.bssid for ap in scan.aps], hours=24)
 
             self.repo.save_wifi_scan(scan, my_bssids=set(self.settings.my_bssids))
 
@@ -320,6 +321,27 @@ class MonitorService:
         return advice
 
     # ------------------------------------------------------------------ #
+    # Retención del histórico
+    # ------------------------------------------------------------------ #
+    def maybe_purge(self, *, now: float | None = None) -> int | None:
+        """Purga histórico antiguo según ``retention_days`` (máx. una vez al día).
+
+        Devuelve el total de registros eliminados, o ``None`` si la retención está
+        desactivada (``retention_days <= 0``) o si todavía no toca ejecutarla.
+        """
+        days = int(self.settings.retention_days)
+        if days <= 0:
+            return None
+        current = time.time() if now is None else now
+        if self._last_purge is not None and current - self._last_purge < 86_400:
+            return None
+        removed = self.repo.purge_old(days)
+        self._last_purge = current
+        total = sum(int(value) for value in removed.values())
+        log.info("retención: purgados %d registros con más de %d días", total, days)
+        return total
+
+    # ------------------------------------------------------------------ #
     # Bucle
     # ------------------------------------------------------------------ #
     def _loop(self) -> None:
@@ -330,6 +352,10 @@ class MonitorService:
             self._sync_monitor()
             if not self._paused and not self._stop_event.is_set():
                 self.scan_once()
+            try:
+                self.maybe_purge()
+            except Exception:  # la retención nunca debe tumbar la vigilancia
+                log.exception("la purga de retención falló")
             self._wait(self.interval_seconds())
 
     def _sync_monitor(self) -> None:
@@ -428,10 +454,8 @@ def _install_signal_handlers(service: MonitorService) -> None:
 
 
 def _write_pid(path: Path) -> None:
-    import contextlib
-
     with contextlib.suppress(OSError):
-        atomic_write(path, f"{__import__('os').getpid()}\n")
+        atomic_write(path, f"{os.getpid()}\n")
 
 
 def _remove_pid(path: Path) -> None:
@@ -447,8 +471,6 @@ def daemon_is_running(paths: Paths | None = None) -> int | None:
         pid = int(paths.pid_file.read_text(encoding="utf-8").strip())
     except (OSError, ValueError):
         return None
-    import os
-
     try:
         os.kill(pid, 0)
     except (OSError, ProcessLookupError):

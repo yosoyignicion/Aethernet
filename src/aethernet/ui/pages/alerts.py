@@ -21,7 +21,7 @@ def alerts_page() -> None:
     with shell("/alertas", "Alertas"):
         state: dict[str, Any] = {"severity": None, "selected": None}
 
-        with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3"):
+        with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3 w-full"):
             with ui.column().classes("gap-0"):
                 ui.label("Centro de Alertas de Espectro").classes("ae-headline text-lg text-[#D8F5E3]")
                 with ui.row().classes("items-center gap-2"):

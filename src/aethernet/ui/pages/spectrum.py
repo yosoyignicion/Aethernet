@@ -35,7 +35,7 @@ def spectrum_page() -> None:
     with shell("/espectro", "Espectro"):
         selected = {"band": Band.GHZ_24}
 
-        with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3"):
+        with ui.element("div").classes("ae-panel flex flex-wrap items-center justify-between gap-3 w-full"):
             with ui.row().classes("items-center gap-3"):
                 label_caps("MÓDULO:")
                 ui.label("RF_SPECTRUM_ANALYZER").classes("ae-mono text-sm text-[#D8F5E3]")

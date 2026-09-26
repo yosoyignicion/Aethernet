@@ -6,7 +6,7 @@ Build-Depends: debhelper-compat (= 13), dh-python, python3-all, python3-setuptoo
  python3-pip, pybuild-plugin-pyproject
 Standards-Version: 4.6.2
 Rules-Requires-Root: no
-Homepage: https://example.invalid/aethernet
+Homepage: https://github.com/yosoyignicion/Aethernet
 
 Package: aethernet
 Architecture: all

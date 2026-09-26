@@ -6,8 +6,11 @@ La configuración vive en ``~/.config/aethernet/config.toml`` y los datos
 
 from __future__ import annotations
 
+import contextlib
+import hmac
 import os
 import re
+import secrets
 import shutil
 import tomllib
 from dataclasses import asdict, dataclass, field, fields
@@ -21,6 +24,10 @@ log = get_logger(__name__)
 
 LEGACY_APP_NAME = "homenet-audit"
 _LEGACY_DB_NAME = "homenet.db"
+
+#: Variable de entorno que fuerza el token de la API local (si se define).
+API_TOKEN_ENV = "AETHERNET_API_TOKEN"
+_API_TOKEN_FILE = "api.token"
 
 
 def _xdg(env: str, default: str) -> Path:
@@ -78,6 +85,55 @@ class Paths:
 
 def default_paths() -> Paths:
     return Paths()
+
+
+def api_token_path(paths: Paths | None = None) -> Path:
+    """Ruta del token de la API local (fichero privado 0600)."""
+    return (paths or default_paths()).data_dir / _API_TOKEN_FILE
+
+
+def _write_private(path: Path, content: str) -> None:
+    """Escribe un fichero de forma atómica con permisos 0600."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(content)
+        os.replace(tmp, path)
+    except OSError:
+        with contextlib.suppress(OSError):
+            tmp.unlink()
+        raise
+
+
+def resolve_api_token(paths: Paths | None = None) -> str:
+    """Token de la API local: ``AETHERNET_API_TOKEN`` > fichero 0600 > nuevo.
+
+    Se genera una sola vez por instalación y se persiste en el directorio de
+    datos; nunca se codifica en el código. Es obligatorio para los endpoints que
+    mutan estado o activan hardware (el resto son de solo lectura en loopback).
+    """
+    env = os.environ.get(API_TOKEN_ENV)
+    if env and env.strip():
+        return env.strip()
+    paths = (paths or default_paths()).ensure()
+    path = paths.data_dir / _API_TOKEN_FILE
+    with contextlib.suppress(OSError):
+        existing = path.read_text(encoding="utf-8").strip()
+        if existing:
+            return existing
+    token = secrets.token_urlsafe(32)
+    with contextlib.suppress(OSError):
+        _write_private(path, token + "\n")
+    return token
+
+
+def tokens_match(expected: str, provided: str | None) -> bool:
+    """Comparación en tiempo constante para no filtrar el token por temporización."""
+    if not expected or not provided:
+        return False
+    return hmac.compare_digest(expected, provided)
 
 
 def _legacy_dir(env: str, default: str) -> Path:
@@ -164,6 +220,8 @@ class Settings:
 
     redact_macs_in_reports: bool = False
     report_template_title: str = "Estado de mi WiFi"
+    # Retención del histórico: purga automática de registros más antiguos (0 = off).
+    retention_days: int = 90
 
     # Monitor pasivo (nunca exclusivo: usa interfaz virtual, no corta tu WiFi)
     monitor_enabled: bool = False

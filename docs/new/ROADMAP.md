@@ -112,6 +112,11 @@ La recogida es automática en `MonitorService.scan_once` (también vía daemon).
 
 ## Changelog
 
+- **2026-09-26** — Endurecimiento: token de API por instalación (los `POST` exigen
+  `X-Aethernet-Token`), comando `aethernet api` (`--print-token`), retención
+  automática del histórico (`retention_days`, purga diaria en el daemon) y
+  `Repository.signal_history` (sin N+1). Monitor sigue pendiente de validación en
+  hardware real (falta `iw`/`scapy`/root en este equipo).
 - **2026-09-26** — **v1.1.0**: utilidades accionables. Vigilancia de canal en
   background con aviso, escenarios 6h/24h/7d, tu-red-vs-vecinos, informe de canal,
   watchlist de redes (regla `watchlist_change`), identificación de dispositivos y

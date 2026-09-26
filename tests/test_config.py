@@ -14,12 +14,14 @@ def test_settings_roundtrip(tmp_paths):
     settings.scan_interval_min = 30
     settings.quiet_enabled = True
     settings.device_aliases = {"AA:BB": "Router"}
+    settings.retention_days = 30
     save_settings(settings, tmp_paths)
     loaded = load_settings(tmp_paths)
     assert loaded.my_ssids == ["MiRed", "Otra"]
     assert loaded.scan_interval_min == 30
     assert loaded.quiet_enabled is True
     assert loaded.device_aliases == {"AA:BB": "Router"}
+    assert loaded.retention_days == 30
 
 
 def test_load_missing_returns_defaults(tmp_paths):

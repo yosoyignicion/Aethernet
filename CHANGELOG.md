@@ -4,6 +4,44 @@ Todas las novedades relevantes de Aethernet. Formato basado en
 [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y
 [Versionado Semántico](https://semver.org/lang/es/).
 
+## [Unreleased]
+
+### Añadido
+- **Autenticación de la API local**: token por instalación (`AETHERNET_API_TOKEN`
+  o fichero `api.token` con permisos 0600); los `POST` (`/scan`,
+  `/monitor/start|stop`, `/events/{id}/read`) exigen la cabecera
+  `X-Aethernet-Token`. Los `GET` de solo lectura siguen abiertos en loopback.
+- **Comando `aethernet api`** para arrancar la API local y `--print-token` para
+  consultar el token; aviso si se escucha fuera de loopback.
+- **Retención automática del histórico**: ajuste `retention_days` (0 = desactivado)
+  que el daemon ejecuta como máximo una vez al día. La UI permite configurarla.
+- Método `Repository.signal_history` (una sola consulta por BSSID en vez de N+1)
+  usado por daemon, CLI, API, UI e informes.
+- **Fuentes auto-hospedadas** (`ui/fonts`, servidas en `/ae-fonts`): Inter,
+  JetBrains Mono y Space Grotesk, más Material Symbols Outlined (instanciado a
+  FILL/wght fijos, ~311 KB con todas las ligaduras). La interfaz ya no hace
+  peticiones a Google (sin red saliente) y se ve igual sin conexión.
+- **Atajos de teclado reales**: `1-7` módulos, `R` escaneo, `/` y `Ctrl+K` redes,
+  `Ctrl+E` exportar, `C` copiar canal (antes solo se anunciaban en Ajustes).
+- Inspector de Redes con **selección por defecto** (tu red o la más fuerte).
+
+### Corregido
+- **Gauge del Dashboard**: se elimina la aguja y las marcas numéricas que se
+  solapaban; ahora es un arco con brillo y valor centrado.
+- Paneles de cabecera a **ancho completo** (quedaban desalineados respecto a la
+  rejilla en las 7 páginas).
+- El histórico de congestión **oculta la serie 5 GHz** cuando no hay datos.
+- Valor de identificación truncado en Dispositivos ahora tiene **tooltip**.
+- El Dashboard evita **reconstruir los gráficos** si los datos no cambian (firma).
+- Accesibilidad: anillo de foco visible (`:focus-visible`).
+
+### Cambiado
+- `api/server.py` reporta la versión real del paquete y expone la ruta del token
+  en `/health` (nunca el token).
+- Limpieza de imports diferidos en `service/daemon.py`.
+- Refresco del Dashboard de 3 a 5 s y render de la animación de barrido con
+  `will-change`/`contain` para reducir repintados.
+
 ## [1.1.0] - 2026-09-26
 
 Enfoque: convertir el análisis en **decisiones accionables** sobre el canal y las

@@ -1,0 +1,33 @@
+name: Propuesta de mejora
+description: Idea, funcionalidad o mejora de la interfaz
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problema
+    attributes:
+      label: Qué problema resuelve
+      description: Describe la necesidad antes de la solución.
+    validations:
+      required: true
+  - type: textarea
+    id: propuesta
+    attributes:
+      label: Propuesta
+      description: Qué te gustaría que hiciera Aethernet.
+    validations:
+      required: true
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Alternativas consideradas
+  - type: checkboxes
+    id: principios
+    attributes:
+      label: Encaje con los principios del proyecto
+      description: Aethernet es pasivo por defecto, sin nube, y honesto con el hardware.
+      options:
+        - label: La propuesta es pasiva por defecto (no inyecta tráfico ni corta el WiFi).
+          required: true
+        - label: No requiere backend en la nube ni telemetría.
+          required: true

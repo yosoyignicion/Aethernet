@@ -11,7 +11,7 @@ from ...models import AccessPoint
 from .. import charts
 from ..components import empty_state, kv_row, label_caps, panel_header, toast
 from ..shell import shell
-from ..state import fmt_age, get_context, security_label
+from ..state import UIContext, fmt_age, get_context, security_label
 from ..theme import COLORS, icon
 
 _COLUMNS: list[dict[str, Any]] = [
@@ -29,13 +29,26 @@ def _signal_text(dbm: int) -> str:
     return f"{dbm} dBm"
 
 
+def _default_ap(context: UIContext) -> AccessPoint | None:
+    """Red a inspeccionar al abrir: tu red si está definida, si no la más fuerte."""
+    scan = context.last_scan()
+    if scan is None or not scan.aps:
+        return None
+    mine = set(context.settings.my_bssids)
+    if mine:
+        for ap in scan.aps:
+            if ap.bssid in mine:
+                return ap
+    return max(scan.aps, key=lambda a: a.signal_dbm)
+
+
 @ui.page("/redes")
 def networks_page() -> None:
     context = get_context()
     with shell("/redes", "Redes"):
         state: dict[str, Any] = {"chips": set(), "density": "standard"}
 
-        with ui.element("div").classes("ae-panel flex flex-col gap-4"):
+        with ui.element("div").classes("ae-panel flex flex-col gap-4 w-full"):
             with ui.row().classes("items-center justify-between w-full flex-wrap gap-3"):
                 with ui.row().classes("items-center gap-2 ae-mono text-[11px] text-[#86B89B]"):
                     ui.html(icon("wifi", size=18, color=COLORS["cyan"]))
@@ -128,7 +141,7 @@ def networks_page() -> None:
                     "w-full ae-panel"
                 ).props("flat dense dark")
             with ui.element("div").classes("xl:col-span-4"):
-                render_inspector(None)
+                render_inspector(_default_ap(context))
 
         def apply_filters() -> None:
             scan = context.last_scan()

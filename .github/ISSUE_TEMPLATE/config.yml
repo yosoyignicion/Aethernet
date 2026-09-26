@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Guía de uso
+    url: https://github.com/yosoyignicion/Aethernet/blob/main/docs/GUIA_USO.md
+    about: Instalación, pantallas, permisos y resolución de problemas.
+  - name: Preguntas y dudas
+    url: https://github.com/yosoyignicion/Aethernet/discussions
+    about: Para dudas generales, usa las discusiones del repositorio.

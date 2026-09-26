@@ -1,15 +1,26 @@
 __pycache__/
 *.py[cod]
 .venv/
+venv/
 *.egg-info/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
 dist/
 build/
 /debian
 *.log
 *.tar.gz
 *.deb
+*.orig
+*.rej
+
+# editores / SO
+.idea/
+.vscode/
+.DS_Store
 
 .engram/

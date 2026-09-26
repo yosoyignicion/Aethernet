@@ -82,7 +82,7 @@ class UIContext:
         scan = self.last_scan()
         if scan is None:
             return None
-        history = {ap.bssid: [s for _, s in self.repo.signal_series(ap.bssid, hours=48)] for ap in scan.aps}
+        history = self.repo.signal_history([ap.bssid for ap in scan.aps], hours=48)
         return score_health(
             scan,
             my_ssids=tuple(self.settings.my_ssids),
