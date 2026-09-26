@@ -15,11 +15,16 @@ pytest tests/test_spectrum.py::test_x   # un solo test
 ruff check src tests
 mypy --strict src/aethernet
 vulture src/aethernet/core src/aethernet/data
+aethernet doctor                  # veredicto honesto de hardware (útil aun sin hardware)
 aethernet-ui                      # o: python -m aethernet.ui --web --port 8080
 ```
 
 El CI no tolera deuda: `mypy --strict src/aethernet` = 0 y `vulture` = 0 en
 `core/`+`data/`. `./scripts/ci.sh` detecta `.venv/bin/python` automáticamente.
+
+El workflow instala solo `.[dev,ui]`: **no** trae los extras `reports`/`speedtest`,
+así que los tests que hacen `pytest.importorskip("reportlab")` (PDF) se saltan. Para
+cubrirlos de verdad: `pip install -e '.[dev,ui,reports,speedtest]'`.
 
 ## Arquitectura (capas, cero acoplamiento)
 
@@ -37,7 +42,17 @@ El CI no tolera deuda: `mypy --strict src/aethernet` = 0 y `vulture` = 0 en
   cambia el tipo de la interfaz gestionada (no puede cortar el WiFi).
 - No inyectar tráfico ni volcar material sensible a disco. Sin red saliente.
 - Honestidad: si no se puede medir, mostrar `n/d`; no inventar etiquetas ni amenazas.
-- El secreto de sesión UI sale de `AETHERNET_STORAGE_SECRET` o se persiste por instalación; nunca hardcodear.
+- El secreto de sesión UI sale de `AETHERNET_STORAGE_SECRET` (o se persiste por
+  instalación); el token de la API local, de `AETHERNET_API_TOKEN` (o `api.token` 0600).
+  Nunca hardcodear.
+
+## Convenciones
+
+- Un cambio lógico por PR; si el cambio es visible, actualiza `CHANGELOG.md` en la
+  sección `## [Unreleased]` (Keep a Changelog). Commits solo si se piden.
+- `docs/history/` y `docs/design/` son **snapshots históricos** y aún citan el nombre
+  antiguo `homenet-audit`; la fuente actual de arquitectura es `README.md`,
+  `docs/GUIA_USO.md` y `docs/ROADMAP.md`. No los tomes como verdad.
 
 ## Gotchas
 
