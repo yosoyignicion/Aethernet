@@ -33,13 +33,13 @@ Changelog = "https://github.com/yosoyignicion/Aethernet/blob/main/CHANGELOG.md"
 Documentation = "https://github.com/yosoyignicion/Aethernet/blob/main/docs/GUIA_USO.md"
 
 [project.optional-dependencies]
-lan = ["scapy>=2.5"]
-monitor = ["scapy>=2.5"]
-api = ["fastapi>=0.110", "uvicorn[standard]>=0.29"]
+lan = ["scapy>=2.7"]
+monitor = ["scapy>=2.7"]
+api = ["fastapi>=0.141", "uvicorn[standard]>=0.53"]
 reports = ["reportlab>=4.0", "matplotlib>=3.8"]
 speedtest = ["speedtest-cli>=2.1"]
 ui = ["nicegui>=3.17"]
-dev = ["pytest>=8.0", "pytest-cov>=7.1", "ruff>=0.16", "mypy>=1.10", "vulture>=2.16", "scapy>=2.5"]
+dev = ["pytest>=9.0", "pytest-cov>=7.1", "ruff>=0.16", "mypy>=2.3", "vulture>=2.16", "scapy>=2.7"]
 all = [
   "aethernet[lan,api,reports,speedtest,ui]",
 ]
