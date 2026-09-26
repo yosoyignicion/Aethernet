@@ -120,7 +120,7 @@ La recogida es automática en `MonitorService.scan_once` (también vía daemon).
 - **2026-09-26** — **v1.1.0**: utilidades accionables. Vigilancia de canal en
   background con aviso, escenarios 6h/24h/7d, tu-red-vs-vecinos, informe de canal,
   watchlist de redes (regla `watchlist_change`), identificación de dispositivos y
-  tarjeta de canal en Dashboard. Auditoría final en `docs/AUDIT-FINAL.md`.
+  tarjeta de canal en Dashboard. Auditoría final en `docs/audits/AUDIT-FINAL.md`.
 - **2026-09-26** — Gestor de canal: selección manual del canal propio, tabla
   comparativa por canal (interferencia/disponibilidad/ranking), veredicto de
   mejora y copia de instrucciones para el router.

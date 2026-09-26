@@ -10,7 +10,7 @@ Pasivo por defecto · sin nube · sin telemetría · honesto con tu hardware.
 [![License: MIT](https://img.shields.io/badge/license-MIT-00FF9C.svg)](LICENSE)
 [![mypy: strict](https://img.shields.io/badge/mypy-strict-2A6DB2.svg)](#calidad)
 
-[Guía de uso](docs/GUIA_USO.md) · [Changelog](CHANGELOG.md) · [Contribuir](CONTRIBUTING.md) · [Seguridad](SECURITY.md)
+[Guía de uso](docs/GUIA_USO.md) · [Roadmap](docs/ROADMAP.md) · [Changelog](CHANGELOG.md) · [Contribuir](CONTRIBUTING.md) · [Seguridad](SECURITY.md)
 
 </div>
 

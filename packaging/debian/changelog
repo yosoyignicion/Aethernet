@@ -1,3 +1,13 @@
+aethernet (1.2.0) unstable; urgency=medium
+
+  * API local con token por instalacion y comando `aethernet api`.
+  * Retencion automatica del historico (retention_days).
+  * Interfaz AETHERNET: gauge, anchos, atajos de teclado y fuentes
+    auto-hospedadas (sin red saliente).
+  * Documentacion (README, guia de uso), licencia MIT y CI en GitHub Actions.
+
+ -- Aethernet <aethernet@localhost>  Thu, 01 Jan 2026 00:00:00 +0000
+
 aethernet (0.1.0) unstable; urgency=low
 
   * Rename total a Aethernet.

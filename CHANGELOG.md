@@ -6,6 +6,11 @@ Todas las novedades relevantes de Aethernet. Formato basado en
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-26
+
+Endurecimiento y acabado premium de la interfaz, con la API local protegida por
+token, retención automática del histórico y publicación del proyecto en GitHub.
+
 ### Añadido
 - **Autenticación de la API local**: token por instalación (`AETHERNET_API_TOKEN`
   o fichero `api.token` con permisos 0600); los `POST` (`/scan`,
@@ -24,6 +29,9 @@ Todas las novedades relevantes de Aethernet. Formato basado en
 - **Atajos de teclado reales**: `1-7` módulos, `R` escaneo, `/` y `Ctrl+K` redes,
   `Ctrl+E` exportar, `C` copiar canal (antes solo se anunciaban en Ajustes).
 - Inspector de Redes con **selección por defecto** (tu red o la más fuerte).
+- **Publicación en GitHub**: README con capturas, guía de uso, CONTRIBUTING,
+  SECURITY y CODE_OF_CONDUCT, CI (Python 3.11/3.12), plantillas de issue/PR y
+  dependabot. Capturas con MAC/IP difuminadas.
 
 ### Corregido
 - **Gauge del Dashboard**: se elimina la aguja y las marcas numéricas que se
