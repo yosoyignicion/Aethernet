@@ -74,3 +74,9 @@ cubrirlos de verdad: `pip install -e '.[dev,ui,reports,speedtest]'`.
   + `ttLib.woff2 compress` (~311 KB; el original pesa ~4 MB).
 - El venv puede tener un editable install apuntando a otro checkout: si `python -m aethernet`
   o `./scripts/smoke.sh` fallan con `No module named aethernet`, ejecuta con `PYTHONPATH=src`.
+- **Riesgo residual — sonda de servicios (`Identificar`)**: la clasificación
+  (`core/fingerprint.py`) y la persistencia están testeadas, y el handler de UI sigue el
+  patrón soportado por NiceGUI (`async` + `run.io_bound`; **nunca** crear UI desde un hilo
+  de trabajo, `ui.timer` en un hilo lanza `RuntimeError`). Pero el click real solo se puede
+  ejercitar con un dispositivo presente en la DB; no hay test E2E de UI para esa ruta. Es
+  una **sonda activa** (TCP a la propia LAN), bajo petición. **Proyecto en stand by (2026-10)**.
