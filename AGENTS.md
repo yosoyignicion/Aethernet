@@ -59,7 +59,7 @@ cubrirlos de verdad: `pip install -e '.[dev,ui,reports,speedtest]'`.
 - `mypy` fija `python_version = "3.12"` (para stubs PEP 695) y `ruff` apunta a `py311`:
   es deliberado, no lo "arregles".
 - `data/db.py`: `MIGRATIONS` es **append-only**; añade una migración nueva, jamás edites
-  una aplicada. Versión actual: v4. La tabla de control es `schema_version`.
+  una aplicada. Versión actual: v5. La tabla de control es `schema_version`.
 - Rutas XDG: config `~/.config/aethernet/config.toml`, datos/DB `~/.local/share/aethernet/`.
   Honor a `XDG_*` (el smoke test los redirige a un temp dir). Migración legacy desde
   `homenet-audit` → `aethernet`; no reintroduzcas el nombre antiguo.

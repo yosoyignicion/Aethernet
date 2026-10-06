@@ -185,6 +185,18 @@ MIGRATIONS: tuple[str, ...] = (
         created_at        REAL NOT NULL
     );
     """,
+    # v5 — huella de servicios por dispositivo LAN (sonda activa bajo petición)
+    """
+    CREATE TABLE IF NOT EXISTS device_services (
+        mac        TEXT NOT NULL,
+        ip         TEXT,
+        port       INTEGER NOT NULL,
+        service    TEXT,
+        scanned_at REAL NOT NULL,
+        PRIMARY KEY (mac, port)
+    );
+    CREATE INDEX IF NOT EXISTS idx_devsvc_mac ON device_services(mac);
+    """,
 )
 
 

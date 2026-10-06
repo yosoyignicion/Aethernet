@@ -6,6 +6,13 @@ Todas las novedades relevantes de Aethernet. Formato basado en
 
 ## [Unreleased]
 
+### Añadido
+- **Identificación de servicios en Dispositivos**: botón *Identificar* por tarjeta que
+  sondea (activo, bajo petición) puertos comunes TCP de tu propia LAN y muestra los
+  **servicios detectados** y un **perfil estimado** (impresora, cámara, NAS, IoT…).
+  La huella se guarda en la nueva tabla `device_services` (migración v5). La
+  clasificación (`core/fingerprint.py`) es pura y testeable sin red.
+
 ### Corregido
 - **Inspector de Redes**: seleccionar una fila lanzaba `KeyError: 0` (el evento
   `selection` de `ui.table` entrega un dict `{added, rows, keys}`, no una lista).

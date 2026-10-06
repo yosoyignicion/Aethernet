@@ -8,9 +8,10 @@ from __future__ import annotations
 
 import json
 import time
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from typing import Any
 
+from ..core.fingerprint import COMMON_SERVICES
 from ..logging_setup import get_logger
 from ..models import (
     AccessPoint,
@@ -500,6 +501,40 @@ class Repository:
             )
             for r in rows
         ]
+
+    # ------------------------------------------------------------------ #
+    # Huella de servicios (sonda activa bajo petición)
+    # ------------------------------------------------------------------ #
+    def save_device_fingerprint(self, mac: str, ip: str, ports: Sequence[int]) -> None:
+        """Reemplaza la huella de servicios de un dispositivo."""
+        now = time.time()
+        rows = [(mac, ip, int(port), COMMON_SERVICES.get(int(port)), now) for port in ports]
+        with self.db.transaction() as conn:
+            conn.execute("DELETE FROM device_services WHERE mac = ?", (mac,))
+            if rows:
+                conn.executemany(
+                    "INSERT INTO device_services (mac, ip, port, service, scanned_at) VALUES (?,?,?,?,?)",
+                    rows,
+                )
+
+    def device_services(self, mac: str) -> list[dict[str, Any]]:
+        rows = self.db.query(
+            "SELECT port, service, scanned_at FROM device_services WHERE mac = ? ORDER BY port",
+            (mac,),
+        )
+        return [dict(r) for r in rows]
+
+    def device_service_map(self) -> dict[str, list[dict[str, Any]]]:
+        """Servicios de todos los dispositivos, en una sola consulta."""
+        rows = self.db.query(
+            "SELECT mac, port, service, scanned_at FROM device_services ORDER BY mac, port"
+        )
+        out: dict[str, list[dict[str, Any]]] = {}
+        for r in rows:
+            out.setdefault(r["mac"], []).append(
+                {"port": r["port"], "service": r["service"], "scanned_at": r["scanned_at"]}
+            )
+        return out
 
     # ------------------------------------------------------------------ #
     # Eventos

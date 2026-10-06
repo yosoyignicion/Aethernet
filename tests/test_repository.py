@@ -156,3 +156,18 @@ def test_channel_advisory_history(repo):
     slot = [b for b in buckets if b["hour"] == 0]
     assert slot and slot[0]["n"] == 2
     assert repo.channel_advisory_recent(limit=2)
+
+
+def test_device_services_roundtrip(repo):
+    mac = "AA:BB:CC:00:00:01"
+    repo.save_device_fingerprint(mac, "192.168.1.10", [22, 80, 443])
+    services = repo.device_services(mac)
+    assert [s["port"] for s in services] == [22, 80, 443]
+    assert services[0]["service"] == "SSH"
+    mapping = repo.device_service_map()
+    assert mapping[mac][1]["service"] == "HTTP"
+
+    repo.save_device_fingerprint(mac, "192.168.1.10", [22])
+    assert [s["port"] for s in repo.device_services(mac)] == [22]
+    assert repo.device_services("00:00:00:00:00:00") == []
+

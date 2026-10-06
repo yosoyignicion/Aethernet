@@ -5,14 +5,18 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from nicegui import ui
+from nicegui import run, ui
 
 from ...core.devices import classify_device
+from ...core.fingerprint import classify_services, probe_ports, service_names
+from ...logging_setup import get_logger
 from ...models import LanDevice
 from ..components import empty_state, label_caps, toast
 from ..shell import shell
 from ..state import fmt_age, get_context
 from ..theme import COLORS, icon
+
+log = get_logger(__name__)
 
 
 @ui.page("/dispositivos")
@@ -69,6 +73,7 @@ def devices_page() -> None:
             trusted = sum(1 for d in devices if d.trusted)
             suspicious = sum(1 for d in devices if not d.trusted and not d.is_gateway)
             summary_label.set_text(f"({trusted} seguros · {suspicious} sin confiar)")
+            services_by_mac = context.repo.device_service_map()
             grid.clear()
             if not devices:
                 with grid:
@@ -76,7 +81,7 @@ def devices_page() -> None:
                 return
             with grid:
                 for device in devices:
-                    _device_card(context, device, render_grid.refresh)
+                    _device_card(context, device, render_grid.refresh, services_by_mac.get(device.mac, []))
 
         def on_search(event: Any) -> None:
             state["query"] = event.value or ""
@@ -107,7 +112,9 @@ def devices_page() -> None:
         ui.timer(5.0, render_grid.refresh)
 
 
-def _device_card(context: Any, device: LanDevice, refresh: Callable[..., Any]) -> None:
+def _device_card(
+    context: Any, device: LanDevice, refresh: Callable[..., Any], services: list[dict[str, Any]]
+) -> None:
     kind = classify_device(device)
     trusted = device.trusted or device.is_gateway
     accent = COLORS["mint"] if trusted else COLORS["amber"]
@@ -129,12 +136,26 @@ def _device_card(context: Any, device: LanDevice, refresh: Callable[..., Any]) -
             _line("HOSTNAME", device.hostname or "sin resolver")
             _line("FABRICANTE (OUI)", device.vendor or "Sin identificar")
             _line("IDENTIFICACIÓN", f"{kind.label} ({kind.confidence}) · {kind.reason}")
+            if services:
+                profile = classify_services([s["port"] for s in services])
+                _line("PERFIL (SERVICIOS)", f"{profile.role} ({profile.confidence}) · {profile.reason}")
+                _line("ÚLTIMO SONDEO", fmt_age(max(s["scanned_at"] for s in services)))
             _line("ÚLTIMA VEZ", fmt_age(device.last_seen))
+        if services:
+            with ui.column().classes("gap-1 w-full"):
+                label_caps("SERVICIOS DETECTADOS")
+                with ui.row().classes("gap-1 flex-wrap"):
+                    for name in service_names([s["port"] for s in services]):
+                        ui.html(f'<span class="ae-chip">{name}</span>')
         with ui.row().classes("items-center gap-2 w-full"):
             label = "Revocar Confianza" if trusted else "Marcar Confiable"
             toggle = ui.button(label, icon="verified_user" if trusted else "gpp_good").props(
                 "unelevated no-caps dense"
             ).style(f"background:{COLORS['surface-2']};color:{accent};flex:1")
+            identify = ui.button("Identificar", icon="travel_explore").props(
+                "unelevated no-caps dense"
+            ).style(f"background:{COLORS['surface-2']};color:{COLORS['cyan']};flex:1")
+            identify.tooltip("Sonda puertos comunes en tu propia LAN (activo, bajo petición)")
             isolate = ui.button("Aislar", icon="block").props("unelevated no-caps dense disabled").style(
                 f"background:{COLORS['surface-2']};color:{COLORS['text-dim']};flex:1"
             )
@@ -145,7 +166,22 @@ def _device_card(context: Any, device: LanDevice, refresh: Callable[..., Any]) -
                 toast(f"{'Revocado' if current else 'Confiable'}: {mac}", icon_name="verified_user")
                 refresh()
 
+            async def start_identify(_: Any = None, dev: LanDevice = device) -> None:
+                toast(f"Identificando {dev.ip}…", icon_name="travel_explore")
+
+                def scan() -> None:
+                    ports = probe_ports(dev.ip)
+                    context.repo.save_device_fingerprint(dev.mac, dev.ip, ports)
+
+                try:
+                    # Sonda de red fuera del event loop; el refresco vuelve al hilo de UI.
+                    await run.io_bound(scan)
+                except Exception as exc:  # nunca romper la UI
+                    log.exception("sonda de servicios falló para %s: %s", dev.ip, exc)
+                refresh()
+
             toggle.on("click", toggle_trust)
+            identify.on("click", start_identify)
 
 
 def _line(key: str, value: str) -> None:
