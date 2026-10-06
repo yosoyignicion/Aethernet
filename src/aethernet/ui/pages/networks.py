@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from nicegui import ui
+from nicegui.events import TableSelectionEventArguments
 
 from ...core.oui import vendor_for
 from ...models import AccessPoint
@@ -209,14 +210,12 @@ def networks_page() -> None:
             build_chips()
             apply_filters()
 
-        def on_select(event: Any) -> None:
-            selection = event.args or []
-            if not selection:
-                render_inspector.refresh(None)
-                return
-            bssid = selection[0].get("bssid")
+        def on_select(event: TableSelectionEventArguments) -> None:
+            selection = event.selection
+            row = selection[0] if selection else None
+            bssid = row.get("bssid") if isinstance(row, dict) else None
             scan = context.last_scan()
-            ap = next((a for a in scan.aps if a.bssid == bssid), None) if scan else None
+            ap = next((a for a in scan.aps if a.bssid == bssid), None) if scan and bssid else None
             render_inspector.refresh(ap)
 
         def refresh() -> None:
@@ -246,7 +245,7 @@ def networks_page() -> None:
             build_chips()
             apply_filters()
 
-        table.on("selection", on_select)
+        table.on_select(on_select)
         search.bind_value(table, "filter")
         refresh()
         ui.timer(4.0, refresh)

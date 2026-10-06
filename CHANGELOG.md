@@ -6,6 +6,11 @@ Todas las novedades relevantes de Aethernet. Formato basado en
 
 ## [Unreleased]
 
+### Corregido
+- **Inspector de Redes**: seleccionar una fila lanzaba `KeyError: 0` (el evento
+  `selection` de `ui.table` entrega un dict `{added, rows, keys}`, no una lista).
+  Se usa el callback tipado `table.on_select` con `event.selection`.
+
 ## [1.2.0] - 2026-09-26
 
 Endurecimiento y acabado premium de la interfaz, con la API local protegida por
