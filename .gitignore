@@ -14,6 +14,7 @@ build/
 /debian
 *.log
 *.tar.gz
+!tests/fixtures/backups/*.tar.gz
 *.deb
 *.orig
 *.rej

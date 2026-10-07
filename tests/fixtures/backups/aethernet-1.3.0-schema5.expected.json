@@ -1,0 +1,20 @@
+{
+  "app_version": "1.3.0",
+  "config_ssids": [
+    "AethernetLab"
+  ],
+  "counts": {
+    "lan_devices": 2,
+    "unread_events": 1,
+    "untrusted_devices": 1,
+    "visible_networks": 1,
+    "wifi_scans": 2
+  },
+  "db_bytes": 159744,
+  "db_sha256": "9d8539a7cd55ab0e2742d1cfcc8b7c7eadef8b9f0348a79fd5a4c36467e332eb",
+  "format_version": 1,
+  "kv_marker": "golden",
+  "page_size": 4096,
+  "schema_version": 5,
+  "sqlite_version": "3.45.1"
+}
