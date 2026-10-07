@@ -6,7 +6,23 @@ Todas las novedades relevantes de Aethernet. Formato basado en
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-07
+
+Copia y restauración offline, identificación de servicios por dispositivo y
+correcciones de la interfaz.
+
 ### Añadido
+- **Copia y restauración offline (`aethernet backup` / `restore`)**: paquete
+  `.tar.gz` portátil con la base (copia **consistente**, sin depender del WAL),
+  la configuración y un `manifest.json` (versión de formato/app/esquema y SHA-256).
+  `restore` valida antes de escribir, resguarda la base actual y rechaza copias de
+  un esquema más nuevo. **Sin secretos**: el token de API nunca viaja. Incluye
+  `restore --verify` (dry-run) y `db info` ahora reporta `schema_version`.
+  El caso de aceptación (restaurar en una máquina limpia y aun así leer el
+  histórico e informe) queda cubierto por tests. En la interfaz, el botón de
+  Ajustes genera el paquete completo (antes copiaba solo la base), muestra la
+  antigüedad de la última copia y ofrece un diálogo de restauración con validación
+  previa y confirmación.
 - **Identificación de servicios en Dispositivos**: botón *Identificar* por tarjeta que
   sondea (activo, bajo petición) puertos comunes TCP de tu propia LAN y muestra los
   **servicios detectados** y un **perfil estimado** (impresora, cámara, NAS, IoT…).
@@ -133,7 +149,8 @@ Primera versión estable.
   por instalación (o se toma de `AETHERNET_STORAGE_SECRET`).
 - Monitor estrictamente pasivo: sin inyección ni captura de material sensible a disco.
 
-[Unreleased]: https://github.com/yosoyignicion/Aethernet/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/yosoyignicion/Aethernet/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/yosoyignicion/Aethernet/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/yosoyignicion/Aethernet/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/yosoyignicion/Aethernet/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/yosoyignicion/Aethernet/releases/tag/v1.0.0

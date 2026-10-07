@@ -2,15 +2,18 @@
 
 from __future__ import annotations
 
-import tarfile
+import tempfile
 import time
+from pathlib import Path
 from typing import Any
 
 from nicegui import ui
 
+from ...backup import BackupError, create_backup, latest_backup, verify_backup
 from ...config import save_settings
 from ...core.adapter import hardware_suggestions, honest_limits
 from ...core.didactic import all_topics
+from ...utils import humanize_age
 from ..components import kv_row, label_caps, panel_header, toast
 from ..shell import shell
 from ..state import get_context
@@ -190,6 +193,48 @@ def settings_page() -> None:
                         backup_btn = ui.button("RESPALDO .TAR.GZ", icon="archive").props("unelevated no-caps dense").style(
                             f"background:{COLORS['surface-2']};color:{COLORS['mint']};flex:1"
                         )
+                    backup_info = ui.label("").classes("ae-mono text-[11px] text-[#86B89B]")
+
+                    pending: dict[str, Any] = {"path": None}
+                    with ui.dialog() as restore_dialog, ui.card().classes("ae-panel gap-3"):
+                        ui.label("Restaurar copia de seguridad").classes("ae-headline text-sm text-[#D8F5E3]")
+                        dialog_info = ui.label("").classes("ae-mono text-[11px] text-[#86B89B]")
+                        ui.label(
+                            "Se reemplazará la base de datos actual (se resguarda una copia .bak). "
+                            "La interfaz se recargará al terminar."
+                        ).classes("text-[11px]").style(f"color:{COLORS['amber']}")
+                        with ui.row().classes("justify-end gap-2 w-full"):
+                            ui.button("CANCELAR", on_click=restore_dialog.close).props("flat no-caps")
+                            ui.button("RESTAURAR", on_click=lambda _=None: confirm_restore()).props(
+                                "unelevated no-caps"
+                            ).style(f"background:{COLORS['surface-2']};color:{COLORS['coral']}")
+
+                    def on_restore_upload(event: Any) -> None:
+                        with tempfile.NamedTemporaryFile(suffix=".tar.gz", delete=False) as handle:
+                            handle.write(event.content.read())
+                            staged = Path(handle.name)
+                        verification = verify_backup(staged)
+                        if not verification.ok or verification.manifest is None:
+                            staged.unlink(missing_ok=True)
+                            toast(
+                                "Copia no válida: " + "; ".join(verification.problems),
+                                icon_name="error",
+                                color=COLORS["coral"],
+                            )
+                            return
+                        pending["path"] = staged
+                        manifest = verification.manifest
+                        dialog_info.set_text(
+                            f"{staged.name} · esquema v{manifest.schema_version} · app {manifest.app_version}"
+                            f" · {manifest.db_bytes / 1024:.0f} KB · config:"
+                            f" {'sí' if manifest.includes_config else 'no'}"
+                        )
+                        restore_dialog.open()
+
+                    label_caps("RESTAURAR COPIA (.TAR.GZ)")
+                    ui.upload(
+                        on_upload=on_restore_upload, auto_upload=True, max_files=1
+                    ).props('flat dense accept=".tar.gz"').classes("w-full")
 
                 # -- atajos ------------------------------------------#
                 with ui.element("div").classes("ae-panel flex flex-col gap-2"):
@@ -237,11 +282,38 @@ def settings_page() -> None:
             total = sum(removed.values())
             persist(f"Purgados {total} registros >{days} días")
 
+        def refresh_backup_info() -> None:
+            latest = latest_backup(context.paths)
+            if latest is None:
+                backup_info.set_text("Sin copias todavía.")
+                return
+            age = humanize_age(time.time() - latest.stat().st_mtime)
+            backup_info.set_text(f"Última copia {age}: {latest.name} ({latest.stat().st_size / 1024:.0f} KB)")
+
         def backup() -> None:
-            target = context.paths.data_dir / f"aethernet-backup-{time.strftime('%Y%m%d-%H%M%S')}.tar.gz"
-            with tarfile.open(target, "w:gz") as tar:
-                tar.add(context.paths.db_path, arcname="aethernet.db")
-            toast(f"Respaldo: {target.name}", icon_name="archive")
+            try:
+                result = create_backup(context.paths, include_config=True)
+            except BackupError as exc:
+                toast(f"No se pudo crear la copia: {exc}", icon_name="error", color=COLORS["coral"])
+                return
+            refresh_backup_info()
+            toast(f"Copia creada: {result.path.name}", icon_name="archive")
+
+        def confirm_restore() -> None:
+            restore_dialog.close()
+            staged = pending["path"]
+            if staged is None:
+                return
+            try:
+                result = context.restore(staged)
+            except BackupError as exc:
+                staged.unlink(missing_ok=True)
+                toast(f"No se pudo restaurar: {exc}", icon_name="error", color=COLORS["coral"])
+                return
+            staged.unlink(missing_ok=True)
+            refresh_backup_info()
+            toast(f"Restaurado (esquema v{result.schema_version}). Recargando…", icon_name="restore")
+            ui.timer(1.0, lambda: ui.navigate.reload(), once=True)
 
         interval_toggle.on_value_change(lambda e: on_setting("scan_interval_min", int(e.value)))
         dwell_slider.on_value_change(lambda e: on_setting("dwell_ms", int(e.value)))
@@ -254,4 +326,5 @@ def settings_page() -> None:
         test_btn.on("click", run_selftest)
         purge_btn.on("click", purge)
         backup_btn.on("click", backup)
+        refresh_backup_info()
         run_selftest()

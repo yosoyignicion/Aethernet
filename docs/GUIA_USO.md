@@ -177,7 +177,43 @@ aethernet api                    # API en http://127.0.0.1:8765
 
 ---
 
-## 7. Privacidad y datos
+## 7. Copia y restauración (backup offline)
+
+Un informe **exporta** datos; una copia de seguridad debe poder **recuperar** el
+estado en otra máquina, sin la instalación original. Aethernet empaqueta todo en
+un único `.tar.gz`:
+
+- `aethernet.db` — la base, con una copia **consistente** (aunque el daemon escriba).
+- `config.toml` — tus ajustes: redes propias, alias, retención…
+- `manifest.json` — versión de formato, de la app y del esquema, más el hash
+  SHA-256 de la base para detectar corrupción.
+
+**Sin secretos:** el token de la API no viaja (se regenera) y el secreto de sesión
+de la UI no es necesario. No hay claves que guardar aparte.
+
+```bash
+aethernet backup                         # crea aethernet-backup-FECHA.tar.gz
+aethernet backup --output ~/mi-copia.tar.gz
+aethernet backup --include-reports       # añade también los informes exportados
+
+aethernet restore copia.tar.gz           # restaura (valida y resguarda la actual)
+aethernet restore --verify copia.tar.gz  # solo valida la copia, sin escribir
+```
+
+Notas:
+
+- `restore` **valida antes de escribir**, rechaza copias de un esquema más nuevo,
+  resguarda tu base actual como `aethernet.db.bak-…` y aplica migraciones si la
+  copia es más antigua.
+- Si el **daemon** está activo, deténlo (o usa `--force`).
+- En la interfaz, *Ajustes* permite crear la copia, ver su antigüedad y restaurar
+  con un diálogo de confirmación.
+- **Máquina limpia**: instala Aethernet, lanza `aethernet restore copia.tar.gz` y
+  recuperarás tu histórico e informes como si nada hubiera pasado.
+
+---
+
+## 8. Privacidad y datos
 
 - **Sin red saliente.** La interfaz sirve fuentes e iconos localmente.
 - Nada se sube a la nube. No hay telemetría.
@@ -197,7 +233,7 @@ directorio de datos.
 
 ---
 
-## 8. Resolución de problemas
+## 9. Resolución de problemas
 
 **`No module named aethernet`**
 Instala el paquete (`pip install -e '.[ui]'`) o ejecuta con `PYTHONPATH=src`.
@@ -222,7 +258,7 @@ Es cosmético.
 
 ---
 
-## 9. Glosario rápido
+## 10. Glosario rápido
 
 - **dBm** — potencia de señal. Cerca de 0 es mejor; `-30` excelente, `-90` pésimo.
 - **SSID / BSSID** — nombre de la red / dirección MAC del punto de acceso.
@@ -233,7 +269,7 @@ Es cosmético.
 
 ---
 
-## 10. Aviso legal
+## 11. Aviso legal
 
 Aethernet está pensado para **auditar tu propia red**. Auditar redes ajenas sin
 autorización puede ser ilegal en tu jurisdicción. El modo activo (inyección,

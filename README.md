@@ -33,6 +33,7 @@ interfaz gráfica "AETHERNET" que consume exactamente los mismos servicios.
 - **Inventario LAN** con confianza, alias y detección de MAC aleatoria.
 - **Monitor pasivo** no disruptivo (interfaz *virtual*, nunca corta tu WiFi).
 - **Informes** Markdown / PDF / JSON / CSV y snapshots comparables.
+- **Copia y restauración offline** (`aethernet backup` / `restore`): un `.tar.gz` con la base consistente, la config y un manifiesto; **sin secretos**.
 - **Daemon** de vigilancia continua y **alertas** con deduplicación y horas silenciosas.
 - **API local** opcional (FastAPI) protegida por token.
 
@@ -65,6 +66,8 @@ aethernet analyze                  # reglas sobre el último escaneo
 aethernet networks --open          # inventario filtrado
 aethernet config set my_ssids MiRed
 aethernet daemon start             # vigilancia continua
+aethernet backup                   # copia de seguridad offline (.tar.gz)
+aethernet restore copia.tar.gz     # recupérala en esta o en otra máquina
 
 # Interfaz gráfica
 aethernet-ui                       # o: python -m aethernet.ui --web --port 8080

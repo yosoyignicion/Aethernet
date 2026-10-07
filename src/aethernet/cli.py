@@ -13,8 +13,16 @@ from pathlib import Path
 from typing import Any
 
 from . import APP_TITLE, __version__
+from .backup import BackupError, create_backup, latest_backup, restore_backup, verify_backup
 from .capabilities import detect
-from .config import api_token_path, bootstrap_paths, load_settings, resolve_api_token, save_settings
+from .config import (
+    Paths,
+    api_token_path,
+    bootstrap_paths,
+    load_settings,
+    resolve_api_token,
+    save_settings,
+)
 from .core.adapter import hardware_suggestions, honest_limits, probe_adapter
 from .core.analysis import AnalysisContext, run_rules
 from .core.didactic import all_topics, glossary_term
@@ -524,16 +532,32 @@ def cmd_forecast(ctx: Context) -> int:
     return 1
 
 
+def _backup_readiness(paths: Paths) -> dict[str, Any]:
+    """Estado de recuperación: ¿hay una copia reciente y sin secretos que la bloquee?"""
+    latest = latest_backup(paths)
+    if latest is None:
+        return {"exists": False, "file": None, "age": None, "last_backup": None, "bytes": 0}
+    stat = latest.stat()
+    return {
+        "exists": True,
+        "file": str(latest),
+        "age": humanize_age(time.time() - stat.st_mtime),
+        "last_backup": stat.st_mtime,
+        "bytes": stat.st_size,
+    }
+
+
 def cmd_doctor(ctx: Context) -> int:
     report = detect(ctx.settings.interface)
     adapter = probe_adapter(ctx.settings.interface or "")
     monitor_status = ctx.service.monitor_status()
-    payload = {
+    payload: dict[str, Any] = {
         "capabilities": report.to_dict(),
         "adapter": adapter.to_dict(),
         "limits": honest_limits(adapter),
         "suggestions": hardware_suggestions(adapter),
         "monitor": monitor_status,
+        "backup": _backup_readiness(ctx.paths),
     }
     if ctx.args.json:
         _emit_json(payload)
@@ -559,6 +583,12 @@ def cmd_doctor(ctx: Context) -> int:
         print("  Monitor pasivo: disponible (no disruptivo, crea interfaz virtual).")
     else:
         print(f"  Monitor pasivo: no disponible — {monitor_status['reason']}")
+    backup = payload["backup"]
+    print("  Recuperación: restore en máquina limpia · sin claves irrecuperables")
+    if backup["exists"]:
+        print(f"    Última copia {backup['age']}: {backup['file']}")
+    else:
+        print("    Sin copias: crea una con 'aethernet backup'")
     return 0
 
 
@@ -648,11 +678,101 @@ def cmd_db(ctx: Context) -> int:
         payload = {
             "path": str(ctx.paths.db_path),
             "size_bytes": ctx.paths.db_path.stat().st_size if ctx.paths.db_path.exists() else 0,
+            "schema_version": ctx.db.scalar("SELECT version FROM schema_version", default=0),
             "counts": ctx.repo.counts(),
         }
         _emit_json(payload) if ctx.args.json else print(json.dumps(payload, indent=2, ensure_ascii=False))
         return 0
     return 1
+
+
+def cmd_backup(ctx: Context) -> int:
+    args = ctx.args
+    destination = Path(args.output) if args.output else None
+    try:
+        result = create_backup(
+            ctx.paths,
+            destination,
+            include_config=args.config,
+            include_reports=args.include_reports,
+        )
+    except BackupError as exc:
+        print(f"No se pudo crear la copia: {exc}")
+        return 1
+    manifest = result.manifest
+    if args.json:
+        _emit_json({"path": str(result.path), "manifest": manifest.to_dict()})
+        return 0
+    print(f"Copia creada: {result.path}")
+    print(
+        f"  Base {manifest.db_bytes} bytes · esquema v{manifest.schema_version} · app {manifest.app_version}"
+    )
+    print(f"  Incluye: {', '.join(manifest.members)}")
+    if not manifest.secrets_required:
+        print("  Sin secretos: no hay claves irrecuperables que guardar aparte.")
+    return 0
+
+
+def cmd_restore(ctx: Context) -> int:
+    args = ctx.args
+    bundle = Path(args.bundle)
+    verification = verify_backup(bundle)
+    if args.verify:
+        if args.json:
+            _emit_json(
+                {
+                    "ok": verification.ok,
+                    "manifest": verification.manifest.to_dict() if verification.manifest else None,
+                    "problems": list(verification.problems),
+                }
+            )
+            return 0 if verification.ok else 1
+        if verification.ok:
+            print(f"Copia válida: {bundle}")
+            if verification.manifest:
+                print(
+                    f"  Esquema v{verification.manifest.schema_version} · app {verification.manifest.app_version}"
+                )
+        else:
+            print(f"Copia no válida: {bundle}")
+            for problem in verification.problems:
+                print(f"  - {problem}")
+        return 0 if verification.ok else 1
+    if not verification.ok:
+        print(f"Copia no válida: {bundle}")
+        for problem in verification.problems:
+            print(f"  - {problem}")
+        return 1
+    pid = daemon_is_running(ctx.paths)
+    if pid and not args.force:
+        print(f"El daemon está en ejecución (PID {pid}). Deténlo o usa --force para continuar.")
+        return 1
+    # Cierra la conexión del contexto: no se restaura sobre una base abierta (WAL).
+    ctx.db.close()
+    try:
+        result = restore_backup(bundle, ctx.paths)
+    except BackupError as exc:
+        print(f"No se pudo restaurar: {exc}")
+        return 1
+    if args.json:
+        _emit_json(
+            {
+                "db_path": str(result.db_path),
+                "schema_version": result.schema_version,
+                "config_restored": result.config_restored,
+                "reports_restored": result.reports_restored,
+                "previous_backup": str(result.previous_backup) if result.previous_backup else None,
+            }
+        )
+        return 0
+    print(f"Copia restaurada en {result.db_path}")
+    print(
+        f"  Esquema v{result.schema_version} · config: {'sí' if result.config_restored else 'no'}"
+        f" · informes: {'sí' if result.reports_restored else 'no'}"
+    )
+    if result.previous_backup:
+        print(f"  Base anterior resguardada: {result.previous_backup}")
+    return 0
 
 
 def cmd_api(ctx: Context) -> int:
@@ -846,6 +966,24 @@ def build_parser() -> argparse.ArgumentParser:
     p_db.add_argument("--days", type=int, default=90, help="días de histórico a conservar")
     add_json(p_db)
     p_db.set_defaults(func=cmd_db)
+
+    p_backup = sub.add_parser("backup", help="crea una copia de seguridad offline (.tar.gz)")
+    p_backup.add_argument("--output", help="ruta del archivo de salida")
+    p_backup.add_argument(
+        "--no-config", dest="config", action="store_false", default=True, help="no incluir config.toml"
+    )
+    p_backup.add_argument(
+        "--include-reports", action="store_true", help="incluir también los informes exportados"
+    )
+    add_json(p_backup)
+    p_backup.set_defaults(func=cmd_backup)
+
+    p_restore = sub.add_parser("restore", help="restaura una copia sobre esta instalación")
+    p_restore.add_argument("bundle", help="ruta al archivo .tar.gz de la copia")
+    p_restore.add_argument("--force", action="store_true", help="proceder aunque el daemon esté activo")
+    p_restore.add_argument("--verify", action="store_true", help="solo valida la copia, sin escribir")
+    add_json(p_restore)
+    p_restore.set_defaults(func=cmd_restore)
 
     p_api = sub.add_parser("api", help="API local de solo lectura (FastAPI, opcional)")
     p_api.add_argument("--host", help="interfaz de escucha (por defecto 127.0.0.1)")

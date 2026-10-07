@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from ..alerts.queue import AlertQueue
+from ..backup import BackupError, RestoreResult, restore_backup
 from ..capabilities import CapabilityReport, detect
 from ..config import Paths, Settings, bootstrap_paths, load_settings
 from ..core.adapter import probe_adapter
@@ -152,6 +153,26 @@ class UIContext:
 
     def counts(self) -> dict[str, int]:
         return self.repo.counts()
+
+    def restore(self, bundle: Path) -> RestoreResult:
+        """Restaura una copia reconstruyendo las conexiones abiertas.
+
+        Cierra la base antes de reemplazarla (evita un ``-wal`` huérfano) y
+        reengancha repositorio y servicios a la base restaurada.
+        """
+        if self.scanning:
+            raise BackupError("hay un escaneo en curso; espera a que termine")
+        if self.monitor_running():
+            raise BackupError("el monitor pasivo está activo; deténlo antes de restaurar")
+        self.db.close()
+        result = restore_backup(bundle, self.paths)
+        self.db = Database(self.paths.db_path)
+        self.db.migrate()
+        self.repo = Repository(self.db)
+        self.service.repo = self.repo
+        self.service.alerts.repo = self.repo
+        self.reload_settings()
+        return result
 
     def uptime(self) -> str:
         status = self.repo.kv_get("daemon_status", {}) or {}
