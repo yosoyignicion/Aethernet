@@ -2,13 +2,16 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sqlite3
 import tarfile
 from pathlib import Path
 
 import pytest
 
+from aethernet import backup as backup_mod
 from aethernet.backup import (
     BUNDLE_FORMAT_VERSION,
+    BackupError,
     BackupManifest,
     ManifestError,
     SchemaTooNewError,
@@ -211,3 +214,84 @@ def test_restore_over_open_wal_connection(tmp_path: Path, tmp_paths: Paths) -> N
         assert Repository(check).wifi_scan_count() == 1
     finally:
         check.close()
+
+
+def test_restore_falls_back_on_page_size_mismatch(tmp_path: Path, tmp_paths: Paths) -> None:
+    """El backup inverso exige mismo ``page_size``; si no, cae al reemplazo atómico."""
+    _populate(tmp_paths)
+    bundle = create_backup(tmp_paths, tmp_path / "b.tar.gz")
+
+    # Destino legado con page_size 8192 (el de la copia es 4096).
+    tmp_paths.db_path.unlink()
+    legacy = sqlite3.connect(str(tmp_paths.db_path))
+    legacy.execute("PRAGMA page_size=8192")
+    legacy.execute("VACUUM")
+    legacy.execute("CREATE TABLE legacy(x)")
+    legacy.commit()
+    legacy.close()
+    assert _page_size_of(tmp_paths.db_path) == 8192
+
+    result = restore_backup(bundle.path, tmp_paths)
+
+    assert result.schema_version == len(MIGRATIONS)
+    assert _page_size_of(tmp_paths.db_path) == 4096
+    check = Database(tmp_paths.db_path)
+    check.migrate()
+    try:
+        assert Repository(check).wifi_scan_count() == 1
+    finally:
+        check.close()
+
+
+def _page_size_of(db_path: Path) -> int:
+    conn = sqlite3.connect(str(db_path))
+    try:
+        row = conn.execute("PRAGMA page_size").fetchone()
+    finally:
+        conn.close()
+    return int(row[0]) if row else 0
+
+
+def test_restore_prefers_reverse_backup(
+    tmp_path: Path, tmp_paths: Paths, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Con ``page_size`` compatible, la restauración no toca el fallback atómico."""
+    _populate(tmp_paths)
+    bundle = create_backup(tmp_paths, tmp_path / "b.tar.gz")
+
+    # El fallback solo aparece para limpiar sidecars; el backup inverso no lo
+    # necesita, así que parchearlo delata si el reemplazo atómico se usara.
+    def explode(*args: object, **kwargs: object) -> None:
+        raise AssertionError("no debería usarse el fallback atómico")
+
+    monkeypatch.setattr(backup_mod, "_remove_sidecars", explode)
+
+    result = restore_backup(bundle.path, tmp_paths)
+
+    assert result.schema_version == len(MIGRATIONS)
+    check = Database(tmp_paths.db_path)
+    check.migrate()
+    try:
+        assert Repository(check).wifi_scan_count() == 1
+    finally:
+        check.close()
+
+
+def test_restore_refuses_when_target_locked(
+    tmp_path: Path, tmp_paths: Paths, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Con la base en uso no se reemplaza a ciegas: se avisa y se aborta."""
+    _populate(tmp_paths)
+    bundle = create_backup(tmp_paths, tmp_path / "b.tar.gz")
+    real = backup_mod._consistent_copy
+
+    # Simula un destino en uso justo en el reemplazo, no en el resguardo previo.
+    def guarded(source: Path, destination: Path) -> None:
+        if Path(destination) == tmp_paths.db_path:
+            raise sqlite3.OperationalError("database is locked")
+        real(source, destination)
+
+    monkeypatch.setattr(backup_mod, "_consistent_copy", guarded)
+
+    with pytest.raises(BackupError, match="uso"):
+        restore_backup(bundle.path, tmp_paths)

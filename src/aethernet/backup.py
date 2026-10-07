@@ -186,6 +186,52 @@ def _consistent_copy(source: Path, destination: Path) -> None:
         src.close()
 
 
+def _page_size(db_path: Path) -> int:
+    """Tamaño de página de una base SQLite; 0 si no existe o no es legible."""
+    if not db_path.exists():
+        return 0
+    conn = sqlite3.connect(str(db_path))
+    try:
+        try:
+            row = conn.execute("PRAGMA page_size").fetchone()
+        except sqlite3.Error:
+            return 0
+    finally:
+        conn.close()
+    return int(row[0]) if row else 0
+
+
+def _replace_db(staged_db: Path, target: Path) -> None:
+    """Sustituye ``target`` por ``staged_db`` por la vía más segura disponible.
+
+    Preferimos el *backup inverso* de SQLite (``origen.backup(destino)``): mantiene
+    una transacción de escritura sobre el destino —con *rollback* si no termina— y
+    reaprovecha el ``-wal`` de la propia base, así que no deja sidecars huérfanos.
+    SQLite exige el mismo ``page_size`` cuando el destino está en modo WAL; si no
+    coincide (o la copia falla), caemos al reemplazo atómico con limpieza de sidecars.
+    """
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target_page = _page_size(target)
+    if target_page in (0, _page_size(staged_db)):
+        try:
+            _consistent_copy(staged_db, target)
+        except sqlite3.OperationalError as exc:
+            message = str(exc).lower()
+            if "locked" in message or "busy" in message:
+                raise BackupError(
+                    "la base destino está en uso por otro proceso; detén el daemon "
+                    "antes de restaurar (no se reemplaza a ciegas)"
+                ) from exc
+            log.warning("backup inverso no disponible (%s); uso reemplazo atómico", exc)
+        except sqlite3.Error as exc:
+            log.warning("backup inverso no disponible (%s); uso reemplazo atómico", exc)
+        else:
+            return
+    _remove_sidecars(target)
+    os.replace(staged_db, target)
+    _remove_sidecars(target)
+
+
 def _member_is_safe(name: str) -> bool:
     """Rechaza rutas absolutas o con ``..`` y limita a los miembros conocidos."""
     if not name or name.startswith(("/", "\\")):
@@ -397,6 +443,10 @@ def restore_backup(
     Valida antes de tocar nada; resguarda la base actual y aplica migraciones
     pendientes si la copia es más antigua. Una copia de un esquema más nuevo
     se rechaza siempre.
+
+    El reemplazo usa el *backup inverso* de SQLite cuando es posible (ver
+    :func:`_replace_db`); si este no puede aplicarse, cae a un reemplazo atómico
+    con limpieza de ``-wal``/``-shm``.
     """
     paths = (paths or default_paths()).ensure()
     bundle = Path(bundle)
@@ -420,9 +470,7 @@ def restore_backup(
         staged_db = staging / BUNDLE_DB
         if not staged_db.exists():
             raise BackupError("el paquete no contiene aethernet.db")
-        _remove_sidecars(paths.db_path)
-        os.replace(staged_db, paths.db_path)
-        _remove_sidecars(paths.db_path)
+        _replace_db(staged_db, paths.db_path)
 
         config_restored = False
         staged_config = staging / BUNDLE_CONFIG
