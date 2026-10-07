@@ -110,9 +110,46 @@ la semana (tabla `channel_advisory`, migración v3). Con 1-2 semanas de datos:
 Permite **adelantarse a la saturación** según el reloj del PC sin tocar el router.
 La recogida es automática en `MonitorService.scan_once` (también vía daemon).
 
+## Recovery y copias — visión proyectada
+
+La copia solo vale si se **restaura**. A partir de la escalera de fixtures (§Verificación)
+y del backup inverso, el camino natural es convertir cada garantía en un test:
+
+- **Matriz de compatibilidad N×M.** Hoy hay una fixture (1.3.0/esquema v5) contra el
+  código actual. Con el tiempo: cada paquete histórico × cada versión de la app, en
+  un test parametrizado. La pestaña `schema_version` del manifiesto ya da la clave de
+  ordenación; falta solo acumular paquetes.
+- **Restauración como transición de estado.** Sustituir "detén el daemon" por un lock
+  participativo (`flock` en `data_dir/.lock`: el daemon toma *shared*, la restauración
+  *exclusive*). Permitiría restaurar **en caliente** sin matar la vigilancia, y haría
+  demostrable que no hay `-wal` huérfano sin borrar ficheros a ciegas.
+- **Verificación profunda del paquete.** `verify_backup` hoy comprueba hash. Añadir
+  `PRAGMA integrity_check`/`quick_check` sobre la base del bundle y, opcionalmente,
+  `sqlite_sequence`/conteos declarados en el manifiesto → detectar corrupción antes de
+  tocar el disco.
+- **Autenticidad, no solo integridad.** El SHA-256 detecta corrupción, no sustitución
+  maliciosa. Firmar `manifest.json` (Ed25519, clave pública en el repo) encaja con el
+  modelo local sin red.
+- **Copia cifrada en reposo (opcional).** Para copias que salen del equipo: sobre
+  `age`/`scrypt`, con la clave fuera del paquete. El manifiesto ya reserva
+  `secrets_required` para declararlo honestamente.
+- **Export lógico en paralelo.** Un `aethernet.sql` (`.dump`) junto al binario: inmune
+  a `page_size` y a cambios de formato, legible a diez años vista, y restaurable con
+  el `sqlite3` del sistema. Cross-check binario ↔ lógico en el mismo test.
+- **Política de retención GFS + verificación programada.** Rotación abuelo-padre-hijo,
+  copia automática tras migrar (parcial ya: `previous_backup`) y un `verify` periódico
+  que avise si la copia más reciente dejó de ser restaurable.
+- **CI con matriz de SQLite.** Probar la escalera contra varias versiones de SQLite
+  (uv/pyenv) para demostrar que el formato es forward-readable de verdad, no por fe.
+
 ## Changelog
 
-- **2026-09-26** — Endurecimiento: token de API por instalación (los `POST` exigen
+- **2026-10-07** — Recovery: restauración con **backup inverso** de SQLite (misma API,
+  sentido inverso: sin `-wal`/`-shm` huérfanos y con *rollback* del destino), fallback
+  atómico si el `page_size` no coincide y **rechazo en voz alta** si la base está en
+  uso. Primera **fixture histórica real** (`tests/fixtures/backups/`) + test de
+  restauración en CI (`tests/test_backup_compat.py`): las migraciones append-only dejan
+  de ser una promesa.
   `X-Aethernet-Token`), comando `aethernet api` (`--print-token`), retención
   automática del histórico (`retention_days`, purga diaria en el daemon) y
   `Repository.signal_history` (sin N+1). Monitor sigue pendiente de validación en

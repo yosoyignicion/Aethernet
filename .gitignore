@@ -25,3 +25,6 @@ build/
 .DS_Store
 
 .engram/
+
+# feedback local de terceros: se archiva pero no se publica
+docs/history/feedback/

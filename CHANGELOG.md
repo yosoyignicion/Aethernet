@@ -6,6 +6,22 @@ Todas las novedades relevantes de Aethernet. Formato basado en
 
 ## [Unreleased]
 
+### Añadido
+- **Compatibilidad histórica de copias (escalera de restauración)**: paquete real
+  generado por 1.3.0 conservado en `tests/fixtures/backups/` y restaurado en CI
+  (`tests/test_backup_compat.py`), con aserciones sobre conteo de escaneos, informe,
+  config y esquema. Incluye `scripts/gen_backup_fixture.py` para ampliar la escalera
+  al subir `schema_version` o `BUNDLE_FORMAT_VERSION`; los paquetes antiguos se
+  conservan. Las migraciones append-only dejan de ser una promesa.
+
+### Cambiado
+- **Restauración (`backup.py`)**: el reemplazo de la base usa ahora el **backup
+  inverso** de SQLite (misma API de copia, sentido preparada → destino). Mantiene una
+  transacción de escritura sobre el destino, no deja `-wal`/`-shm` huérfanos y evita
+  la ventana sin fichero. Si el `page_size` no coincide, cae al reemplazo atómico con
+  limpieza de sidecars. Si la base destino está **en uso** por otro proceso, la
+  restauración se **aborta con aviso** en lugar de competir por el fichero.
+
 ## [1.3.0] - 2026-10-07
 
 Copia y restauración offline, identificación de servicios por dispositivo y
