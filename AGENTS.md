@@ -16,6 +16,8 @@ ruff check src tests
 mypy --strict src/aethernet
 vulture src/aethernet/core src/aethernet/data
 aethernet doctor                  # veredicto honesto de hardware (útil aun sin hardware)
+aethernet backup                  # copia offline .tar.gz (base+config+manifiesto, sin secretos)
+aethernet restore copia.tar.gz    # restaura; valida formato/esquema; 'restore --verify' = dry-run
 aethernet-ui                      # o: python -m aethernet.ui --web --port 8080
 ```
 
@@ -50,9 +52,9 @@ cubrirlos de verdad: `pip install -e '.[dev,ui,reports,speedtest]'`.
 
 - Un cambio lógico por PR; si el cambio es visible, actualiza `CHANGELOG.md` en la
   sección `## [Unreleased]` (Keep a Changelog). Commits solo si se piden.
-- `docs/history/` y `docs/design/` son **snapshots históricos** y aún citan el nombre
-  antiguo `homenet-audit`; la fuente actual de arquitectura es `README.md`,
-  `docs/GUIA_USO.md` y `docs/ROADMAP.md`. No los tomes como verdad.
+- `docs/history/`, `docs/design/` y `docs/audits/` son **snapshots históricos** y aún
+  citan el nombre antiguo `homenet-audit`; la fuente actual de arquitectura es
+  `README.md`, `docs/GUIA_USO.md` y `docs/ROADMAP.md`. No los tomes como verdad.
 
 ## Gotchas
 
@@ -60,6 +62,12 @@ cubrirlos de verdad: `pip install -e '.[dev,ui,reports,speedtest]'`.
   es deliberado, no lo "arregles".
 - `data/db.py`: `MIGRATIONS` es **append-only**; añade una migración nueva, jamás edites
   una aplicada. Versión actual: v5. La tabla de control es `schema_version`.
+- `backup.py`: `BUNDLE_FORMAT_VERSION` y el `schema_version` de la app **acoplan**
+  copia/restauración. `restore` rechaza paquetes de formato o esquema más nuevos. Al subir
+  cualquiera, ejecuta `scripts/gen_backup_fixture.py` para ampliar la escalera de
+  compatibilidad (paquete real conservado en `tests/fixtures/backups/`, cubierto por
+  `tests/test_backup_compat.py`; `.tar.gz` ahí es la excepción al `.gitignore`). Los
+  paquetes antiguos se conservan, no se borran.
 - Rutas XDG: config `~/.config/aethernet/config.toml`, datos/DB `~/.local/share/aethernet/`.
   Honor a `XDG_*` (el smoke test los redirige a un temp dir). Migración legacy desde
   `homenet-audit` → `aethernet`; no reintroduzcas el nombre antiguo.
