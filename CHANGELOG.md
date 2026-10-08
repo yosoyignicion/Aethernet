@@ -22,6 +22,12 @@ Todas las novedades relevantes de Aethernet. Formato basado en
   limpieza de sidecars. Si la base destino está **en uso** por otro proceso, la
   restauración se **aborta con aviso** en lugar de competir por el fichero.
 
+### Documentación
+- **README** rediseñado: portada con insignias, tabla de valor, principios, diagrama
+  de arquitectura (Mermaid) y galería de capturas. Nueva captura de **Ajustes**
+  (`docs/img/ajustes.png`) que muestra el respaldo y la restauración offline.
+  Capturas con MAC/IP difuminadas.
+
 ## [1.3.0] - 2026-10-07
 
 Copia y restauración offline, identificación de servicios por dispositivo y
