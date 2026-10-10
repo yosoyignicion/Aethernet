@@ -35,7 +35,7 @@ Documentation = "https://github.com/yosoyignicion/Aethernet/blob/main/docs/GUIA_
 [project.optional-dependencies]
 lan = ["scapy>=2.7"]
 monitor = ["scapy>=2.7"]
-api = ["fastapi>=0.141", "uvicorn[standard]>=0.53"]
+api = ["fastapi>=0.142.2", "uvicorn[standard]>=0.53"]
 reports = ["reportlab>=5.0.1", "matplotlib>=3.11.2"]
 speedtest = ["speedtest-cli>=2.1.3"]
 ui = ["nicegui>=3.17"]
